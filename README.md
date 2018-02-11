@@ -1,12 +1,7 @@
-# Visual Studio Code: Node.js with TypeScript "Control de Gastos Web Api"
+# Awesome Project Build with TypeORM
+        
+Steps to run this project:
 
-## Installation
-
-```
-npm install
-```
-
-### License
-MIT-licensed
-
-** Enjoy! **
+1. Run `npm i` command
+2. Setup database settings inside `ormconfig.json` file
+3. Run `npm start` command
