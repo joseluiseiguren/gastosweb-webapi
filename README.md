@@ -1,7 +1,5 @@
-# Awesome Project Build with TypeORM
+# WebApi del proyecto de control de gastos
         
-Steps to run this project:
-
-1. Run `npm i` command
-2. Setup database settings inside `ormconfig.json` file
-3. Run `npm start` command
+- Orm: typeorm
+- Database: mysql
+- Http: express.js

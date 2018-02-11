@@ -1,7 +1,7 @@
 {
-  "name": "MyProject",
+  "name": "gastosweb-webapi",
   "version": "0.0.1",
-  "description": "Awesome project developed with TypeORM.",
+  "description": "WebApi del proyecto de gastos web",
   "devDependencies": {
     "@types/express": "^4.11.1",
     "@types/node": "^8.0.29",
