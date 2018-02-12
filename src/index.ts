@@ -1,10 +1,12 @@
 import "reflect-metadata";
-import {createConnection} from "typeorm";
+import {createConnection, Connection, getConnectionManager} from "typeorm";
 import {User} from "./entity/User";
 import {Usuarios} from "./entity/Usuarios";
 
 import express = require('express');
+import { UsuarioRepository } from "./repositorios/UsuariosRepository";
 let app = express();
+let HttpStatus = require('http-status-codes');
 
 // For POST-Support
 let bodyParser = require('body-parser');
@@ -29,17 +31,12 @@ createConnection().then(async connection => {
     console.log("Here you can setup and run express/koa/any other framework.");
     
 }).catch(error => console.log(error));
-*/
 
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
-
-app.get('/', function (request, response) {
     createConnection().then(async connection => {
-        
+        console.log("2");
         let userRepository = connection.getRepository(Usuarios);
-        let savedUsers = await userRepository.find();
+        //let savedUsers = await userRepository.find({ email: "Jose Luis" });
+        let savedUsers = await userRepository.find({ email: "joseluiseiguren@gmail.com" });
         
         response.send(savedUsers);
         return;
@@ -47,8 +44,24 @@ app.get('/', function (request, response) {
     }).catch(error => console.log(error));
 
     //response.send('no data found');
+*/
 
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+
+//obtiene un usuario por id
+app.get('/api/usuarios/:id', async function (request, response) {
+    let id = request.params.id;
+    let repo = new UsuarioRepository();
+    let user = await repo.GetById(id);
+
+    if (user === undefined) {
+        response.status(HttpStatus.NOT_FOUND).end();
+        return;
+    }
     
+    response.status(HttpStatus.OK).send(user).end();
 });
 
 app.get('/api/sayhello/:name', (request, response) => {
