@@ -2,9 +2,10 @@ import "reflect-metadata";
 import {createConnection, Connection, getConnectionManager} from "typeorm";
 import {User} from "./entity/User";
 import {Usuarios} from "./entity/Usuarios";
-
-import express = require('express');
 import { UsuarioRepository } from "./repositorios/UsuariosRepository";
+
+var express = require('express');
+var cors = require('cors')
 let app = express();
 let HttpStatus = require('http-status-codes');
 
@@ -13,48 +14,20 @@ let bodyParser = require('body-parser');
 let multer = require('multer');
 let upload = multer();
 
-/*
-createConnection().then(async connection => {
+app.use(cors())
+app.use(bodyParser.json());
 
-    console.log("Inserting a new user into the database...");
-    const user = new User();
-    user.firstName = "Timber";
-    user.lastName = "Saw";
-    user.age = 25;
-    await connection.manager.save(user);
-    console.log("Saved a new user with id: " + user.id);
-    
-    console.log("Loading users from the database...");
-    const users = await connection.manager.find(User);
-    console.log("Loaded users: ", users);
-     
-    console.log("Here you can setup and run express/koa/any other framework.");
-    
-}).catch(error => console.log(error));
-
-    createConnection().then(async connection => {
-        console.log("2");
-        let userRepository = connection.getRepository(Usuarios);
-        //let savedUsers = await userRepository.find({ email: "Jose Luis" });
-        let savedUsers = await userRepository.find({ email: "joseluiseiguren@gmail.com" });
-        
-        response.send(savedUsers);
-        return;
-        
-    }).catch(error => console.log(error));
-
-    //response.send('no data found');
-*/
-
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
 
 //obtiene una lista de usuarios segun filtros
 app.get('/api/usuarios', async function (request, response) {
     
+    console.log(request.query.email);
+    console.log(request.headers);
+
     let repo = new UsuarioRepository();
     let users = await repo.GetByFilter(request.query.email);
+
+    response.setHeader('Access-Control-Allow-Origin', '*');
     response.status(HttpStatus.OK).send(users).end();
 });
 
@@ -74,37 +47,24 @@ app.get('/api/usuarios/:id', async function (request, response) {
         return;
     }
     
+    response.setHeader('Access-Control-Allow-Origin', '*');
     response.status(HttpStatus.OK).send(user).end();
 });
 
-app.get('/api/sayhello/', (request, response) => {
-    let name = request.query.name;
+app.post('/api/usuarios/login', (request, response, next) => {
+    const email = request.body.email,
+          password = request.body.password;
 
-    let result = {
-        message: name
-    };
+    console.log(request.body);
 
-    if (!isNaN(name)) {
-        response
-            .status(400)
-            .send('No string as name');
-    } else {
-        response.json(result);
-    }
-});
-
-app.post('/api/sayHello', upload.array(), (request, response) => {
-    let name = request.body.name;
-
-    if (!isNaN(name)) {
-        response
-            .status(400)
-            .send('No string as name');
-    } else {
-        console.log('Hello ' + name);
+    if (password === undefined) {
+        // send status 401 Unauthorized
+        response.status(HttpStatus.UNAUTHORIZED).end();
+        return;
     }
 
-    response.send('POST request to homepage');
+    let user = {token:"abc"};
+    response.status(HttpStatus.OK).send(user);
 });
 
 
