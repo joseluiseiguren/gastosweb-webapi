@@ -12,4 +12,20 @@ export class UsuarioRepository implements IUsuarioRepository {
 
         return user;
     }
+
+    async GetByFilter(email: string): Promise<Usuarios[]> {    
+        let dbConnection = await GetDbConnection();
+        let userRepository = dbConnection.getRepository(Usuarios);
+
+        var filter: {[k: string]: any} = {};
+        
+        // filtro por email
+        if (email !== undefined && email.length > 0) {
+            filter.email = email; }
+
+        let user = await userRepository.find(filter);
+        
+        
+        return user;
+    }
 }

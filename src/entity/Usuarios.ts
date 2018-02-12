@@ -15,4 +15,12 @@ export class Usuarios {
     @Column()
     fechanacimiento: Date;
 
+    @Column()
+    fechaalta: Date;
+
+    @Column()
+    idestado: number;
+
+    @Column()
+    password: string;
 }

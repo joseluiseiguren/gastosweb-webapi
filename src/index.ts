@@ -50,32 +50,31 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+//obtiene una lista de usuarios segun filtros
+app.get('/api/usuarios', async function (request, response) {
+    
+    let repo = new UsuarioRepository();
+    let users = await repo.GetByFilter(request.query.email);
+    response.status(HttpStatus.OK).send(users).end();
+});
+
 //obtiene un usuario por id
 app.get('/api/usuarios/:id', async function (request, response) {
+    
     let id = request.params.id;
+    if (isNaN(id)) {
+        response.status(HttpStatus.BAD_REQUEST).send('Invalid Id').end();
+        return;
+    }
+
     let repo = new UsuarioRepository();
     let user = await repo.GetById(id);
-
     if (user === undefined) {
         response.status(HttpStatus.NOT_FOUND).end();
         return;
     }
     
     response.status(HttpStatus.OK).send(user).end();
-});
-
-app.get('/api/sayhello/:name', (request, response) => {
-    let name = request.params.name;
-
-    if (!isNaN(name)) {
-        response
-            .status(400)
-            .send('No string as name');
-    } else {
-        response.json({
-            "message": name
-        });
-    }
 });
 
 app.get('/api/sayhello/', (request, response) => {
