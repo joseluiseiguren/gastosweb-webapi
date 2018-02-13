@@ -1,0 +1,157 @@
+{
+	"info": {
+		"name": "Users",
+		"_postman_id": "6edb1a36-6e7d-6bd5-a61d-cf2e13fd0a03",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GetById",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiRmxvciIsImlhdCI6MTUxODUxNzkzNSwiZXhwIjoxNTE4NjA0MzM1fQ.dl6rlfYpXb5Kz3KfgBMighSdVd9HN5UWaWLUoTOIKg8"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://{{host}}/api/usuarios/2",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"usuarios",
+						"2"
+					]
+				},
+				"description": "X\t"
+			},
+			"response": []
+		},
+		{
+			"name": "GetConceptos ByIdUsuario",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiRmxvciIsImlhdCI6MTUxODUxNzkzNSwiZXhwIjoxNTE4NjA0MzM1fQ.dl6rlfYpXb5Kz3KfgBMighSdVd9HN5UWaWLUoTOIKg8"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://{{host}}/api/usuarios/1/conceptos",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"usuarios",
+						"1",
+						"conceptos"
+					]
+				},
+				"description": "X\t"
+			},
+			"response": []
+		},
+		{
+			"name": "GetDiario By IdUsuario/Fecha",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiRmxvciIsImlhdCI6MTUxODUxNzkzNSwiZXhwIjoxNTE4NjA0MzM1fQ.dl6rlfYpXb5Kz3KfgBMighSdVd9HN5UWaWLUoTOIKg8"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://{{host}}/api/usuarios/1/diario/2018-02-01",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"usuarios",
+						"1",
+						"diario",
+						"2018-02-01"
+					]
+				},
+				"description": "X\t"
+			},
+			"response": []
+		},
+		{
+			"name": "GetByFilter",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiRmxvciIsImlhdCI6MTUxODUxODE2NSwiZXhwIjoxNTE4NTE4MjI1fQ.jyTrb7lIIEkLNptMAjhbfYsRuXBNLgPFpSj4uL85zTI"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://{{host}}/api/usuarios?email=joseluiseiguren@gmail.com",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"usuarios"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "joseluiseiguren@gmail.com",
+							"equals": true
+						}
+					]
+				},
+				"description": "X\t"
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\":\"flopyglorias@gmail.com\",\n\t\"password\":\"987654\"\n}"
+				},
+				"url": {
+					"raw": "http://{{host}}/api/usuarios/login",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"usuarios",
+						"login"
+					]
+				},
+				"description": "X\t"
+			},
+			"response": []
+		}
+	]
+}

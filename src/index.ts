@@ -1,7 +1,10 @@
 import "reflect-metadata";
 import {createConnection, Connection, getConnectionManager} from "typeorm";
 import {Usuarios} from "./entity/Usuarios";
+import {Conceptos} from "./entity/Conceptos";
 import { UsuarioRepository } from "./repositorios/UsuariosRepository";
+import { ConceptosRepository } from "./repositorios/ConceptosRepository";
+import { DiarioRepository } from "./repositorios/DiarioRepository";
 
 var express         = require('express');
 var cors            = require('cors');
@@ -53,7 +56,8 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
     // var hashedPassword = passwordHash.generate('password123');
 
     const payload = {
-        user: users[0].nombre 
+        user: users[0].nombre,
+        id: users[0].id 
     };
 
     var token = jwt.sign(payload, app.get('jwtsecret'), { expiresIn : 60*60*24 });
@@ -114,6 +118,42 @@ apiRoutes.get('/usuarios/:id', async function (request, response) {
     
     response.setHeader('Access-Control-Allow-Origin', '*');
     response.status(HttpStatus.OK).send(user).end();
+});
+
+//obtiene todos los conceptos de un usuario
+apiRoutes.get('/usuarios/:id/conceptos', async function (request, response) {
+    
+    let id = request.params.id;
+    if (isNaN(id)) {
+        response.status(HttpStatus.BAD_REQUEST).send('Invalid Id').end();
+        return;
+    }
+
+    let repo = new ConceptosRepository();
+    let conceptos = await repo.GetByUsuario(id);
+
+    response.status(HttpStatus.OK).send(conceptos).end();
+});
+
+//obtiene todos los gastos diarios de un usuario para una fecha
+apiRoutes.get('/usuarios/:id/diario/:fecha', async function (request, response) {
+    
+    let id = request.params.id;
+    if (isNaN(id)) {
+        response.status(HttpStatus.BAD_REQUEST).send('Invalid Id').end();
+        return;
+    }
+
+    let fecha : Date = new Date(request.params.fecha);
+    if (isNaN(fecha.getTime())) {
+        response.status(HttpStatus.BAD_REQUEST).send('Invalid Date').end();
+        return;
+    }
+
+    let repo = new DiarioRepository();
+    let diario = await repo.GetByUsuario(id, fecha);
+
+    response.status(HttpStatus.OK).send(diario).end();
 });
 
 // la aplicacion va a usar las rutas previamete seteadas
