@@ -5,6 +5,7 @@ import {Conceptos} from "./entity/Conceptos";
 import { UsuarioRepository } from "./repositorios/UsuariosRepository";
 import { ConceptosRepository } from "./repositorios/ConceptosRepository";
 import { DiarioRepository } from "./repositorios/DiarioRepository";
+import { Diario } from "./entity/Diarios";
 
 var express         = require('express');
 var cors            = require('cors');
@@ -154,6 +155,55 @@ apiRoutes.get('/usuarios/:id/diario/:fecha', async function (request, response) 
     let diario = await repo.GetByUsuario(id, fecha);
 
     response.status(HttpStatus.OK).send(diario).end();
+});
+
+//insera o actualiza un item diario
+apiRoutes.post('/diario', async function (request, response) {
+    
+    const idUsuario = request.decoded.id,
+          fecha: Date = new Date(request.body.fecha),
+          importe = request.body.importe,
+          idConcepto = request.body.idConcepto;
+
+    if (isNaN(idUsuario) || isNaN(importe) || isNaN(idConcepto)) {
+        response.status(HttpStatus.BAD_REQUEST).send().end();
+        return;
+    }
+
+    if (isNaN(fecha.getTime())) {
+        response.status(HttpStatus.BAD_REQUEST).send().end();
+        return;
+    }
+
+    // se valida que el concepto pertenezca al usuario
+    let repo = new ConceptosRepository();
+    let concepto = await repo.GetById(idConcepto);
+    
+    if (concepto === undefined ||
+        concepto.idusuario !== idUsuario) {
+        response.status(HttpStatus.BAD_REQUEST).end();
+        return;
+    }
+
+    // se verifica si ya exisgte el item cargado para esa fecha
+    let repoDiario = new DiarioRepository();
+    let diario = await repoDiario.GetById(idConcepto, fecha);
+
+    // no existe el item, hay que insertarlo
+    if (diario === undefined) {
+        diario = new Diario();
+        diario.fecha = fecha;
+        diario.fechaalta = new Date();
+        diario.idconcepto = idConcepto;
+        diario.importe = importe;
+        await repoDiario.Insert(diario);
+    } else {
+        // ya existe el item, hay que actualizarlo
+        diario.importe = importe;
+        await repoDiario.Update(diario);
+    }
+
+    response.status(HttpStatus.OK).send().end();
 });
 
 // la aplicacion va a usar las rutas previamete seteadas

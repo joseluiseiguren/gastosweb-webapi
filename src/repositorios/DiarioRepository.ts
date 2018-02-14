@@ -1,5 +1,4 @@
 import { IConceptoRepository } from "../interfaces/IConceptoRepository";
-import { Conceptos } from "../entity/Conceptos";
 import { Connection, getConnectionManager, createConnection, getManager } from "typeorm";
 import { GetDbConnection } from "./DbConection";
 import { IDiarioRepository } from "../interfaces/IDiarioRepository";
@@ -12,7 +11,7 @@ export class DiarioRepository implements IDiarioRepository {
 
         let sql = "select c.id idconcepto, \
                           c.descripcion, \
-                          c.credito, \
+                          if (c.credito = 0, false, true) credito, \
                           date(d.fecha) fecha, \
                           ifnull(d.importe, 0) importe \
                     from controlgastos.conceptos c \
@@ -41,5 +40,55 @@ export class DiarioRepository implements IDiarioRepository {
         console.log(sql);*/
 
         return datos;
+    }
+
+    async GetById(idConcepto: number, fecha: Date) : Promise<Diario> {
+        let dbConnection = await GetDbConnection();
+
+        /*let sql = await dbConnection
+            .getRepository(Diario)
+            .createQueryBuilder("diario") 
+            .where("diario.idconcepto = " + idConcepto.toString())
+            .andWhere("date(diario.fecha) = '" + fecha.getFullYear().toString() + "-" + (fecha.getMonth()+1).toString() + "-" +  fecha.getDate().toString() + "'")
+            .getSql();
+
+        console.log(sql);*/
+        
+        let diario = await dbConnection
+            .getRepository(Diario)
+            .createQueryBuilder("diario") 
+            .where("diario.idconcepto = " + idConcepto.toString())
+            .andWhere("date(diario.fecha) = '" + fecha.getFullYear().toString() + "-" + (fecha.getMonth()+1).toString() + "-" +  fecha.getDate().toString() + "'")
+            .getOne();
+
+        return diario;
+    }
+
+    async Insert(diario: Diario) : Promise<void> {
+        
+        let dbConnection = await GetDbConnection();
+
+        await dbConnection
+            .createQueryBuilder()
+            .insert()
+            .into(Diario)
+            .values({idconcepto: diario.idconcepto, importe: diario.importe, fecha: diario.fecha, fechaalta: diario.fechaalta}) 
+            .execute();
+    }
+
+    async Update(diario: Diario) : Promise<void> {
+        
+        let dbConnection = await GetDbConnection();
+        let fechaItem = diario.fecha.getFullYear().toString() + "-" + (diario.fecha.getMonth()+1).toString() + "-" + diario.fecha.getDate().toString();
+
+        await dbConnection
+            .createQueryBuilder()
+            .update(Diario)
+            .set({importe: diario.importe})
+            .where("idconcepto = :idconcepto and date(fecha) = :fecha", 
+                    { idconcepto: diario.idconcepto, 
+                      fecha: fechaItem
+                    }) 
+            .execute();
     }
 }

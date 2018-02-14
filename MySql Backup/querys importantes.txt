@@ -4,3 +4,9 @@ from controlgastos.conceptos c
 left join controlgastos.diario d on d.idconcepto = c.id and (date(d.fecha) = '2018-2-1' or d.fecha is null)
 where c.idusuario = 1
 order by c.descripcion asc
+
+
+
+-- PARA HACER BACKUP A MANO
+>cd C:\Program Files\MySQL\MySQL Server 5.7\bin
+>mysqldump.exe -e -uroot -padmin -hlocalhost controlgastos > c:\jos\jos.sql

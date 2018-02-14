@@ -17,4 +17,12 @@ export class ConceptosRepository implements IConceptoRepository {
 
         return conceptos;
     }
+
+    async GetById(id: number) : Promise<Conceptos> {
+        let dbConnection = await GetDbConnection();
+        let concRepository = dbConnection.getRepository(Conceptos);
+        let concepto = await concRepository.findOneById(id);
+
+        return concepto;
+    }
 }
