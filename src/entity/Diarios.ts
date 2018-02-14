@@ -9,7 +9,7 @@ export class Diario {
     @PrimaryColumn()
     fecha: Date;
 
-    @Column()
+    @Column({ type: "decimal", precision: 12, scale: 2 })
     importe: number;
 
     @Column()

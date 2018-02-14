@@ -68,11 +68,17 @@ export class DiarioRepository implements IDiarioRepository {
         
         let dbConnection = await GetDbConnection();
 
+        console.log(diario);
+
         await dbConnection
             .createQueryBuilder()
             .insert()
             .into(Diario)
-            .values({idconcepto: diario.idconcepto, importe: diario.importe, fecha: diario.fecha, fechaalta: diario.fechaalta}) 
+            .values(
+                    {idconcepto: diario.idconcepto, 
+                     importe: diario.importe, 
+                     fecha: diario.fecha, 
+                     fechaalta: diario.fechaalta}) 
             .execute();
     }
 

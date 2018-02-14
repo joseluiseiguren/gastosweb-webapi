@@ -1,0 +1,40 @@
+{
+	"info": {
+		"name": "Mensual",
+		"_postman_id": "74b8a02f-c66d-b25d-cb4c-99fc048ead70",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GetSumary By IdUsuario/Fecha",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-access-token",
+						"value": "{{accessToken}}"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://{{host}}/api/usuarios/1/mensual/20182/sumary",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"usuarios",
+						"1",
+						"mensual",
+						"20182",
+						"sumary"
+					]
+				},
+				"description": "X\t"
+			},
+			"response": []
+		}
+	]
+}

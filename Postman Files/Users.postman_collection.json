@@ -13,7 +13,7 @@
 				"header": [
 					{
 						"key": "x-access-token",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiRmxvciIsImlhdCI6MTUxODUxNzkzNSwiZXhwIjoxNTE4NjA0MzM1fQ.dl6rlfYpXb5Kz3KfgBMighSdVd9HN5UWaWLUoTOIKg8"
+						"value": "{{accessToken}}"
 					}
 				],
 				"body": {},
@@ -40,7 +40,7 @@
 				"header": [
 					{
 						"key": "x-access-token",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiRmxvciIsImlhdCI6MTUxODUxNzkzNSwiZXhwIjoxNTE4NjA0MzM1fQ.dl6rlfYpXb5Kz3KfgBMighSdVd9HN5UWaWLUoTOIKg8"
+						"value": "{{accessToken}}"
 					}
 				],
 				"body": {},
@@ -62,42 +62,13 @@
 			"response": []
 		},
 		{
-			"name": "GetDiario By IdUsuario/Fecha",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "x-access-token",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiRmxvciIsImlhdCI6MTUxODUxNzkzNSwiZXhwIjoxNTE4NjA0MzM1fQ.dl6rlfYpXb5Kz3KfgBMighSdVd9HN5UWaWLUoTOIKg8"
-					}
-				],
-				"body": {},
-				"url": {
-					"raw": "http://{{host}}/api/usuarios/1/diario/2018-02-01",
-					"protocol": "http",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"api",
-						"usuarios",
-						"1",
-						"diario",
-						"2018-02-01"
-					]
-				},
-				"description": "X\t"
-			},
-			"response": []
-		},
-		{
 			"name": "GetByFilter",
 			"request": {
 				"method": "GET",
 				"header": [
 					{
 						"key": "x-access-token",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiRmxvciIsImlhdCI6MTUxODUxODE2NSwiZXhwIjoxNTE4NTE4MjI1fQ.jyTrb7lIIEkLNptMAjhbfYsRuXBNLgPFpSj4uL85zTI"
+						"value": "{{accessToken}}"
 					}
 				],
 				"body": {},
@@ -125,6 +96,29 @@
 		},
 		{
 			"name": "Login",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cb44f03a-b82f-47fb-bd8e-8161a801148c",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "44ff1ab9-acab-4fe8-bcb1-263ca5886ef0",
+						"type": "text/javascript",
+						"exec": [
+							"var jsondata = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"accessToken\", jsondata.token);"
+						]
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [
@@ -135,7 +129,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"email\":\"flopyglorias@gmail.com\",\n\t\"password\":\"987654\"\n}"
+					"raw": "{\n\t\"email\":\"joseluiseiguren@gmail.com\",\n\t\"password\":\"123456\"\n}"
 				},
 				"url": {
 					"raw": "http://{{host}}/api/usuarios/login",

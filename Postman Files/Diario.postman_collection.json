@@ -1,0 +1,72 @@
+{
+	"info": {
+		"name": "Diario",
+		"_postman_id": "b79ca0cc-3910-e97b-4256-e47d31a00020",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GetDiario By IdUsuario/Fecha",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-access-token",
+						"value": "{{accessToken}}"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://{{host}}/api/usuarios/1/diario/20180201",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"usuarios",
+						"1",
+						"diario",
+						"20180201"
+					]
+				},
+				"description": "X\t"
+			},
+			"response": []
+		},
+		{
+			"name": "Diario",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "x-access-token",
+						"value": "{{accessToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"fecha\":\"20180531\",\n\t\"importe\":\"51\",\n\t\"idConcepto\": 4\n}"
+				},
+				"url": {
+					"raw": "http://{{host}}/api/diario",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"diario"
+					]
+				},
+				"description": "X\t"
+			},
+			"response": []
+		}
+	]
+}

@@ -6,6 +6,7 @@ import { UsuarioRepository } from "./repositorios/UsuariosRepository";
 import { ConceptosRepository } from "./repositorios/ConceptosRepository";
 import { DiarioRepository } from "./repositorios/DiarioRepository";
 import { Diario } from "./entity/Diarios";
+import { MensualRepository } from "./repositorios/MensualRepository";
 
 var express         = require('express');
 var cors            = require('cors');
@@ -145,23 +146,53 @@ apiRoutes.get('/usuarios/:id/diario/:fecha', async function (request, response) 
         return;
     }
 
-    let fecha : Date = new Date(request.params.fecha);
-    if (isNaN(fecha.getTime())) {
+    let fecha = request.params.fecha;
+    if (fecha.length != 8) {
         response.status(HttpStatus.BAD_REQUEST).send('Invalid Date').end();
         return;
     }
 
+    let fechaParam: Date = new Date(
+                                Number(fecha.substring(0, 4)), 
+                                Number(fecha.substring(4, 6))-1, 
+                                Number(fecha.substring(6, 8))+1, 
+                                0, 0, 0, 0);
+    fechaParam.setUTCHours(0, 0, 0, 0);
+
     let repo = new DiarioRepository();
-    let diario = await repo.GetByUsuario(id, fecha);
+    let diario = await repo.GetByUsuario(id, fechaParam);
 
     response.status(HttpStatus.OK).send(diario).end();
+});
+
+//obtiene el total mensual de un usuario para una fecha YYYYMM
+apiRoutes.get('/usuarios/:id/mensual/:fecha/sumary', async function (request, response) {
+    
+    let id = request.params.id;
+    if (isNaN(id)) {
+        response.status(HttpStatus.BAD_REQUEST).send('Invalid Id').end();
+        return;
+    }
+
+    let fecha = request.params.fecha;
+    if (isNaN(fecha) ||
+        fecha.length < 5 || 
+        fecha.length > 6) {
+        response.status(HttpStatus.BAD_REQUEST).send('Invalid Date').end();
+        return;
+    }
+
+    let repo = new MensualRepository();
+    let mensual = await repo.GetTotal(id, fecha);
+
+    response.status(HttpStatus.OK).send(mensual).end();
 });
 
 //insera o actualiza un item diario
 apiRoutes.post('/diario', async function (request, response) {
     
     const idUsuario = request.decoded.id,
-          fecha: Date = new Date(request.body.fecha),
+          fecha: string = request.body.fecha,
           importe = request.body.importe,
           idConcepto = request.body.idConcepto;
 
@@ -170,15 +201,29 @@ apiRoutes.post('/diario', async function (request, response) {
         return;
     }
 
-    if (isNaN(fecha.getTime())) {
+    /*console.log(idUsuario);
+    console.log(fecha);
+    console.log(importe);
+    console.log(idConcepto);*/
+    
+    if (fecha.length !== 8) {
         response.status(HttpStatus.BAD_REQUEST).send().end();
         return;
     }
 
+    let fechaParam: Date = new Date(
+                        Number(fecha.substring(0, 4)), 
+                        Number(fecha.substring(4, 6))-1, 
+                        Number(fecha.substring(6, 8))+1, 
+                        0, 0, 0, 0);
+    fechaParam.setUTCHours(0, 0, 0, 0);
+    
     // se valida que el concepto pertenezca al usuario
     let repo = new ConceptosRepository();
     let concepto = await repo.GetById(idConcepto);
     
+    //console.log(concepto);
+
     if (concepto === undefined ||
         concepto.idusuario !== idUsuario) {
         response.status(HttpStatus.BAD_REQUEST).end();
@@ -187,12 +232,12 @@ apiRoutes.post('/diario', async function (request, response) {
 
     // se verifica si ya exisgte el item cargado para esa fecha
     let repoDiario = new DiarioRepository();
-    let diario = await repoDiario.GetById(idConcepto, fecha);
+    let diario = await repoDiario.GetById(idConcepto, fechaParam);
 
     // no existe el item, hay que insertarlo
     if (diario === undefined) {
         diario = new Diario();
-        diario.fecha = fecha;
+        diario.fecha = fechaParam;
         diario.fechaalta = new Date();
         diario.idconcepto = idConcepto;
         diario.importe = importe;
