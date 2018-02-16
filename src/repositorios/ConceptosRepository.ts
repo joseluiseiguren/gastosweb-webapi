@@ -45,4 +45,24 @@ export class ConceptosRepository implements IConceptoRepository {
         
         return datos;
     }
+
+    async GetConceptosMovimMensual(idUsuario: number, fecha: string /*YYYYMM*/, idConcepto: number) : Promise<any> {
+        let dbConnection = await GetDbConnection();
+
+        let sql = "select d.idconcepto, d.fecha, d.importe \
+                    from controlgastos.diario d \
+                    inner join controlgastos.conceptos c on c.id = d.idconcepto \
+                    inner join controlgastos.usuarios u on u.id = c.idusuario \
+                    where c.idusuario = " + idUsuario.toString() +  
+                    "  and date_format(d.fecha, '%Y%m') = '" + fecha + "' \
+                    and d.idconcepto = " + idConcepto.toString() +  
+                    " and d.importe != 0 \
+                    order by d.fecha asc";
+
+        //console.log(sql);
+
+        const datos = await getManager().query(sql);
+        
+        return datos;
+    }
 }

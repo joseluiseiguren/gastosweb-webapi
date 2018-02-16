@@ -297,6 +297,33 @@ apiRoutes.get('/diario/first', async function (request, response) {
     response.status(HttpStatus.OK).send(minDiario).end();
 });
 
+//obtiene las fechas que un concepto tuvo movimientos YYYYMM
+apiRoutes.get('/conceptos/:id/movimientos/:mes', async function (request, response) {
+    
+    const idUsuario = request.decoded.id;
+    if (isNaN(idUsuario)) {
+        response.status(HttpStatus.BAD_REQUEST).send().end();
+        return;
+    }
+
+    const idConcepto = request.params.id;
+    if (isNaN(idConcepto)) {
+        response.status(HttpStatus.BAD_REQUEST).send().end();
+        return;
+    }
+
+    const fecha = request.params.mes;
+    if (isNaN(fecha) || fecha.length != 6) {
+        response.status(HttpStatus.BAD_REQUEST).send().end();
+        return;
+    }
+
+    let repo = new ConceptosRepository();
+    let concep = await repo.GetConceptosMovimMensual(idUsuario, fecha, idConcepto);
+
+    response.status(HttpStatus.OK).send(concep).end();
+});
+
 // la aplicacion va a usar las rutas previamete seteadas
 app.use('/api', apiRoutes);
 

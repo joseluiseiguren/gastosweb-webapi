@@ -63,6 +63,35 @@
 				"description": "X\t"
 			},
 			"response": []
+		},
+		{
+			"name": "GetConcepto Movim Mensual",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-access-token",
+						"value": "{{accessToken}}"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://{{host}}/api/conceptos/4/movimientos/201805",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"conceptos",
+						"4",
+						"movimientos",
+						"201805"
+					]
+				},
+				"description": "X\t"
+			},
+			"response": []
 		}
 	]
 }
