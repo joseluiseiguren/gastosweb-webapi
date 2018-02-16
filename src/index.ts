@@ -59,7 +59,8 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
 
     const payload = {
         user: users[0].nombre,
-        id: users[0].id 
+        id: users[0].id,
+        moneda: users[0].moneda, 
     };
 
     var token = jwt.sign(payload, app.get('jwtsecret'), { expiresIn : 60*60*24 });
@@ -279,6 +280,21 @@ apiRoutes.post('/diario', async function (request, response) {
     }
 
     response.status(HttpStatus.OK).send().end();
+});
+
+//obtiene el primer consumo del usuario
+apiRoutes.get('/diario/first', async function (request, response) {
+    
+    const idUsuario = request.decoded.id;
+    if (isNaN(idUsuario)) {
+        response.status(HttpStatus.BAD_REQUEST).send().end();
+        return;
+    }
+
+    let repo = new DiarioRepository();
+    let minDiario = await repo.GetMinConsumoByUsuario(idUsuario);
+
+    response.status(HttpStatus.OK).send(minDiario).end();
 });
 
 // la aplicacion va a usar las rutas previamete seteadas

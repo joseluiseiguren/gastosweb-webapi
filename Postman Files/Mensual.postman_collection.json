@@ -35,6 +35,34 @@
 				"description": "X\t"
 			},
 			"response": []
+		},
+		{
+			"name": "GetConceptos Total Mensual",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-access-token",
+						"value": "{{accessToken}}"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://{{host}}/api/conceptos/sumary/201802",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"conceptos",
+						"sumary",
+						"201802"
+					]
+				},
+				"description": "X\t"
+			},
+			"response": []
 		}
 	]
 }

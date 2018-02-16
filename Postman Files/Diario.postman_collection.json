@@ -36,6 +36,33 @@
 			"response": []
 		},
 		{
+			"name": "GetDiario Primer Consumo",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-access-token",
+						"value": "{{accessToken}}"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://{{host}}/api/diario/first",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"diario",
+						"first"
+					]
+				},
+				"description": "X\t"
+			},
+			"response": []
+		},
+		{
 			"name": "Diario",
 			"request": {
 				"method": "POST",

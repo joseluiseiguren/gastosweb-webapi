@@ -4,6 +4,8 @@ export interface IDiarioRepository {
 
     GetByUsuario(idUsuario: number, fecha: Date) : Promise<any[]>;
 
+    GetMinConsumoByUsuario(idUsuario: number) : Promise<any>;
+
     GetById(idConcepto: number, fecha: Date) : Promise<Diario>;
 
     Insert(diario: Diario) : Promise<void>;

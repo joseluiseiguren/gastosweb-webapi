@@ -24,4 +24,7 @@ export class Usuarios {
 
     @Column()
     password: string;
+
+    @Column()
+    moneda: string;
 }

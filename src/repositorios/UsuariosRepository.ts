@@ -25,7 +25,7 @@ export class UsuarioRepository implements IUsuarioRepository {
 
         let user = await userRepository.find(filter);
         
-        console.log(user);
+        //console.log(user);
         
         return user;
     }

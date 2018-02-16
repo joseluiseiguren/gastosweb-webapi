@@ -68,7 +68,7 @@ export class DiarioRepository implements IDiarioRepository {
         
         let dbConnection = await GetDbConnection();
 
-        console.log(diario);
+        //console.log(diario);
 
         await dbConnection
             .createQueryBuilder()
@@ -96,5 +96,24 @@ export class DiarioRepository implements IDiarioRepository {
                       fecha: fechaItem
                     }) 
             .execute();
+    }
+
+    async GetMinConsumoByUsuario(idUsuario: number) : Promise<any> {
+        let dbConnection = await GetDbConnection();
+
+        let sql = "select date_format(ifnull(min(d.fecha), curdate()), '%Y-%m-%d') fechaMin, \
+                          date_format(ifnull(max(d.fecha), curdate()), '%Y-%m-%d') fechaMax \
+                    from controlgastos.diario d \
+                    inner join controlgastos.conceptos c on c.id = d.idconcepto \
+                    inner join controlgastos.usuarios u on u.id = c.idusuario \
+                    where c.idusuario = " + idUsuario.toString();
+
+        //console.log(sql);
+
+        const datos = await getManager().query(sql);
+
+        //console.log(datos);
+        
+        return datos[0];
     }
 }
