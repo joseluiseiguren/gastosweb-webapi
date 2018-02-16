@@ -19,7 +19,7 @@ export class MensualRepository implements IMensualRepository {
 
         const datos = await getManager().query(sql);
 
-        console.log(datos);
+        //console.log(datos);
 
         return datos[0];
     }

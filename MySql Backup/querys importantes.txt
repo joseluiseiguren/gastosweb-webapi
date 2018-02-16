@@ -6,7 +6,7 @@ where c.idusuario = 1
 order by c.descripcion asc
 
 
--- SUMATY MENSUAL
+-- SUMARY MENSUAL
 select sum(case when d.importe > 0 then d.importe else 0 end) ingresos,
 		sum(case when d.importe < 0 then d.importe else 0 end) egresos
 from controlgastos.diario d
@@ -14,6 +14,15 @@ inner join controlgastos.conceptos c on c.id = d.idconcepto
 inner join controlgastos.usuarios u on u.id = c.idusuario
 where u.id = 1
 and date_format(d.fecha, "%Y%c") = "20182"
+
+
+-- TOTAL MENSUAL POR conceptosselect sum(d.importe) saldo, d.idconcepto
+from controlgastos.diario d
+inner join controlgastos.conceptos c on c.id = d.idconcepto
+inner join controlgastos.usuarios u on u.id = c.idusuario
+where u.id = 1
+and date_format(d.fecha, '%Y%c') = "20182"
+group by d.idconcepto
 
 
 -- PARA HACER BACKUP A MANO

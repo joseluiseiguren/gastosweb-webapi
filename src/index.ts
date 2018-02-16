@@ -165,6 +165,36 @@ apiRoutes.get('/usuarios/:id/diario/:fecha', async function (request, response) 
     response.status(HttpStatus.OK).send(diario).end();
 });
 
+//obtiene el total de cada concepto para un mes parametrizado
+apiRoutes.get('/conceptos/sumary/:mes', async function (request, response) {
+    
+    const idUsuario = request.decoded.id;
+    if (isNaN(idUsuario)) {
+        response.status(HttpStatus.BAD_REQUEST).send().end();
+        return;
+    }
+
+    let fecha = request.params.mes;
+    if (fecha.length != 6) {
+        response.status(HttpStatus.BAD_REQUEST).send().end();
+        return;
+    }
+
+    let fechaParam: Date = new Date(
+                                Number(fecha.substring(0, 4)), 
+                                Number(fecha.substring(4, 6)), 
+                                1, 0, 0, 0, 0);
+    fechaParam.setUTCHours(0, 0, 0, 0);
+
+    /*console.log(fecha);
+    console.log(fechaParam);*/
+
+    let repo = new ConceptosRepository();
+    let conceptosTotalMes = await repo.GetConceptosMensual(idUsuario, fechaParam);
+
+    response.status(HttpStatus.OK).send(conceptosTotalMes).end();
+});
+
 //obtiene el total mensual de un usuario para una fecha YYYYMM
 apiRoutes.get('/usuarios/:id/mensual/:fecha/sumary', async function (request, response) {
     
