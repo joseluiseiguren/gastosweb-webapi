@@ -27,6 +27,8 @@ app.set('jwtsecret', config.secret);
 
 var apiRoutes = express.Router();
 
+/**** USUARIOS ******************************************************************************************/
+
 // se pide un login y se entrega un token
 apiRoutes.post('/usuarios/login', async (request, response, next) => {
     
@@ -103,6 +105,21 @@ apiRoutes.get('/usuarios', async function(request, response) {
     response.status(HttpStatus.OK).send(users).end();
 });
 
+//obtiene todos los conceptos de un usuario
+apiRoutes.get('/usuarios/conceptos', async function (request, response) {
+    
+    const idUsuario = request.decoded.id;
+    if (isNaN(idUsuario)) {
+        response.status(HttpStatus.BAD_REQUEST).send().end();
+        return;
+    }
+
+    let repo = new ConceptosRepository();
+    let conceptos = await repo.GetByUsuario(idUsuario);
+
+    response.status(HttpStatus.OK).send(conceptos).end();
+});
+
 //obtiene un usuario por id
 apiRoutes.get('/usuarios/:id', async function (request, response) {
     
@@ -123,50 +140,11 @@ apiRoutes.get('/usuarios/:id', async function (request, response) {
     response.status(HttpStatus.OK).send(user).end();
 });
 
-//obtiene todos los conceptos de un usuario
-apiRoutes.get('/usuarios/:id/conceptos', async function (request, response) {
-    
-    let id = request.params.id;
-    if (isNaN(id)) {
-        response.status(HttpStatus.BAD_REQUEST).send('Invalid Id').end();
-        return;
-    }
 
-    let repo = new ConceptosRepository();
-    let conceptos = await repo.GetByUsuario(id);
 
-    response.status(HttpStatus.OK).send(conceptos).end();
-});
+/**** CONCEPTOS ****************************************************************************************/
 
-//obtiene todos los gastos diarios de un usuario para una fecha
-apiRoutes.get('/usuarios/:id/diario/:fecha', async function (request, response) {
-    
-    let id = request.params.id;
-    if (isNaN(id)) {
-        response.status(HttpStatus.BAD_REQUEST).send('Invalid Id').end();
-        return;
-    }
-
-    let fecha = request.params.fecha;
-    if (fecha.length != 8) {
-        response.status(HttpStatus.BAD_REQUEST).send('Invalid Date').end();
-        return;
-    }
-
-    let fechaParam: Date = new Date(
-                                Number(fecha.substring(0, 4)), 
-                                Number(fecha.substring(4, 6))-1, 
-                                Number(fecha.substring(6, 8))+1, 
-                                0, 0, 0, 0);
-    fechaParam.setUTCHours(0, 0, 0, 0);
-
-    let repo = new DiarioRepository();
-    let diario = await repo.GetByUsuario(id, fechaParam);
-
-    response.status(HttpStatus.OK).send(diario).end();
-});
-
-//obtiene el total de cada concepto para un mes parametrizado
+//obtiene el total de cada concepto para un mes parametrizado para un usuario
 apiRoutes.get('/conceptos/sumary/:mes', async function (request, response) {
     
     const idUsuario = request.decoded.id;
@@ -196,12 +174,43 @@ apiRoutes.get('/conceptos/sumary/:mes', async function (request, response) {
     response.status(HttpStatus.OK).send(conceptosTotalMes).end();
 });
 
-//obtiene el total mensual de un usuario para una fecha YYYYMM
-apiRoutes.get('/usuarios/:id/mensual/:fecha/sumary', async function (request, response) {
+//obtiene las fechas que un concepto tuvo movimientos YYYYMM para un usuario
+apiRoutes.get('/conceptos/:id/movimientos/:mes', async function (request, response) {
     
-    let id = request.params.id;
-    if (isNaN(id)) {
-        response.status(HttpStatus.BAD_REQUEST).send('Invalid Id').end();
+    const idUsuario = request.decoded.id;
+    if (isNaN(idUsuario)) {
+        response.status(HttpStatus.BAD_REQUEST).send().end();
+        return;
+    }
+
+    const idConcepto = request.params.id;
+    if (isNaN(idConcepto)) {
+        response.status(HttpStatus.BAD_REQUEST).send().end();
+        return;
+    }
+
+    const fecha = request.params.mes;
+    if (isNaN(fecha) || fecha.length != 6) {
+        response.status(HttpStatus.BAD_REQUEST).send().end();
+        return;
+    }
+
+    let repo = new ConceptosRepository();
+    let concep = await repo.GetConceptosMovimMensual(idUsuario, fecha, idConcepto);
+
+    response.status(HttpStatus.OK).send(concep).end();
+});
+
+
+
+/**** MENSUAL ******************************************************************************************/
+
+//obtiene el total mensual de un usuario para una fecha YYYYMM
+apiRoutes.get('/mensual/:fecha/sumary', async function (request, response) {
+    
+    const idUsuario = request.decoded.id;
+    if (isNaN(idUsuario)) {
+        response.status(HttpStatus.BAD_REQUEST).send().end();
         return;
     }
 
@@ -214,12 +223,16 @@ apiRoutes.get('/usuarios/:id/mensual/:fecha/sumary', async function (request, re
     }
 
     let repo = new MensualRepository();
-    let mensual = await repo.GetTotal(id, fecha);
+    let mensual = await repo.GetTotal(idUsuario, fecha);
 
     response.status(HttpStatus.OK).send(mensual).end();
 });
 
-//insera o actualiza un item diario
+
+
+/**** DIARIO *******************************************************************************************/
+
+//insera o actualiza un item diario para un usuario
 apiRoutes.post('/diario', async function (request, response) {
     
     const idUsuario = request.decoded.id,
@@ -297,8 +310,8 @@ apiRoutes.get('/diario/first', async function (request, response) {
     response.status(HttpStatus.OK).send(minDiario).end();
 });
 
-//obtiene las fechas que un concepto tuvo movimientos YYYYMM
-apiRoutes.get('/conceptos/:id/movimientos/:mes', async function (request, response) {
+//obtiene todos los gastos diarios de un usuario para una fecha
+apiRoutes.get('/diario/:fecha', async function (request, response) {
     
     const idUsuario = request.decoded.id;
     if (isNaN(idUsuario)) {
@@ -306,23 +319,27 @@ apiRoutes.get('/conceptos/:id/movimientos/:mes', async function (request, respon
         return;
     }
 
-    const idConcepto = request.params.id;
-    if (isNaN(idConcepto)) {
-        response.status(HttpStatus.BAD_REQUEST).send().end();
+    let fecha = request.params.fecha;
+    if (fecha.length != 8) {
+        response.status(HttpStatus.BAD_REQUEST).send('Invalid Date').end();
         return;
     }
 
-    const fecha = request.params.mes;
-    if (isNaN(fecha) || fecha.length != 6) {
-        response.status(HttpStatus.BAD_REQUEST).send().end();
-        return;
-    }
+    let fechaParam: Date = new Date(
+                                Number(fecha.substring(0, 4)), 
+                                Number(fecha.substring(4, 6))-1, 
+                                Number(fecha.substring(6, 8))+1, 
+                                0, 0, 0, 0);
+    fechaParam.setUTCHours(0, 0, 0, 0);
 
-    let repo = new ConceptosRepository();
-    let concep = await repo.GetConceptosMovimMensual(idUsuario, fecha, idConcepto);
+    let repo = new DiarioRepository();
+    let diario = await repo.GetByUsuario(idUsuario, fechaParam);
 
-    response.status(HttpStatus.OK).send(concep).end();
+    response.status(HttpStatus.OK).send(diario).end();
 });
+
+
+/********************************************************************************************************/
 
 // la aplicacion va a usar las rutas previamete seteadas
 app.use('/api', apiRoutes);
