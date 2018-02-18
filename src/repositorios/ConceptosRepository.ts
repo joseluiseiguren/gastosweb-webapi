@@ -2,6 +2,7 @@ import { IConceptoRepository } from "../interfaces/IConceptoRepository";
 import { Conceptos } from "../entity/Conceptos";
 import { Connection, getConnectionManager, createConnection, getManager } from "typeorm";
 import { GetDbConnection } from "./DbConection";
+import { DESTRUCTION } from "dns";
 
 export class ConceptosRepository implements IConceptoRepository {
     
@@ -64,5 +65,45 @@ export class ConceptosRepository implements IConceptoRepository {
         const datos = await getManager().query(sql);
         
         return datos;
+    }
+
+    async Insert(concepto: Conceptos) : Promise<void> {
+        
+        let dbConnection = await GetDbConnection();
+
+        //console.log(diario);
+
+        await dbConnection
+            .createQueryBuilder()
+            .insert()
+            .into(Conceptos)
+            .values(
+                    {idusuario: concepto.idusuario, 
+                     descripcion: concepto.descripcion, 
+                     credito: concepto.credito, 
+                     idestado: concepto.idestado, 
+                     fechaalta: concepto.fechaalta}) 
+            .execute();
+    }
+
+    async Update(concepto: Conceptos) : Promise<void> {
+        
+        let dbConnection = await GetDbConnection();
+
+        await dbConnection
+            .createQueryBuilder()
+            .update(Conceptos)
+            .set({descripcion: concepto.descripcion, credito: concepto.credito})
+            .where("id = :id", 
+                    { id: concepto.id}) 
+            .execute();
+    }
+
+    async GetByDescrcipcion(idUsuario: number, descripcion: string) : Promise<Conceptos> {
+        let dbConnection = await GetDbConnection();
+        let concRepository = dbConnection.getRepository(Conceptos);
+        let concepto = await concRepository.findOne({idusuario: idUsuario, descripcion: descripcion});
+
+        return concepto;
     }
 }

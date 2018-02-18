@@ -201,6 +201,77 @@ apiRoutes.get('/conceptos/:id/movimientos/:mes', async function (request, respon
     response.status(HttpStatus.OK).send(concep).end();
 });
 
+//insera concepto nuevo para el usuario
+apiRoutes.post('/concepto', async function (request, response) {
+    
+    const idUsuario = request.decoded.id,
+          descripcion: string = request.body.descripcion,
+          credito = request.body.credito;
+
+    if (isNaN(idUsuario) || isNaN(credito) || descripcion == undefined || descripcion.length <= 0) {
+        response.status(HttpStatus.BAD_REQUEST).send().end();
+        return;
+    }
+
+    // se valida que el no exista un concepto con la misma descripcion
+    let repoConcepto = new ConceptosRepository();
+    let conceptoSearch = await repoConcepto.GetByDescrcipcion(idUsuario, descripcion);
+    if (conceptoSearch !== undefined) {
+        response.status(HttpStatus.BAD_REQUEST).end();
+        return;
+    }
+
+    let concepto = new Conceptos();
+    concepto.credito = credito;
+    concepto.descripcion = descripcion;
+    concepto.fechaalta = new Date();
+    concepto.idestado = 0;
+    concepto.idusuario = idUsuario;
+    await repoConcepto.Insert(concepto);
+    
+    response.status(HttpStatus.OK).send().end();
+});
+
+//actualiza un concepto nuevo para el usuario
+apiRoutes.put('/concepto', async function (request, response) {
+    
+    const idUsuario = request.decoded.id,
+          descripcion: string = request.body.descripcion,
+          credito = request.body.credito,
+          idConcepto = request.body.idconcepto;
+
+    if (isNaN(idUsuario) || isNaN(idConcepto) || isNaN(credito) || descripcion == undefined || descripcion.length <= 0) {
+        response.status(HttpStatus.BAD_REQUEST).send().end();
+        return;
+    }
+
+    // se valida que exista el concepto y pertenezca al usuario
+    let repoConcepto = new ConceptosRepository();
+    let conceptoSearch = await repoConcepto.GetById(idConcepto);
+    
+    if (conceptoSearch === undefined ||
+        conceptoSearch.idusuario !== idUsuario) {
+        response.status(HttpStatus.BAD_REQUEST).end();
+        return;
+    }
+
+    // se valida que no haya otro concepto con el mismo nombre para ese usuario
+    conceptoSearch = await repoConcepto.GetByDescrcipcion(idUsuario, descripcion);
+    if (conceptoSearch !== undefined &&
+         conceptoSearch.id != idConcepto) {
+        response.status(HttpStatus.BAD_REQUEST).end();
+        return;
+    }
+
+    let concepto = new Conceptos();
+    concepto.credito = credito;
+    concepto.descripcion = descripcion;
+    concepto.id = idConcepto;
+    await repoConcepto.Update(concepto);
+    
+    response.status(HttpStatus.OK).send().end();
+});
+
 
 
 /**** MENSUAL ******************************************************************************************/

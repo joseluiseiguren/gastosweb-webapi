@@ -45,7 +45,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://{{host}}/api/usuarios/1/conceptos",
+					"raw": "http://{{host}}/api/usuarios/conceptos",
 					"protocol": "http",
 					"host": [
 						"{{host}}"
@@ -53,7 +53,6 @@
 					"path": [
 						"api",
 						"usuarios",
-						"1",
 						"conceptos"
 					]
 				},
@@ -141,6 +140,72 @@
 						"api",
 						"usuarios",
 						"login"
+					]
+				},
+				"description": "X\t"
+			},
+			"response": []
+		},
+		{
+			"name": "Concepto",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "x-access-token",
+						"value": "{{accessToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"descripcion\":\"Muebles\",\n\t\"credito\":false\n}"
+				},
+				"url": {
+					"raw": "http://{{host}}/api/concepto",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"concepto"
+					]
+				},
+				"description": "X\t"
+			},
+			"response": []
+		},
+		{
+			"name": "Concepto",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "x-access-token",
+						"value": "{{accessToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"descripcion\":\"Supermercado\",\n\t\"credito\":false,\n\t\"idconcepto\":1\n}"
+				},
+				"url": {
+					"raw": "http://{{host}}/api/concepto",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"concepto"
 					]
 				},
 				"description": "X\t"
