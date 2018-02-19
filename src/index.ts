@@ -70,6 +70,82 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
     response.status(HttpStatus.OK).send({token: token});
 });
 
+// se da de alta un usuario
+apiRoutes.post('/usuarios/registracion', async (request, response, next) => {
+    
+    const email = request.body.email,
+          password = request.body.password,
+          nombre = request.body.nombre,
+          fechanacimiento = request.body.fechanacimiento,
+          moneda = request.body.moneda;
+
+    let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    re.test(String(email).toLowerCase());
+
+    if (email === undefined ||
+        re.test(String(email).toLowerCase()) === false) {
+        response.status(HttpStatus.BAD_REQUEST).send("Email Invalido").end();
+        return;
+    }
+
+    if (password === undefined) {
+        response.status(HttpStatus.BAD_REQUEST).send("Password Invalido").end();
+        return;
+    }
+
+    if (nombre === undefined) {
+        response.status(HttpStatus.BAD_REQUEST).send("Nombre Invalido").end();
+        return;
+    }
+
+    if (moneda === undefined ||
+        moneda.length > 3) {
+        response.status(HttpStatus.BAD_REQUEST).send("Moneda Invalida").end();
+        return;
+    }
+
+    if (fechanacimiento === undefined) {
+        response.status(HttpStatus.BAD_REQUEST).send("Fecha Nacimiento Invalida").end();
+        return;
+    }
+
+    let fechaParam: Date = new Date(
+                        Number(fechanacimiento.substring(0, 4)), 
+                        Number(fechanacimiento.substring(4, 6))-1, 
+                        Number(fechanacimiento.substring(6, 8))+1, 
+                        0, 0, 0, 0);
+    fechaParam.setUTCHours(0, 0, 0, 0);
+
+
+    // valida que el usuario no exista
+    let repo = new UsuarioRepository();
+    let users = await repo.GetByFilter(email);
+
+    // usuario existente
+    if (users.length > 0) {
+        response.status(HttpStatus.BAD_REQUEST).send("Usuario Existente").end();
+        return;
+    }
+
+    // se hashea el password
+    let hashedPassword = passwordHash.generate(password);
+
+    let usuario: Usuarios = new Usuarios();
+    usuario.email = email;
+    usuario.fechaalta = new Date();
+    usuario.fechanacimiento = fechaParam;
+    usuario.idestado = 0;
+    usuario.moneda = moneda;
+    usuario.nombre = nombre;
+    usuario.password = hashedPassword;
+
+    console.log(usuario);
+
+    await repo.Insert(usuario);
+
+    response.status(HttpStatus.OK).send();
+});
+
 // middleware para validar el token
 apiRoutes.use(function(request, response, next) {
 
@@ -209,7 +285,7 @@ apiRoutes.post('/concepto', async function (request, response) {
           credito = request.body.credito;
 
     if (isNaN(idUsuario) || isNaN(credito) || descripcion == undefined || descripcion.length <= 0) {
-        response.status(HttpStatus.BAD_REQUEST).send().end();
+        response.status(HttpStatus.BAD_REQUEST).send("Datos erroneos").end();
         return;
     }
 
@@ -217,7 +293,7 @@ apiRoutes.post('/concepto', async function (request, response) {
     let repoConcepto = new ConceptosRepository();
     let conceptoSearch = await repoConcepto.GetByDescrcipcion(idUsuario, descripcion);
     if (conceptoSearch !== undefined) {
-        response.status(HttpStatus.BAD_REQUEST).end();
+        response.status(HttpStatus.BAD_REQUEST).send("Ya existe concepto con el mismo nombre").end();
         return;
     }
 
@@ -241,7 +317,7 @@ apiRoutes.put('/concepto', async function (request, response) {
           idConcepto = request.body.idconcepto;
 
     if (isNaN(idUsuario) || isNaN(idConcepto) || isNaN(credito) || descripcion == undefined || descripcion.length <= 0) {
-        response.status(HttpStatus.BAD_REQUEST).send().end();
+        response.status(HttpStatus.BAD_REQUEST).send("Datos Erroneos").end();
         return;
     }
 
@@ -251,7 +327,7 @@ apiRoutes.put('/concepto', async function (request, response) {
     
     if (conceptoSearch === undefined ||
         conceptoSearch.idusuario !== idUsuario) {
-        response.status(HttpStatus.BAD_REQUEST).end();
+        response.status(HttpStatus.BAD_REQUEST).send("El concepto no pertenece al usuario").end();
         return;
     }
 
@@ -259,7 +335,7 @@ apiRoutes.put('/concepto', async function (request, response) {
     conceptoSearch = await repoConcepto.GetByDescrcipcion(idUsuario, descripcion);
     if (conceptoSearch !== undefined &&
          conceptoSearch.id != idConcepto) {
-        response.status(HttpStatus.BAD_REQUEST).end();
+        response.status(HttpStatus.BAD_REQUEST).send("Ya existe otro concepto con el mismo nombre").end();
         return;
     }
 

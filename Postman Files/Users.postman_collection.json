@@ -147,6 +147,58 @@
 			"response": []
 		},
 		{
+			"name": "Register",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cb44f03a-b82f-47fb-bd8e-8161a801148c",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "ebf710d1-f965-40ac-af08-d7af777ab708",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\":\"joseluiseiguren2@gmail.com\",\n\t\"password\":\"123456\",\n\t\"nombre\":\"Joseph\",\n\t\"fechanacimiento\":\"19800513\",\n\t\"moneda\":\"$\"\n}"
+				},
+				"url": {
+					"raw": "http://{{host}}/api/usuarios/registracion",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"usuarios",
+						"registracion"
+					]
+				},
+				"description": "X\t"
+			},
+			"response": []
+		},
+		{
 			"name": "Concepto",
 			"request": {
 				"method": "POST",

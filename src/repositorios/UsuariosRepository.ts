@@ -29,4 +29,25 @@ export class UsuarioRepository implements IUsuarioRepository {
         
         return user;
     }
+
+    async Insert(usuario: Usuarios) : Promise<void> {
+        
+        let dbConnection = await GetDbConnection();
+
+        //console.log(diario);
+
+        await dbConnection
+            .createQueryBuilder()
+            .insert()
+            .into(Usuarios)
+            .values(
+                    {email: usuario.email, 
+                     nombre: usuario.nombre,
+                     fechanacimiento: usuario.fechanacimiento,
+                     fechaalta: usuario.fechaalta,
+                     idestado: usuario.idestado,
+                     password: usuario.password,
+                     moneda: usuario.moneda}) 
+            .execute();
+    }
 }
