@@ -6,28 +6,34 @@ import { GetDbConnection } from "./DbConection";
 export class UsuarioRepository implements IUsuarioRepository {
     
     async GetById(id: number): Promise<Usuarios> {    
+        
         let dbConnection = await GetDbConnection();
         let userRepository = dbConnection.getRepository(Usuarios);
         let user = await userRepository.findOneById(id);
 
         return user;
+
     }
 
     async GetByFilter(email: string): Promise<Usuarios[]> {    
-        let dbConnection = await GetDbConnection();
-        let userRepository = dbConnection.getRepository(Usuarios);
+        try {
+            let dbConnection = await GetDbConnection();
+            let userRepository = dbConnection.getRepository(Usuarios);
 
-        var filter: {[k: string]: any} = {};
-        
-        // filtro por email
-        if (email !== undefined && email.length > 0) {
-            filter.email = email; }
+            var filter: {[k: string]: any} = {};
+            
+            // filtro por email
+            if (email !== undefined && email.length > 0) {
+                filter.email = email; }
 
-        let user = await userRepository.find(filter);
-        
-        //console.log(user);
-        
-        return user;
+            let user = await userRepository.find(filter);
+            
+            //console.log(user);
+            
+            return user;
+        } catch (err) {
+            throw err;
+        }
     }
 
     async Insert(usuario: Usuarios) : Promise<void> {

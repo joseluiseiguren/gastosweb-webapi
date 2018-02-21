@@ -1,0 +1,737 @@
+[2018-02-21T14:50:23.538] [ERROR] cheese - Cheese is too ripe!
+[2018-02-21T14:54:21.818] [ERROR] default - Cheese is too ripe!
+[2018-02-21T14:56:55.261] [ERROR] default - { errorId: 'c3aad21f-b692-440a-908e-3864f318b10c',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:94:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T15:20:57.608] [ERROR] default - { errorId: '4fb38d85-b3c7-43eb-a74d-eb62f51a8256',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:94:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T15:22:22.731] [ERROR] default - { errorId: '6627ea09-dc6e-4921-9554-5a6fa78b6343',
+  message: 
+   Error: {"name":"RepositoryNotFoundError","message":"No repository for \"Usuarios\" was found. Looks like this entity is not registered in current \"default\" connection?"}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:94:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T15:22:24.585] [ERROR] default - { errorId: 'e3c8bea4-024a-4df8-accd-78b25fa2c92d',
+  message: 
+   Error: {"name":"RepositoryNotFoundError","message":"No repository for \"Usuarios\" was found. Looks like this entity is not registered in current \"default\" connection?"}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:94:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T15:22:40.239] [ERROR] default - { errorId: 'b269c5e6-12d8-4c26-b36b-6cbb50d248ae',
+  message: 
+   Error: {"name":"RepositoryNotFoundError","message":"No repository for \"Usuarios\" was found. Looks like this entity is not registered in current \"default\" connection?"}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:94:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T15:22:42.251] [ERROR] default - { errorId: '404a3600-f8c8-416e-91e8-cb77851a8001',
+  message: 
+   Error: {"name":"RepositoryNotFoundError","message":"No repository for \"Usuarios\" was found. Looks like this entity is not registered in current \"default\" connection?"}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:94:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T15:22:43.500] [ERROR] default - { errorId: '541fdea7-31de-4841-bdb8-9f0895c27801',
+  message: 
+   Error: {"name":"RepositoryNotFoundError","message":"No repository for \"Usuarios\" was found. Looks like this entity is not registered in current \"default\" connection?"}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:94:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T15:22:44.600] [ERROR] default - { errorId: '80aada9d-a2cf-44c1-9798-5b228521674d',
+  message: 
+   Error: {"name":"RepositoryNotFoundError","message":"No repository for \"Usuarios\" was found. Looks like this entity is not registered in current \"default\" connection?"}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:94:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T15:22:45.671] [ERROR] default - { errorId: '1570ada2-5b05-4714-9b93-7ecfc5c7c6ae',
+  message: 
+   Error: {"name":"RepositoryNotFoundError","message":"No repository for \"Usuarios\" was found. Looks like this entity is not registered in current \"default\" connection?"}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:94:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T15:35:39.767] [ERROR] default - { errorId: '80a92c4b-7a7f-4d76-8bc5-5dceb6895766',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:261:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:15:49.863] [ERROR] default - { errorId: '1684852b-f788-48c4-9930-da424ba2267f',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:95:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:16:47.176] [ERROR] default - { errorId: '9f33e62f-a881-43d9-956d-ec232846c11b',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:95:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:18:05.957] [ERROR] default - { errorId: '6e5528ba-d63c-4145-8603-8207c3df068d',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:95:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:18:35.495] [ERROR] default - { errorId: '0153a48a-c81e-4e92-b801-8141a1973607',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:95:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:19:56.624] [ERROR] default - { errorId: '9569c4ed-96a3-433c-8b92-c04fd5e7938b',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:95:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:21:12.995] [ERROR] default - { errorId: 'c00ba81d-e60e-4ee0-a742-fe8bcdefb0d5',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:95:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:25:11.662] [ERROR] default - { errorId: '26aeb5e8-adaf-43e8-b81a-d8525343f183',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:95:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:28:35.567] [ERROR] default - { errorId: 'f25b88fa-470c-45c2-89e5-17841ce53192',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:95:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:29:07.735] [ERROR] default - { errorId: 'df80d321-aa06-4990-a1b4-a233acdd4278',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:95:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:30:03.331] [ERROR] default - { errorId: '50b8a4f9-fed7-4e82-9d15-54da80c27569',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:95:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:30:34.793] [ERROR] default - { errorId: '02859b1a-ef1b-41aa-8333-cebfc1a640db',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:95:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:30:51.039] [ERROR] default - { errorId: 'baca9c5f-c3e0-4bc3-a2a4-009f7af9a3aa',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:95:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:30:53.987] [ERROR] default - { errorId: '7c6a7380-0a41-4197-a54f-10683980ab59',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:95:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:32:11.260] [ERROR] default - { errorId: 'e389d7e2-b99b-4501-9a0b-cc652931c63a',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:95:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:32:41.260] [ERROR] default - { errorId: 'ccd2df41-79d9-43dd-8bda-56312bf5982a',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:95:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:32:43.088] [ERROR] default - { errorId: '0bf8b7bd-906e-40fa-97ca-2614ea0ef295',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:95:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:33:51.208] [ERROR] default - { errorId: 'dfa81d55-40c1-4348-9ff3-2328e13271d5',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:95:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:33:54.206] [ERROR] default - { errorId: '00ecdc83-217e-47c5-aaa7-1040a5e48a6f',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:95:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:35:41.450] [ERROR] default - { errorId: 'de60832a-3997-4bcf-a149-60472c15b884',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:179:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:35:54.533] [ERROR] default - { errorId: '81f4a71b-0e10-4bba-9bf9-b82f1b45cd88',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:179:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:36:00.661] [ERROR] default - { errorId: 'b758ccbe-de6c-4e61-84a9-7f85f9cccd6e',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:179:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:40:08.683] [ERROR] default - { errorId: 'ce13263f-d83e-4a38-907b-1a514bfbc8bf',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:179:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:40:19.374] [ERROR] default - { errorId: '1782fac5-3863-4564-b136-bac47f589601',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:179:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:45:54.404] [ERROR] default - { errorId: 'cb5aa118-ca55-49e2-be75-eaf728a01054',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:179:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:46:09.044] [ERROR] default - { errorId: 'f11ceb20-5995-436e-88e0-9c4b9ea59335',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:179:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:46:11.267] [ERROR] default - { errorId: '03c4f9d6-c693-4f02-ae1c-7df966a77044',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:179:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:48:19.551] [ERROR] default - { errorId: 'a148d425-a9e1-488b-b5a8-1fc26bb19d2d',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:179:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:48:27.629] [ERROR] default - { errorId: 'c2046149-a6df-4283-9d48-c90eeca29d47',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:179:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T16:49:30.242] [ERROR] default - { errorId: 'ee58a3cc-7048-48c0-8946-f0a42042c823',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:179:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:08:15.935] [ERROR] default - { errorId: '4cc5f164-f3ab-414b-869c-f60b5ae843a4',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:179:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:08:19.632] [ERROR] default - { errorId: '21ca4ff5-a24e-4813-9fa2-55304101cbfa',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:179:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:12:35.193] [ERROR] default - { errorId: 'bf94678c-c3ee-4d1e-97c4-d0c7d8230c6f',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:12:35.207] [ERROR] default - { errorId: '8b1824e7-1b02-4e7e-801a-8bb49ddd1dde',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:14:15.839] [ERROR] default - { errorId: 'd0a4623e-c692-4269-8634-66af03d51ff3',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:14:15.846] [ERROR] default - { errorId: 'ed85da6a-42f9-4401-aa6c-7b885da5a743',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:15:46.420] [ERROR] default - { errorId: 'dd93f1d7-2cb2-4ae4-b7fe-6c72058298d1',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:16:26.363] [ERROR] default - { errorId: 'bfa829d5-552c-4469-9c61-02547abc5818',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:16:26.368] [ERROR] default - { errorId: '409892c5-dc13-483e-a839-42fe1dfd6002',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:17:32.451] [ERROR] default - { errorId: '75e789bd-28b2-4c55-b716-5986a9b881c7',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:17:32.457] [ERROR] default - { errorId: '562b5992-f114-4c61-a3a5-63f1ce9d6bd0',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:20:29.163] [ERROR] default - { errorId: '9991fd4b-ada6-4cab-b69f-63dee68c19ab',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:20:29.169] [ERROR] default - { errorId: 'ee9cd91b-5196-4fec-b5cd-9a1e939d6297',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:21:14.910] [ERROR] default - { errorId: 'b7c542d5-3ff2-4474-9d08-ccb36e210b6d',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:21:14.915] [ERROR] default - { errorId: '86d0cb52-c8be-4c7f-8ede-4126b2242269',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:25:46.182] [ERROR] default - { errorId: 'db3a2066-1da8-41f5-8f6a-90d2c2051fbb',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:25:46.196] [ERROR] default - { errorId: 'f1a1366d-64f7-4b60-913e-4cadfa89458a',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:26:18.366] [ERROR] default - { errorId: '714c8764-3ab3-4c3a-bd06-8499c784d56e',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:26:18.375] [ERROR] default - { errorId: '37c06939-0f74-425e-8299-3f8af23a5b71',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:26:47.312] [ERROR] default - { errorId: 'd77d7faf-bfee-4315-b39b-744089486bdf',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:26:47.319] [ERROR] default - { errorId: '421b955f-1edd-4c4a-ba56-c2d598e2268c',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:33:55.660] [ERROR] default - { errorId: '3c2874a7-a4f3-42c5-b5e0-d94f7edaa589',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:33:56.719] [ERROR] default - { errorId: '45fb0c82-149e-43c4-98b6-aeeb405fd299',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:34:24.341] [ERROR] default - { errorId: '0db02f61-8530-49e8-bade-3283a1317a89',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:34:24.346] [ERROR] default - { errorId: 'f1c00c26-7195-42a4-a766-dd0d12600f72',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:34:30.995] [ERROR] default - { errorId: 'e2f30893-47e6-464e-be97-8c46d10ccbb1',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:34:31.002] [ERROR] default - { errorId: 'c5653296-0ae4-4f38-afde-aace42535831',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:35:08.656] [ERROR] default - { errorId: 'e4cbcf7a-943b-4a54-abd9-0fe66887130f',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:36:20.179] [ERROR] default - { errorId: 'f9e673a9-2bdf-43d1-8e8d-b495bcaa049c',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:36:25.493] [ERROR] default - { errorId: '98c941f3-b332-42a3-8d24-d5391d6761f1',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:36:30.901] [ERROR] default - { errorId: 'fff3156e-0176-4088-a40d-e19587492f55',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:36:35.869] [ERROR] default - { errorId: '13db157a-1809-48a8-9b0e-bbc64fa8740a',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:37:36.018] [ERROR] default - { errorId: '593aad91-cb82-4d63-a0ab-53f98abbca0e',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:37:36.022] [ERROR] default - { errorId: '1d4d2370-da7b-4447-8f1c-b936b4931604',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:37:39.423] [ERROR] default - { errorId: 'e74fffe2-3fba-4170-a72e-fb0d4e8fa4a7',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:39:12.146] [ERROR] default - { errorId: 'a8fc6a31-4c6b-4ad1-859b-015e32bddfee',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:39:21.860] [ERROR] default - { errorId: '2f840f32-d51e-4e7b-a65b-472a94be1828',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:39:52.397] [ERROR] default - { errorId: '4021e055-d3a6-4dbd-830d-fdf016acc3c4',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:39:52.403] [ERROR] default - { errorId: '4e7ab99e-33da-4410-9ea8-deac75e41157',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:39:57.138] [ERROR] default - { errorId: '5931dcc7-979b-4d68-9cfc-391c57200a77',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:40:53.306] [ERROR] default - { errorId: '8f402b8d-5860-4731-aa90-14e447bcec47',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:41:45.410] [ERROR] default - { errorId: 'f68fb313-b2d4-487f-a585-a39b59286352',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:41:45.415] [ERROR] default - { errorId: '1aa292c5-a0dd-4bfb-89c8-fa6de55df72e',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:42:31.276] [ERROR] default - { errorId: '793e35af-2183-4ef6-a2d8-31d392c6f4d8',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:43:16.580] [ERROR] default - { errorId: '084d7926-2698-4b8b-b56e-df57e1ef010c',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:43:16.586] [ERROR] default - { errorId: '52bab53e-d938-4377-a55c-3cb5d32cc7e9',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:44:00.314] [ERROR] default - { errorId: '7907b82b-5606-4fa0-a8bc-0a260e7abe1d',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:44:07.700] [ERROR] default - { errorId: '864936d4-1a5b-4af2-a6f8-7105c0cd6968',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:44:07.707] [ERROR] default - { errorId: '418a9eaa-ff99-45b1-830a-372f82537c75',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:46:27.303] [ERROR] default - { errorId: '7f9b80a3-cd5b-47c3-a6a3-7cce6af4ab43',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:46:31.624] [ERROR] default - { errorId: 'fbdef468-2c11-44c1-9fcf-75a7f945725e',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:46:31.629] [ERROR] default - { errorId: 'fc14dc70-066a-4fa4-bd2f-486a5a4614c8',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T17:47:53.674] [ERROR] default - { errorId: '6baf1102-a236-4f40-826c-54a187bdf813',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T18:00:41.419] [ERROR] default - { errorId: '19c24860-a002-4d4a-b71e-c866b4fa21c6',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:302:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T18:03:47.203] [ERROR] default - { errorId: 'aeba3364-2c86-46fa-8f1a-3ee3febebe38',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:302:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T18:05:05.501] [ERROR] default - { errorId: '36fbddcf-2124-45c7-8b5e-dd230fbad9d0',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T18:11:55.590] [ERROR] default - { errorId: '22efb940-9285-4d36-9319-26f4fd980c1e',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T18:14:50.916] [ERROR] default - { errorId: '286dc01c-9a4a-4d17-9b1b-bd510d141e69',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T18:19:28.440] [ERROR] default - { errorId: '9cb24e2e-39de-4d30-8751-fd65ebb23aae',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T18:26:17.843] [ERROR] default - { errorId: '5ebaa063-dd79-4cb2-99db-301aab0dfb24',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T18:28:50.573] [ERROR] default - { errorId: 'c45f0792-edcd-4536-bcd3-31003d8f2675',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T18:36:28.853] [ERROR] default - { errorId: '074f2683-f3ec-49d5-9730-074a0779968f',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:242:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T18:37:18.344] [ERROR] default - { errorId: '3bafefb5-5dc5-4dcf-85a9-946d1b2e8655',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:242:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T18:38:23.629] [ERROR] default - { errorId: '12bf408e-bafe-4609-8f33-d47dbdc2057b',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:242:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T18:38:40.862] [ERROR] default - { errorId: '4d8dde48-7324-45d9-995f-875a53c9d82a',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:242:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T18:39:13.243] [ERROR] default - { errorId: 'ed9133d3-7cb1-4297-9783-b7277a6fcd6d',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:242:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }

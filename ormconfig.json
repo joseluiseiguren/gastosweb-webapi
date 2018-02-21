@@ -5,7 +5,7 @@
    "username": "gastosweb",
    "password": "admin",
    "database": "controlgastos",
-   "synchronize": true,
+   "synchronize": false,
    "logging": false,
    "entities": [
       "src/entity/**/*.ts"
