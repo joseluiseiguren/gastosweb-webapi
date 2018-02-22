@@ -735,3 +735,94 @@
        at runCallback (timers.js:672:20)
        at tryOnImmediate (timers.js:645:5)
        at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T19:43:43.986] [ERROR] default - { errorId: '7d7f7d0a-8be4-4f43-81af-09ff22b2476d',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T19:44:45.486] [ERROR] default - { errorId: '064550f2-5812-4921-aaad-ca86e440a774',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T19:44:49.894] [ERROR] default - { errorId: '4f707478-4601-4c53-8643-b2cc3ed738be',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T19:44:52.781] [ERROR] default - { errorId: 'aca9703a-418f-43fb-a044-c9915aa9f521',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T19:44:56.020] [ERROR] default - { errorId: 'e19a5d26-5aa5-421e-b72d-1b05ed7027b2',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T19:44:59.465] [ERROR] default - { errorId: 'c143b7e9-d591-4cb2-ae2e-8981b9eb5f28',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T19:45:05.116] [ERROR] default - { errorId: 'c4a9154c-ae45-451f-acbe-895a77d46b1a',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T19:45:06.533] [ERROR] default - { errorId: '5710e735-cf58-420c-9c4a-310c7b174855',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T19:45:07.335] [ERROR] default - { errorId: 'fa9b1ced-6b77-4c79-997c-e72ce9f06bd3',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T19:45:08.183] [ERROR] default - { errorId: '1562b853-5fda-45d2-bbf5-536383a315c2',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T19:45:08.999] [ERROR] default - { errorId: '8bb2292a-6981-4a6c-a8fe-93998391bd95',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T19:45:09.903] [ERROR] default - { errorId: '2ad94040-1dfa-4f9a-afb1-96b383b12cf3',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-21T19:45:10.667] [ERROR] default - { errorId: '037faa93-9cca-4f42-bbe4-d9d80d09f6d2',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:596:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }

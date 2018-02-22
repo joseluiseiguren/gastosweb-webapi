@@ -7,6 +7,7 @@ import { ConceptosRepository } from "./repositorios/ConceptosRepository";
 import { DiarioRepository } from "./repositorios/DiarioRepository";
 import { Diario } from "./entity/Diarios";
 import { MensualRepository } from "./repositorios/MensualRepository";
+import { AnualRepository } from "./repositorios/AnualRepository";
 
 var express         = require('express');
 var cors            = require('cors');
@@ -471,6 +472,34 @@ apiRoutes.get('/mensual/:fecha/sumary', async function (request, response, next)
     }
 });
 
+
+/**** ANUAL ******************************************************************************************/
+
+//obtiene el total anual de un usuario para una fecha YYYY
+apiRoutes.get('/anual/:fecha/sumary', async function (request, response, next) {
+    
+    try {
+        const idUsuario = request.decoded.id;
+        if (isNaN(idUsuario)) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
+            return;
+        }
+
+        let fecha = request.params.fecha;
+        if (isNaN(fecha) ||
+            fecha.length != 4) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Año invalido"}).end();
+            return;
+        }
+
+        let repo = new AnualRepository();
+        let anual = await repo.GetTotal(idUsuario, fecha);
+
+        response.status(HttpStatus.OK).send(anual).end();
+    } catch (err) {
+        setImmediate(() => { next(new Error(JSON.stringify(err))); });
+    }
+});
 
 
 /**** DIARIO *******************************************************************************************/

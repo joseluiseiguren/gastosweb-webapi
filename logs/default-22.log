@@ -1,0 +1,84 @@
+[2018-02-22T09:43:10.569] [ERROR] default - { errorId: '20134b11-3ab0-467a-8416-88d86b402c19',
+  message: 
+   Error: {"message":"ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingres' at line 1","code":"ER_PARSE_ERROR","errno":1064,"sqlMessage":"You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingres' at line 1","sqlState":"42000","index":0,"sql":"Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingresos,                           ifnull(abs(sum(case when d.importe < 0 then d.importe else 0 end)), 0) egresos                     from controlgastos.diario d                     inner join controlgastos.conceptos c on c.id = d.idconcepto                     inner join controlgastos.usuarios u on u.id = c.idusuario                     where u.id = 1 and date_format(d.fecha, '%Y%c') = 20182","name":"QueryFailedError","query":"Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingresos,                           ifnull(abs(sum(case when d.importe < 0 then d.importe else 0 end)), 0) egresos                     from controlgastos.diario d                     inner join controlgastos.conceptos c on c.id = d.idconcepto                     inner join controlgastos.usuarios u on u.id = c.idusuario                     where u.id = 1 and date_format(d.fecha, '%Y%c') = 20182","parameters":[]}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-22T09:43:20.903] [ERROR] default - { errorId: '192016c3-c525-4c7f-85a3-c991ee304f22',
+  message: 
+   Error: {"message":"ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingres' at line 1","code":"ER_PARSE_ERROR","errno":1064,"sqlMessage":"You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingres' at line 1","sqlState":"42000","index":0,"sql":"Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingresos,                           ifnull(abs(sum(case when d.importe < 0 then d.importe else 0 end)), 0) egresos                     from controlgastos.diario d                     inner join controlgastos.conceptos c on c.id = d.idconcepto                     inner join controlgastos.usuarios u on u.id = c.idusuario                     where u.id = 1 and date_format(d.fecha, '%Y%c') = 20182","name":"QueryFailedError","query":"Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingresos,                           ifnull(abs(sum(case when d.importe < 0 then d.importe else 0 end)), 0) egresos                     from controlgastos.diario d                     inner join controlgastos.conceptos c on c.id = d.idconcepto                     inner join controlgastos.usuarios u on u.id = c.idusuario                     where u.id = 1 and date_format(d.fecha, '%Y%c') = 20182","parameters":[]}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-22T09:44:59.894] [ERROR] default - { errorId: '52de91f8-0ee2-4b2e-87b2-f3010e8c9955',
+  message: 
+   Error: {"message":"ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingres' at line 1","code":"ER_PARSE_ERROR","errno":1064,"sqlMessage":"You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingres' at line 1","sqlState":"42000","index":0,"sql":"Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingresos,                           ifnull(abs(sum(case when d.importe < 0 then d.importe else 0 end)), 0) egresos                     from controlgastos.diario d                     inner join controlgastos.conceptos c on c.id = d.idconcepto                     inner join controlgastos.usuarios u on u.id = c.idusuario                     where u.id = 1 and date_format(d.fecha, '%Y%c') = 20182","name":"QueryFailedError","query":"Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingresos,                           ifnull(abs(sum(case when d.importe < 0 then d.importe else 0 end)), 0) egresos                     from controlgastos.diario d                     inner join controlgastos.conceptos c on c.id = d.idconcepto                     inner join controlgastos.usuarios u on u.id = c.idusuario                     where u.id = 1 and date_format(d.fecha, '%Y%c') = 20182","parameters":[]}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-22T09:46:00.337] [ERROR] default - { errorId: 'e13abca8-14b9-441c-9992-10dd5264beff',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-22T09:48:29.339] [ERROR] default - { errorId: '05d89da5-2486-4033-964b-d8798879e880',
+  message: 
+   Error: {"message":"ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingres' at line 1","code":"ER_PARSE_ERROR","errno":1064,"sqlMessage":"You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingres' at line 1","sqlState":"42000","index":0,"sql":"Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingresos,                           ifnull(abs(sum(case when d.importe < 0 then d.importe else 0 end)), 0) egresos                     from controlgastos.diario d                     inner join controlgastos.conceptos c on c.id = d.idconcepto                     inner join controlgastos.usuarios u on u.id = c.idusuario                     where u.id = 1 and date_format(d.fecha, '%Y%c') = 20182","name":"QueryFailedError","query":"Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingresos,                           ifnull(abs(sum(case when d.importe < 0 then d.importe else 0 end)), 0) egresos                     from controlgastos.diario d                     inner join controlgastos.conceptos c on c.id = d.idconcepto                     inner join controlgastos.usuarios u on u.id = c.idusuario                     where u.id = 1 and date_format(d.fecha, '%Y%c') = 20182","parameters":[]}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-22T09:49:20.756] [ERROR] default - { errorId: '36e88e03-84b3-4379-9334-f77e0a4fe87a',
+  message: 
+   Error: {"message":"ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingres' at line 1","code":"ER_PARSE_ERROR","errno":1064,"sqlMessage":"You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingres' at line 1","sqlState":"42000","index":0,"sql":"Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingresos,                           ifnull(abs(sum(case when d.importe < 0 then d.importe else 0 end)), 0) egresos                     from controlgastos.diario d                     inner join controlgastos.conceptos c on c.id = d.idconcepto                     inner join controlgastos.usuarios u on u.id = c.idusuario                     where u.id = 1 and date_format(d.fecha, '%Y%c') = 20182","name":"QueryFailedError","query":"Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingresos,                           ifnull(abs(sum(case when d.importe < 0 then d.importe else 0 end)), 0) egresos                     from controlgastos.diario d                     inner join controlgastos.conceptos c on c.id = d.idconcepto                     inner join controlgastos.usuarios u on u.id = c.idusuario                     where u.id = 1 and date_format(d.fecha, '%Y%c') = 20182","parameters":[]}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-22T09:57:25.015] [ERROR] default - { errorId: 'a931ee40-2f5b-4a38-b57b-0883a3ae29dd',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:302:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-22T10:12:22.647] [ERROR] default - { errorId: '08b55a73-081b-48ef-8d11-ceb8a2df1ccd',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:302:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-22T10:12:38.041] [ERROR] default - { errorId: '01889058-de9d-48ff-afe4-d71fc6186e7e',
+  message: 
+   Error: {"message":"ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingres' at line 1","code":"ER_PARSE_ERROR","errno":1064,"sqlMessage":"You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingres' at line 1","sqlState":"42000","index":0,"sql":"Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingresos,                           ifnull(abs(sum(case when d.importe < 0 then d.importe else 0 end)), 0) egresos                     from controlgastos.diario d                     inner join controlgastos.conceptos c on c.id = d.idconcepto                     inner join controlgastos.usuarios u on u.id = c.idusuario                     where u.id = 1 and date_format(d.fecha, '%Y%c') = 20182","name":"QueryFailedError","query":"Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingresos,                           ifnull(abs(sum(case when d.importe < 0 then d.importe else 0 end)), 0) egresos                     from controlgastos.diario d                     inner join controlgastos.conceptos c on c.id = d.idconcepto                     inner join controlgastos.usuarios u on u.id = c.idusuario                     where u.id = 1 and date_format(d.fecha, '%Y%c') = 20182","parameters":[]}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-22T10:13:09.280] [ERROR] default - { errorId: 'd0588c58-58d6-44c3-b5ae-bcecb7b793a5',
+  message: 
+   Error: {"message":"ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingres' at line 1","code":"ER_PARSE_ERROR","errno":1064,"sqlMessage":"You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingres' at line 1","sqlState":"42000","index":0,"sql":"Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingresos,                           ifnull(abs(sum(case when d.importe < 0 then d.importe else 0 end)), 0) egresos                     from controlgastos.diario d                     inner join controlgastos.conceptos c on c.id = d.idconcepto                     inner join controlgastos.usuarios u on u.id = c.idusuario                     where u.id = 1 and date_format(d.fecha, '%Y%c') = 20182","name":"QueryFailedError","query":"Aselect ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingresos,                           ifnull(abs(sum(case when d.importe < 0 then d.importe else 0 end)), 0) egresos                     from controlgastos.diario d                     inner join controlgastos.conceptos c on c.id = d.idconcepto                     inner join controlgastos.usuarios u on u.id = c.idusuario                     where u.id = 1 and date_format(d.fecha, '%Y%c') = 20182","parameters":[]}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:470:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-22T10:22:39.865] [ERROR] default - { errorId: '3ff2fcd1-d5da-47d1-9f0f-af3992f6c7ac',
+  message: 
+   Error: {}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:302:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-02-22T10:23:17.706] [ERROR] default - { errorId: 'c282f5ce-6521-49d6-b8a6-38d99ca215d1',
+  message: 
+   Error: {"code":"ECONNREFUSED","errno":"ECONNREFUSED","syscall":"connect","address":"127.0.0.1","port":3306,"fatal":true}
+       at Immediate.<anonymous> (C:\jos\gastosweb-webapi\src\index.ts:242:35)
+       at runCallback (timers.js:672:20)
+       at tryOnImmediate (timers.js:645:5)
+       at processImmediate [as _immediateCallback] (timers.js:617:5) }
