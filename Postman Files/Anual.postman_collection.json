@@ -1,7 +1,7 @@
 {
 	"info": {
-		"name": "Mensual",
-		"_postman_id": "74b8a02f-c66d-b25d-cb4c-99fc048ead70",
+		"name": "Anual",
+		"_postman_id": "31a94bd7-0341-4c54-d096-6ab56d1be69c",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -18,15 +18,15 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://{{host}}/api/mensual/20182/sumary",
+					"raw": "http://{{host}}/api/anual/2018/sumary",
 					"protocol": "http",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
-						"mensual",
-						"20182",
+						"anual",
+						"2018",
 						"sumary"
 					]
 				},
@@ -35,7 +35,7 @@
 			"response": []
 		},
 		{
-			"name": "GetConceptos Total Mensual",
+			"name": "GetConceptos Total Anual",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -46,7 +46,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://{{host}}/api/conceptos/mensual/201802/sumary",
+					"raw": "http://{{host}}/api/conceptos/anual/2018/sumary",
 					"protocol": "http",
 					"host": [
 						"{{host}}"
@@ -54,8 +54,8 @@
 					"path": [
 						"api",
 						"conceptos",
-						"mensual",
-						"201802",
+						"anual",
+						"2018",
 						"sumary"
 					]
 				},
@@ -64,7 +64,7 @@
 			"response": []
 		},
 		{
-			"name": "GetConcepto Movim Mensual",
+			"name": "GetConcepto Movim Anual",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -75,7 +75,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://{{host}}/api/conceptos/1/movimientos/mensual/201802",
+					"raw": "http://{{host}}/api/conceptos/1/movimientos/anual/2018",
 					"protocol": "http",
 					"host": [
 						"{{host}}"
@@ -85,13 +85,35 @@
 						"conceptos",
 						"1",
 						"movimientos",
-						"mensual",
-						"201802"
+						"anual",
+						"2018"
 					]
 				},
 				"description": "X\t"
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "870bba49-4e02-4292-9479-15c8e398f7b7",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "79ce3678-b51f-419c-95a7-49f273061ddf",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }

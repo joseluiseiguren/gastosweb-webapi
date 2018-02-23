@@ -272,7 +272,7 @@ apiRoutes.get('/usuarios/:id', async function (request, response, next) {
 /**** CONCEPTOS ****************************************************************************************/
 
 //obtiene el total de cada concepto para un mes parametrizado para un usuario
-apiRoutes.get('/conceptos/sumary/:mes', async function (request, response, next) {
+apiRoutes.get('/conceptos/mensual/:mes/sumary', async function (request, response, next) {
     
     try {
         const idUsuario = request.decoded.id;
@@ -306,7 +306,7 @@ apiRoutes.get('/conceptos/sumary/:mes', async function (request, response, next)
 });
 
 //obtiene las fechas que un concepto tuvo movimientos YYYYMM para un usuario
-apiRoutes.get('/conceptos/:id/movimientos/:mes', async function (request, response, next) {
+apiRoutes.get('/conceptos/:id/movimientos/mensual/:mes', async function (request, response, next) {
     
     try {
         const idUsuario = request.decoded.id;
@@ -437,6 +437,63 @@ apiRoutes.put('/concepto', async function (request, response, next) {
         
         response.status(HttpStatus.OK).send().end();
     } catch(err) {
+        setImmediate(() => { next(new Error(JSON.stringify(err))); });
+    }
+});
+
+//obtiene el total de cada concepto para un anio parametrizado para un usuario
+apiRoutes.get('/conceptos/anual/:anio/sumary', async function (request, response, next) {
+    
+    try {
+        const idUsuario = request.decoded.id;
+        if (isNaN(idUsuario)) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
+            return;
+        }
+
+        let anio = request.params.anio;
+        if (isNaN(anio) === true) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Anio invalido"}).end();
+            return;
+        }
+
+        let repo = new ConceptosRepository();
+        let conceptosTotalAnio = await repo.GetConceptosAnual(idUsuario, anio);
+
+        response.status(HttpStatus.OK).send(conceptosTotalAnio).end();
+    } catch (err) {
+        setImmediate(() => { next(new Error(JSON.stringify(err))); });
+    }
+
+});
+
+//obtiene los meses que un concepto tuvo movimientos YYYY para un usuario
+apiRoutes.get('/conceptos/:id/movimientos/anual/:anio', async function (request, response, next) {
+    
+    try {
+        const idUsuario = request.decoded.id;
+        if (isNaN(idUsuario)) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
+            return;
+        }
+
+        const idConcepto = request.params.id;
+        if (isNaN(idConcepto)) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Id concepto invalido"}).end();
+            return;
+        }
+
+        const anio = request.params.anio;
+        if (isNaN(anio)) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Anio invalido"}).end();
+            return;
+        }
+
+        let repo = new ConceptosRepository();
+        let concep = await repo.GetConceptosMovimAnual(idUsuario, anio, idConcepto);
+
+        response.status(HttpStatus.OK).send(concep).end();
+    } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
 });

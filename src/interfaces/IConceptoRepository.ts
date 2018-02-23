@@ -14,4 +14,8 @@ export interface IConceptoRepository {
     Insert(concepto: Conceptos) : Promise<void>;
 
     Update(concepto: Conceptos) : Promise<void>;
+
+    GetConceptosAnual(idUsuario: number, anio: number /*YYYY*/) : Promise<any>;
+
+    GetConceptosMovimAnual(idUsuario: number, anio: number /*YYYY*/, idConcepto: number) : Promise<any>;
 }
