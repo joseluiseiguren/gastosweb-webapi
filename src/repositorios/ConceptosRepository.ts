@@ -128,7 +128,7 @@ export class ConceptosRepository implements IConceptoRepository {
     async GetConceptosMovimAnual(idUsuario: number, anio: number /*YYYY*/, idConcepto: number) : Promise<any> {
         let dbConnection = await GetDbConnection();
 
-        let sql = "select d.idconcepto, date_format(d.fecha, '%m-%Y') as mes, sum(d.importe) as importe \
+        let sql = "select d.idconcepto, date_format(d.fecha, '%m%Y') as mes, sum(d.importe) as importe \
                     from controlgastos.diario d \
                     inner join controlgastos.conceptos c on c.id = d.idconcepto \
                     inner join controlgastos.usuarios u on u.id = c.idusuario \
