@@ -267,6 +267,86 @@ apiRoutes.get('/usuarios/:id', async function (request, response, next) {
     }
 });
 
+//actualiza un un usuario
+apiRoutes.put('/usuario', async function (request, response, next) {
+    
+    try {
+        const idUsuario = request.decoded.id,
+            email: string = request.body.email,
+            password = request.body.password,
+            fechanacimiento = request.body.fechanacimiento,
+            moneda = request.body.moneda,
+            nombre = request.body.nombre;
+
+        if (isNaN(idUsuario)) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
+            return;
+        }
+
+        if (password === undefined ||
+            password.length <= 0) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Password Invalido"}).end();
+            return;
+        }
+
+        if (nombre === undefined ||
+            nombre.length <= 0) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Nombre Invalido"}).end();
+            return;
+        }
+
+        if (moneda === undefined ||
+            moneda.length > 3 ||
+            moneda.length <= 0) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Moneda Invalida"}).end();
+            return;
+        }
+
+        if (fechanacimiento === undefined ||
+            fechanacimiento.length != 8 ||
+            isNaN(fechanacimiento)) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Fecha Nacimiento Invalida"}).end();
+            return;
+        }
+
+        let fechaParam: Date = new Date(
+                            Number(fechanacimiento.substring(0, 4)), 
+                            Number(fechanacimiento.substring(4, 6))-1, 
+                            Number(fechanacimiento.substring(6, 8))+1, 
+                            0, 0, 0, 0);
+        fechaParam.setUTCHours(0, 0, 0, 0);
+    
+/*
+        // se valida que exista el concepto y pertenezca al usuario
+        let repoConcepto = new ConceptosRepository();
+        let conceptoSearch = await repoConcepto.GetById(idConcepto);
+        
+        if (conceptoSearch === undefined ||
+            conceptoSearch.idusuario !== idUsuario) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "El concepto no pertenece al usuario"}).end();
+            return;
+        }
+
+        // se valida que no haya otro concepto con el mismo nombre para ese usuario
+        conceptoSearch = await repoConcepto.GetByDescrcipcion(idUsuario, descripcion);
+        if (conceptoSearch !== undefined &&
+            conceptoSearch.id != idConcepto) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe otro concepto con el mismo nombre"}).end();
+            return;
+        }
+
+        let concepto = new Conceptos();
+        concepto.credito = credito;
+        concepto.descripcion = descripcion;
+        concepto.id = idConcepto;
+        await repoConcepto.Update(concepto);*/
+        
+        response.status(HttpStatus.OK).send().end();
+    } catch(err) {
+        setImmediate(() => { next(new Error(JSON.stringify(err))); });
+    }
+});
+
 
 
 /**** CONCEPTOS ****************************************************************************************/

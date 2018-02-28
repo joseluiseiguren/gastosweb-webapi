@@ -19,7 +19,7 @@ export class UsuarioRepository implements IUsuarioRepository {
         try {
             let dbConnection = await GetDbConnection();
             let userRepository = dbConnection.getRepository(Usuarios);
-
+            
             var filter: {[k: string]: any} = {};
             
             // filtro por email
@@ -34,6 +34,24 @@ export class UsuarioRepository implements IUsuarioRepository {
         } catch (err) {
             throw err;
         }
+    }
+
+    async Update(usuario: Usuarios) : Promise<void> {
+        
+        let dbConnection = await GetDbConnection();
+
+        await dbConnection
+            .createQueryBuilder()
+            .update(Usuarios)
+            .set({
+                email: usuario.email,
+                nomrbe: usuario.nombre,
+                fechanacimiento: usuario.fechanacimiento,
+                password: usuario.password,
+                moneda: usuario.moneda})
+            .where("id = :id", 
+                    { id: usuario.id}) 
+            .execute();
     }
 
     async Insert(usuario: Usuarios) : Promise<void> {

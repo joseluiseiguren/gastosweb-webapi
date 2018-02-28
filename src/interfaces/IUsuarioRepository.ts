@@ -6,4 +6,6 @@ export interface IUsuarioRepository {
     GetByFilter(email: string) : Promise<Usuarios[]>;
 
     Insert(usuario: Usuarios) : Promise<void>;
+
+    Update(usuario: Usuarios) : Promise<void>;
 }
