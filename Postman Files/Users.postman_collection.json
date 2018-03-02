@@ -280,17 +280,17 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"email\":\"joseluiseiguren2@gmail.com\",\n\t\"password\":\"123456\",\n\t\"nombre\":\"Joseph\",\n\t\"fechanacimiento\":\"19800513\",\n\t\"moneda\":\"$\"\n}"
+					"raw": "{\n\t\"email\":\"joseluiseiguren2@gmail.com\",\n\t\"password\":\"abc\",\n\t\"nombre\":\"Joseph\",\n\t\"fechanacimiento\":\"19800513\",\n\t\"moneda\":\"$\"\n}"
 				},
 				"url": {
-					"raw": "http://{{host}}/api/concepto",
+					"raw": "http://{{host}}/api/usuario",
 					"protocol": "http",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
-						"concepto"
+						"usuario"
 					]
 				},
 				"description": "X\t"

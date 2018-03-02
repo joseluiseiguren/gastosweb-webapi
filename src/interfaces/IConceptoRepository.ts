@@ -18,4 +18,8 @@ export interface IConceptoRepository {
     GetConceptosAnual(idUsuario: number, anio: number /*YYYY*/) : Promise<any>;
 
     GetConceptosMovimAnual(idUsuario: number, anio: number /*YYYY*/, idConcepto: number) : Promise<any>;
+
+    GetConceptosHistorico(idUsuario: number) : Promise<any>;
+
+    GetConceptosMovimHistorico(idUsuario: number, idConcepto: number) : Promise<any>;
 }

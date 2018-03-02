@@ -45,10 +45,11 @@ export class UsuarioRepository implements IUsuarioRepository {
             .update(Usuarios)
             .set({
                 email: usuario.email,
-                nomrbe: usuario.nombre,
+                nombre: usuario.nombre,
                 fechanacimiento: usuario.fechanacimiento,
                 password: usuario.password,
-                moneda: usuario.moneda})
+                moneda: usuario.moneda,
+                idestado: usuario.idestado})
             .where("id = :id", 
                     { id: usuario.id}) 
             .execute();

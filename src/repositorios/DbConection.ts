@@ -1,4 +1,6 @@
 import { Connection, getConnectionManager, createConnection } from "typeorm";
+import { Audit } from "../entity/Audit";
+import { AuditRepository } from "./AuditRepository";
 
 export async function GetDbConnection(): Promise<Connection> {
     let connection: Connection;
@@ -11,5 +13,16 @@ export async function GetDbConnection(): Promise<Connection> {
     }
 
     return connection;
+}
 
+export async function SaveAudit(idusuario, observacion, aditionalinfo, tipooperacion): Promise<void> {
+    let audit: Audit = new Audit();
+    audit.fecha = new Date();
+    audit.idusuario = idusuario;
+    audit.observacion = observacion;
+    audit.aditionalinfo = aditionalinfo;
+    audit.tipooperacion = tipooperacion;
+    
+    let repo = new AuditRepository();
+    repo.Insert(audit);
 }

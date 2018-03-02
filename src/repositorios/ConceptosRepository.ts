@@ -145,4 +145,37 @@ export class ConceptosRepository implements IConceptoRepository {
         
         return datos;
     }
+
+    async GetConceptosHistorico(idUsuario: number) : Promise<any> {
+        let dbConnection = await GetDbConnection();
+
+        let sql = "select ifnull(sum(d.importe),0) saldo, c.id idconcepto, c.descripcion \
+                    from controlgastos.conceptos c \
+                    left join controlgastos.diario d on d.idconcepto = c.id \
+                    where c.idusuario = " + idUsuario.toString() +  
+                    " group by c.id, c.descripcion \
+                    order by c.descripcion asc";
+
+        const datos = await getManager().query(sql);
+        
+        return datos;
+    }
+
+    async GetConceptosMovimHistorico(idUsuario: number, idConcepto: number) : Promise<any> {
+        let dbConnection = await GetDbConnection();
+
+        let sql = "select d.idconcepto, date_format(d.fecha, '%Y') as anio, sum(d.importe) as importe \
+                    from controlgastos.diario d \
+                    inner join controlgastos.conceptos c on c.id = d.idconcepto \
+                    inner join controlgastos.usuarios u on u.id = c.idusuario \
+                    where c.idusuario = " + idUsuario.toString() +  
+                    " and d.idconcepto = " + idConcepto.toString() +  
+                    " and d.importe != 0 \
+                    group by d.idconcepto, date_format(d.fecha, '%Y') \
+                    order by d.fecha asc";
+
+        const datos = await getManager().query(sql);
+        
+        return datos;
+    }
 }

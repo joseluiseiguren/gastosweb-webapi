@@ -8,6 +8,10 @@ import { DiarioRepository } from "./repositorios/DiarioRepository";
 import { Diario } from "./entity/Diarios";
 import { MensualRepository } from "./repositorios/MensualRepository";
 import { AnualRepository } from "./repositorios/AnualRepository";
+import { HistoricoRepository } from "./repositorios/HistoricoRepository";
+import { Audit } from "./entity/Audit";
+import { AuditRepository } from "./repositorios/AuditRepository";
+import { SaveAudit } from "./repositorios/DbConection";
 
 var express         = require('express');
 var cors            = require('cors');
@@ -46,7 +50,7 @@ app.use(bodyParser.json());
 app.set('jwtsecret', config.secret);
 
 var apiRoutes = express.Router();
-
+const TIPOOPERACION = Object.freeze({LOGINOK: 1, LOGINDENIED: 2});
 
 
 /**** USUARIOS ******************************************************************************************/
@@ -60,7 +64,9 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
 
         if (password === undefined ||
             email === undefined) {
-            response.status(HttpStatus.BAD_REQUEST).end();
+            let responseMessage = {message: "Email / Password no informado"};
+            response.status(HttpStatus.BAD_REQUEST).send(responseMessage).end();
+            SaveAudit(0, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED);
             return;
         }
 
@@ -70,18 +76,19 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
 
         // usuario inexistente
         if (users.length <= 0) {
-            response.status(HttpStatus.UNAUTHORIZED).send({message: "Usuario Inexistente"}).end();
+            let responseMessage = {message: "Usuario Inexistente"};
+            response.status(HttpStatus.UNAUTHORIZED).send(responseMessage).end();
+            SaveAudit(0, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED);
             return;
         }
 
         // se valida el password
         if (passwordHash.verify(password, users[0].password) === false) {
-            response.status(HttpStatus.UNAUTHORIZED).send({message: "Password invalido"}).end();
+            let responseMessage = {message: "Password Invalido"};
+            response.status(HttpStatus.UNAUTHORIZED).send(responseMessage).end();
+            SaveAudit(0, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED);
             return;
         }
-
-        // para hashear
-        // var hashedPassword = passwordHash.generate('password123');
 
         const payload = {
             user: users[0].nombre,
@@ -92,6 +99,7 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
         var token = jwt.sign(payload, app.get('jwtsecret'), { expiresIn : 60*60*24 });
 
         response.status(HttpStatus.OK).send({token: token});
+        SaveAudit(users[0].id, "", "", TIPOOPERACION.LOGINOK);
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -278,69 +286,75 @@ apiRoutes.put('/usuario', async function (request, response, next) {
             moneda = request.body.moneda,
             nombre = request.body.nombre;
 
+        let fechaNacimParsed: Date = undefined;
+
         if (isNaN(idUsuario)) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
             return;
         }
 
-        if (password === undefined ||
-            password.length <= 0) {
-            response.status(HttpStatus.BAD_REQUEST).send({message: "Password Invalido"}).end();
+        let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        re.test(String(email).toLowerCase());
+
+        if (email != undefined && 
+            email.length > 0 &&
+            re.test(String(email).toLowerCase()) === false) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Email Invalido"}).end();
             return;
         }
 
-        if (nombre === undefined ||
-            nombre.length <= 0) {
-            response.status(HttpStatus.BAD_REQUEST).send({message: "Nombre Invalido"}).end();
-            return;
-        }
-
-        if (moneda === undefined ||
-            moneda.length > 3 ||
-            moneda.length <= 0) {
+        if (moneda != undefined &&
+            (moneda.length > 3 ||
+            moneda.length <= 0)) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Moneda Invalida"}).end();
             return;
         }
 
-        if (fechanacimiento === undefined ||
-            fechanacimiento.length != 8 ||
-            isNaN(fechanacimiento)) {
+        if (fechanacimiento != undefined &&
+            (fechanacimiento.length != 8 ||
+            isNaN(fechanacimiento))) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Fecha Nacimiento Invalida"}).end();
             return;
         }
 
-        let fechaParam: Date = new Date(
-                            Number(fechanacimiento.substring(0, 4)), 
-                            Number(fechanacimiento.substring(4, 6))-1, 
-                            Number(fechanacimiento.substring(6, 8))+1, 
-                            0, 0, 0, 0);
-        fechaParam.setUTCHours(0, 0, 0, 0);
-    
-/*
-        // se valida que exista el concepto y pertenezca al usuario
-        let repoConcepto = new ConceptosRepository();
-        let conceptoSearch = await repoConcepto.GetById(idConcepto);
+        if (fechanacimiento != undefined) {
+            fechaNacimParsed = new Date(
+                Number(fechanacimiento.substring(0, 4)), 
+                Number(fechanacimiento.substring(4, 6))-1, 
+                Number(fechanacimiento.substring(6, 8))+1, 
+                0, 0, 0, 0);
+            fechaNacimParsed.setUTCHours(0, 0, 0, 0);
+        }
+
+        let repo = new UsuarioRepository();
         
-        if (conceptoSearch === undefined ||
-            conceptoSearch.idusuario !== idUsuario) {
-            response.status(HttpStatus.BAD_REQUEST).send({message: "El concepto no pertenece al usuario"}).end();
+        // se valida que no exista otro usuario con el mismo email
+        if (email != undefined) {
+            let users = await repo.GetByFilter(email);
+
+            // otro usuario ya tiene el mismo email
+            if (users.length > 0 &&
+                users[0].id != idUsuario) {
+                response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe un usuario con el mismo email"}).end();
+                return;
+            }
+        }
+
+        // se obtienen todos los datos del usuario a actualizar
+        let user = await repo.GetById(idUsuario)
+        if (user == null) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Usuario Inexistente"}).end();
             return;
         }
 
-        // se valida que no haya otro concepto con el mismo nombre para ese usuario
-        conceptoSearch = await repoConcepto.GetByDescrcipcion(idUsuario, descripcion);
-        if (conceptoSearch !== undefined &&
-            conceptoSearch.id != idConcepto) {
-            response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe otro concepto con el mismo nombre"}).end();
-            return;
-        }
+        user.email = (email != undefined && email.length > 0) ? email : user.email;
+        user.fechanacimiento = (fechaNacimParsed != undefined) ? fechaNacimParsed : user.fechanacimiento;
+        user.moneda = (moneda != undefined && moneda.length > 0) ? moneda : user.moneda;
+        user.nombre = (nombre != undefined && nombre.length > 0) ? nombre : user.nombre;
+        user.password = (password != undefined && password.length > 0) ? passwordHash.generate(password) : user.password;
 
-        let concepto = new Conceptos();
-        concepto.credito = credito;
-        concepto.descripcion = descripcion;
-        concepto.id = idConcepto;
-        await repoConcepto.Update(concepto);*/
-        
+        await repo.Update(user);
+
         response.status(HttpStatus.OK).send().end();
     } catch(err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
@@ -578,6 +592,51 @@ apiRoutes.get('/conceptos/:id/movimientos/anual/:anio', async function (request,
     }
 });
 
+//obtiene el total de cada concepto en la historia de un usuario
+apiRoutes.get('/conceptos/historico/sumary', async function (request, response, next) {
+    
+    try {
+        const idUsuario = request.decoded.id;
+        if (isNaN(idUsuario)) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
+            return;
+        }
+
+        let repo = new ConceptosRepository();
+        let conceptosTotalHist = await repo.GetConceptosHistorico(idUsuario);
+
+        response.status(HttpStatus.OK).send(conceptosTotalHist).end();
+    } catch (err) {
+        setImmediate(() => { next(new Error(JSON.stringify(err))); });
+    }
+
+});
+
+//obtiene los anios que un concepto tuvo movimientos para un usuario
+apiRoutes.get('/conceptos/:id/movimientos/historico', async function (request, response, next) {
+    
+    try {
+        const idUsuario = request.decoded.id;
+        if (isNaN(idUsuario)) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
+            return;
+        }
+
+        const idConcepto = request.params.id;
+        if (isNaN(idConcepto)) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Id concepto invalido"}).end();
+            return;
+        }
+
+        let repo = new ConceptosRepository();
+        let concep = await repo.GetConceptosMovimHistorico(idUsuario, idConcepto);
+
+        response.status(HttpStatus.OK).send(concep).end();
+    } catch (err) {
+        setImmediate(() => { next(new Error(JSON.stringify(err))); });
+    }
+});
+
 
 
 /**** MENSUAL ******************************************************************************************/
@@ -633,6 +692,28 @@ apiRoutes.get('/anual/:fecha/sumary', async function (request, response, next) {
         let anual = await repo.GetTotal(idUsuario, fecha);
 
         response.status(HttpStatus.OK).send(anual).end();
+    } catch (err) {
+        setImmediate(() => { next(new Error(JSON.stringify(err))); });
+    }
+});
+
+
+/**** HISTORICO ******************************************************************************************/
+
+//obtiene el total historico de un usuario
+apiRoutes.get('/historico/sumary', async function (request, response, next) {
+    
+    try {
+        const idUsuario = request.decoded.id;
+        if (isNaN(idUsuario)) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
+            return;
+        }
+
+        let repo = new HistoricoRepository();
+        let hist = await repo.GetTotal(idUsuario);
+
+        response.status(HttpStatus.OK).send(hist).end();
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
