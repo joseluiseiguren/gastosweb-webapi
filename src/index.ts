@@ -861,5 +861,5 @@ app.use(function(err, req, res, next) {
     logger.error({errorId: errorId, message: err});
 });
 
-
+logger.error({errorId: 1, message: "init ok"});
 app.listen(3000);
