@@ -59,6 +59,7 @@ const TIPOOPERACION = Object.freeze({LOGINOK: 1, LOGINDENIED: 2});
 apiRoutes.post('/usuarios/login', async (request, response, next) => {
     
     try {
+        logger.error({errorId: 1, message: "init login"});
         const email = request.body.email,
             password = request.body.password;
 
@@ -850,6 +851,7 @@ apiRoutes.get('/diario/:fecha', async function (request, response, next) {
 
 // la aplicacion va a usar las rutas previamete seteadas
 app.use('/api', apiRoutes);
+logger.error({errorId: 1, message: "set api routes ok"});
 
 // global error handler
 app.use(function(err, req, res, next) {
@@ -863,3 +865,4 @@ app.use(function(err, req, res, next) {
 
 logger.error({errorId: 1, message: "init ok"});
 app.listen(3000);
+logger.error({errorId: 1, message: "finish ok"});
