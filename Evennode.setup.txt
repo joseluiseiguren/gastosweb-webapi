@@ -1,0 +1,5 @@
+Una vez:
+	git remote add evennode git@git.evennode.com:147cda85e5f36bc5a7e386d45d3a79d1.git	
+
+Cada v ez que hay un cambio
+	c:\jos\gastosweb-webapi>git push evennode master
