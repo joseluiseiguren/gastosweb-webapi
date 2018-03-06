@@ -2,7 +2,7 @@
    "type": "mysql",
    "host": "localhost",
    "port": 3306,
-   "username": "gastosweb",
+   "username": "controlgastos",
    "password": "admin",
    "database": "controlgastos",
    "synchronize": false,
