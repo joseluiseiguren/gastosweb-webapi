@@ -376,6 +376,8 @@ apiRoutes.get('/conceptos/mensual/:mes/sumary', async function (request, respons
             return;
         }
 
+        logger.error({errorId: 1, message: "fecha1: " + request.params.mes});
+        
         let fecha = request.params.mes;
         if (fecha === undefined ||
             fecha.length != 6 ||
@@ -389,6 +391,8 @@ apiRoutes.get('/conceptos/mensual/:mes/sumary', async function (request, respons
                                     Number(fecha.substring(4, 6)), 
                                     1, 0, 0, 0, 0);
         fechaParam.setUTCHours(0, 0, 0, 0);
+
+        logger.error({errorId: 1, message: "fecha2: " + fechaParam});
 
         let repo = new ConceptosRepository();
         let conceptosTotalMes = await repo.GetConceptosMensual(idUsuario, fechaParam);
@@ -865,4 +869,3 @@ app.use(function(err, req, res, next) {
 
 logger.error({errorId: 1, message: "init ok"});
 app.listen(3000);
-logger.error({errorId: 1, message: "finish ok"});
