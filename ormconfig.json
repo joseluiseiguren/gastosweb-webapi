@@ -1,10 +1,10 @@
 {
    "type": "mysql",
-   "host": "sql2.freemysqlhosting.net",
+   "host": "localhost",
    "port": 3306,
-   "username": "sql2225236",
-   "password": "sP9*jG2%",
-   "database": "sql2225236",
+   "username": "controlgastos",
+   "password": "admin",
+   "database": "controlgastos",
    "synchronize": false,
    "logging": false,
    "entities": [
