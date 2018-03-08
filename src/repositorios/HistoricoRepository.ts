@@ -9,9 +9,9 @@ export class HistoricoRepository implements IHistoricoRepository {
 
         let sql = "select ifnull(sum(case when d.importe > 0 then d.importe else 0 end), 0) ingresos, \
                           ifnull(abs(sum(case when d.importe < 0 then d.importe else 0 end)), 0) egresos \
-                    from controlgastos.diario d \
-                    inner join controlgastos.conceptos c on c.id = d.idconcepto \
-                    inner join controlgastos.usuarios u on u.id = c.idusuario \
+                    from diario d \
+                    inner join conceptos c on c.id = d.idconcepto \
+                    inner join usuarios u on u.id = c.idusuario \
                     where u.id = " + idUsuario.toString();
 
         const datos = await getManager().query(sql);

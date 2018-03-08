@@ -14,8 +14,8 @@ export class DiarioRepository implements IDiarioRepository {
                           if (c.credito = 0, false, true) credito, \
                           date(d.fecha) fecha, \
                           ifnull(d.importe, 0) importe \
-                    from controlgastos.conceptos c \
-                    left join controlgastos.diario d on d.idconcepto = c.id \
+                    from conceptos c \
+                    left join diario d on d.idconcepto = c.id \
                     and (date(d.fecha) = '" + 
                     fecha.getFullYear().toString() + "-" + (fecha.getMonth()+1).toString() + "-" +  fecha.getDate().toString() + 
                     "' or d.fecha is null) \
@@ -103,9 +103,9 @@ export class DiarioRepository implements IDiarioRepository {
 
         let sql = "select date_format(ifnull(min(d.fecha), curdate()), '%Y-%m-%d') fechaMin, \
                           date_format(ifnull(max(d.fecha), curdate()), '%Y-%m-%d') fechaMax \
-                    from controlgastos.diario d \
-                    inner join controlgastos.conceptos c on c.id = d.idconcepto \
-                    inner join controlgastos.usuarios u on u.id = c.idusuario \
+                    from diario d \
+                    inner join conceptos c on c.id = d.idconcepto \
+                    inner join usuarios u on u.id = c.idusuario \
                     where c.idusuario = " + idUsuario.toString();
 
         //console.log(sql);
