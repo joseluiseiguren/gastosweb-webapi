@@ -856,5 +856,6 @@ app.use(function(err, req, res, next) {
     logger.error({errorId: errorId, message: err});
 });
 
+logger.info({message: process.env});
 logger.info({message: "init ok"});
 app.listen(3000);
