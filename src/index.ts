@@ -388,7 +388,7 @@ apiRoutes.get('/conceptos/mensual/:mes/sumary', async function (request, respons
 
         let fechaParam: Date = new Date(
                                     Number(fecha.substring(0, 4)), 
-                                    Number(fecha.substring(4, 6)), 
+                                    Number(fecha.substring(4, 6))-1, 
                                     1, 0, 0, 0, 0);
         fechaParam.setUTCHours(0, 0, 0, 0);
 
