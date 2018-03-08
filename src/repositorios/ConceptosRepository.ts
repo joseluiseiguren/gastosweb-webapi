@@ -27,14 +27,13 @@ export class ConceptosRepository implements IConceptoRepository {
         return concepto;
     }
 
-    async GetConceptosMensual(idUsuario: number, fecha: Date /*MM-YYYY*/) : Promise<any> {
+    async GetConceptosMensual(idUsuario: number, fecha: Date /*YYYYMM*/) : Promise<any> {
         let dbConnection = await GetDbConnection();
 
         let sql = "select ifnull(sum(d.importe),0) saldo, c.id idconcepto, c.descripcion \
                     from conceptos c \
                     left join diario d on d.idconcepto = c.id \
-                    and (date_format(d.fecha, '%Y%c') = '" + 
-                    fecha.getFullYear().toString() + (fecha.getMonth()+1).toString() +
+                    and (date_format(d.fecha, '%Y%m') = '" + fecha + 
                     "' or d.fecha is null) \
                     where c.idusuario = " + idUsuario.toString() +  
                     " group by c.id, c.descripcion \

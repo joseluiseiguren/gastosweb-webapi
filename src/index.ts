@@ -59,7 +59,6 @@ const TIPOOPERACION = Object.freeze({LOGINOK: 1, LOGINDENIED: 2});
 apiRoutes.post('/usuarios/login', async (request, response, next) => {
     
     try {
-        logger.error({errorId: 1, message: "init login"});
         const email = request.body.email,
             password = request.body.password;
 
@@ -376,8 +375,6 @@ apiRoutes.get('/conceptos/mensual/:mes/sumary', async function (request, respons
             return;
         }
 
-        logger.error({errorId: 1, message: "fecha1: " + request.params.mes});
-        
         let fecha = request.params.mes;
         if (fecha === undefined ||
             fecha.length != 6 ||
@@ -386,16 +383,8 @@ apiRoutes.get('/conceptos/mensual/:mes/sumary', async function (request, respons
             return;
         }
 
-        let fechaParam: Date = new Date(
-                                    Number(fecha.substring(0, 4)), 
-                                    Number(fecha.substring(4, 6))-1, 
-                                    1, 0, 0, 0, 0);
-        fechaParam.setUTCHours(0, 0, 0, 0);
-
-        logger.error({errorId: 1, message: "fecha2: " + fechaParam});
-
         let repo = new ConceptosRepository();
-        let conceptosTotalMes = await repo.GetConceptosMensual(idUsuario, fechaParam);
+        let conceptosTotalMes = await repo.GetConceptosMensual(idUsuario, fecha);
 
         response.status(HttpStatus.OK).send(conceptosTotalMes).end();
     } catch (err) {
@@ -855,7 +844,7 @@ apiRoutes.get('/diario/:fecha', async function (request, response, next) {
 
 // la aplicacion va a usar las rutas previamete seteadas
 app.use('/api', apiRoutes);
-logger.error({errorId: 1, message: "set api routes ok"});
+logger.info({message: "set api routes ok"});
 
 // global error handler
 app.use(function(err, req, res, next) {
@@ -867,5 +856,5 @@ app.use(function(err, req, res, next) {
     logger.error({errorId: errorId, message: err});
 });
 
-logger.error({errorId: 1, message: "init ok"});
+logger.info({message: "init ok"});
 app.listen(3000);
