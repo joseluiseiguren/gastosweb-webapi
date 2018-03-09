@@ -1,7 +1,7 @@
 import "reflect-metadata";
-import {createConnection, Connection, getConnectionManager} from "typeorm";
-import {Usuarios} from "./entity/Usuarios";
-import {Conceptos} from "./entity/Conceptos";
+import { createConnection, Connection, getConnectionManager} from "typeorm";
+import { Usuarios } from "./entity/Usuarios";
+import { Conceptos } from "./entity/Conceptos";
 import { UsuarioRepository } from "./repositorios/UsuariosRepository";
 import { ConceptosRepository } from "./repositorios/ConceptosRepository";
 import { DiarioRepository } from "./repositorios/DiarioRepository";
@@ -44,14 +44,54 @@ log4js.configure({
 });
 var logger = log4js.getLogger();
 
+/* VERIFICA QUE LAS VARIABLES DE ENTORNO ESTEN SETEADAS */
+if (process.env.NODE_ENV === undefined){
+    logger.error({errorId: 1, message: "Variables de entorno no seteada: NODE_ENV"});
+    process.exit(1);
+}
+
+switch (process.env.NODE_ENV) {
+    case "dev":
+        logger.info({message: "Working in Dev"});
+        if (process.env.DEV_APP_PORT === undefined ||
+            process.env.DEV_DB_HOST === undefined ||
+            process.env.DEV_DB_PORT === undefined ||
+            process.env.DEV_DB_NAME === undefined ||
+            process.env.DEV_DB_USER === undefined ||
+            process.env.DEV_DB_PASSWORD === undefined ||
+            process.env.DEV_SECRETHASH === undefined){
+                logger.error({errorId: 1, message: "Variables de entorno de DEV no seteadas"});
+                process.exit(1);
+            }            
+        break;
+
+    case "prod":
+        logger.info({message: "Working in Prod"});
+        if (process.env.PROD_APP_PORT === undefined ||
+            process.env.PROD_DB_HOST === undefined ||
+            process.env.PROD_DB_PORT === undefined ||
+            process.env.PROD_DB_NAME === undefined ||
+            process.env.PROD_DB_USER === undefined ||
+            process.env.PROD_DB_PASSWORD === undefined ||
+            process.env.PROD_SECRETHASH === undefined){
+                logger.error({errorId: 1, message: "Variables de entorno de PROD no seteadas"});
+                process.exit(1);
+            }
+        break;
+
+    default:
+        logger.error({errorId: 1, message: "Variables de entorno NODE_ENV invalida: " + process.env.NODE_ENV});
+        process.exit(1);
+}
+
+
 let app = express();
 app.use(cors())
 app.use(bodyParser.json());
-app.set('jwtsecret', config.secret);
+app.set('jwtsecret', config.secrethash.key);
 
 var apiRoutes = express.Router();
 const TIPOOPERACION = Object.freeze({LOGINOK: 1, LOGINDENIED: 2});
-
 
 /**** USUARIOS ******************************************************************************************/
 
@@ -856,6 +896,5 @@ app.use(function(err, req, res, next) {
     logger.error({errorId: errorId, message: err});
 });
 
-logger.info({message: process.env});
 logger.info({message: "init ok"});
-app.listen(3000);
+app.listen(config.app.port);

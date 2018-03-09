@@ -3,13 +3,47 @@ import { Audit } from "../entity/Audit";
 import { AuditRepository } from "./AuditRepository";
 
 export async function GetDbConnection(): Promise<Connection> {
-    let connection: Connection;
+    /*let connection: Connection;
     try {
         connection = getConnectionManager().get();
         //console.log('got existing connection');
     } catch (err) {
         //console.log('creating connection');
         connection = await createConnection();
+    }
+
+    return connection;*/
+
+    let config = require('../config'); 
+    
+    let connection: Connection;
+    try {
+        connection = getConnectionManager().get();
+        //console.log('got existing connection');
+    } catch (err) {
+        //console.log('creating connection');
+        connection = await createConnection({type: "mysql",
+                                             host: config.db.host,
+                                             port: config.db.port,
+                                             username: config.db.user,
+                                             password: config.db.password,
+                                             database: config.db.database,
+                                             entities: [
+                                                "src/entity/**/*.ts"
+                                             ],
+                                             synchronize: false,
+                                             logging: false,
+                                             migrations: [
+                                                "src/migration/**/*.ts"
+                                             ],
+                                             subscribers: [
+                                                "src/subscriber/**/*.ts"
+                                             ],
+                                             cli: {
+                                                "entitiesDir": "src/entity",
+                                                "migrationsDir": "src/migration",
+                                                "subscribersDir": "src/subscriber"
+                                             }});
     }
 
     return connection;
