@@ -65,7 +65,7 @@ switch (process.env.NODE_ENV) {
             }            
         break;
 
-    case "prod":
+    case "production":
         logger.info({message: "Working in Prod"});
         if (process.env.PROD_APP_PORT === undefined ||
             process.env.PROD_DB_HOST === undefined ||
