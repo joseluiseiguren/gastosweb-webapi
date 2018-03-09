@@ -1,4 +1,4 @@
-const env = process.env.NODE_ENV; // 'dev' or 'prod'
+const env = process.env.NODE_ENV; // 'dev' or 'production'
 
 const dev = {
     app: {
@@ -16,26 +16,26 @@ const dev = {
     }
 };
 
-const prod = {
+const production = {
     app: {
-        port: 3306
+        port: process.env.PROD_APP_PORT
     },
     db: {
         host: process.env.PROD_DB_HOST,
-        port: 27017,
-        database: 'test',
-        user: 'controlgastos',
-        password: 'admin'
+        port: process.env.PROD_DB_PORT,
+        database: process.env.PROD_DB_NAME,
+        user: process.env.PROD_DB_USER,
+        password: process.env.PROD_DB_PASSWORD
     },
     secrethash: 
     { 
-        key: 'ilovescotchyscotch'
+        key: process.env.PROD_SECRETHASH
     }
 };
 
 const config = {
  dev,
- prod
+ production
 };
 
 module.exports = config[env];
