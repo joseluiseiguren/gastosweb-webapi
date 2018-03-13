@@ -1,8 +1,8 @@
-- Loguear status de inicializacion
+    - Loguear status de inicializacion
 - Loguear mas en disco
 - enviar un mail en la registracion
 - bloquear al usuario en 5 intentos de login fallidos
 - unit testing webapi
 - webapi: abrir el index.ts en multiples files
 - poner indices en los select
-- Tener un ormconfig.json de dev y otro de prod
+    - Tener un ormconfig.json de dev y otro de prod

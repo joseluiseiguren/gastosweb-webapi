@@ -17,4 +17,7 @@ export class Audit {
 
     @Column()
     aditionalinfo: string;
+
+    @Column()
+    location: string;
 }

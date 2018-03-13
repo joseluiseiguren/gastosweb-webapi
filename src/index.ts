@@ -100,13 +100,14 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
     
     try {
         const email = request.body.email,
-            password = request.body.password;
+            password = request.body.password,
+            location = request.body.location;
 
         if (password === undefined ||
             email === undefined) {
             let responseMessage = {message: "Email / Password no informado"};
             response.status(HttpStatus.BAD_REQUEST).send(responseMessage).end();
-            SaveAudit(0, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED);
+            SaveAudit(0, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED, location);
             return;
         }
 
@@ -118,7 +119,7 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
         if (users.length <= 0) {
             let responseMessage = {message: "Usuario Inexistente"};
             response.status(HttpStatus.UNAUTHORIZED).send(responseMessage).end();
-            SaveAudit(0, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED);
+            SaveAudit(0, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED, location);
             return;
         }
 
@@ -126,7 +127,7 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
         if (passwordHash.verify(password, users[0].password) === false) {
             let responseMessage = {message: "Password Invalido"};
             response.status(HttpStatus.UNAUTHORIZED).send(responseMessage).end();
-            SaveAudit(0, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED);
+            SaveAudit(0, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED, location);
             return;
         }
 
@@ -139,7 +140,7 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
         var token = jwt.sign(payload, app.get('jwtsecret'), { expiresIn : 60*60*24 });
 
         response.status(HttpStatus.OK).send({token: token});
-        SaveAudit(users[0].id, "", "", TIPOOPERACION.LOGINOK);
+        SaveAudit(users[0].id, "", "", TIPOOPERACION.LOGINOK, location);
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }

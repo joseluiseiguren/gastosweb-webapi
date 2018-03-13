@@ -49,13 +49,14 @@ export async function GetDbConnection(): Promise<Connection> {
     return connection;
 }
 
-export async function SaveAudit(idusuario, observacion, aditionalinfo, tipooperacion): Promise<void> {
+export async function SaveAudit(idusuario, observacion, aditionalinfo, tipooperacion, location): Promise<void> {
     let audit: Audit = new Audit();
     audit.fecha = new Date();
     audit.idusuario = idusuario;
     audit.observacion = observacion;
     audit.aditionalinfo = aditionalinfo;
     audit.tipooperacion = tipooperacion;
+    audit.location = location;
     
     let repo = new AuditRepository();
     repo.Insert(audit);

@@ -6,14 +6,6 @@ Cada v ez que hay un cambio
 	c:\jos\gastosweb-webapi>git push evennode master
 
 
-/******** PROD **********/
-"host": "sql2.freemysqlhosting.net",
-"port": 3306,
-"username": "sql2225236",
-"password": "sP9*jG2%",
-"database": "sql2225236",
-
-
 /* Variables de entorno DEV LOCAL */
 SET NODE_ENV=dev
 SET DEV_APP_PORT=3000
@@ -26,14 +18,14 @@ SET DEV_SECRETHASH=ilovescotchyscotch
 
 
 /* Variables de entorno PROD */
-SET NODE_ENV=prod
-SET DEV_APP_PORT=3000
-SET DEV_DB_HOST=sql2.freemysqlhosting.net
-SET DEV_DB_PORT=3306
-SET DEV_DB_NAME=sql2225236
-SET DEV_DB_USER=sql2225236
-SET DEV_DB_PASSWORD=sP9*jG2%
-SET DEV_SECRETHASH=ilovescotchyscotch
+SET NODE_ENV=production
+SET PROD_APP_PORT=3000
+SET PROD_DB_HOST=sql2.freemysqlhosting.net
+SET PROD_DB_PORT=3306
+SET PROD_DB_NAME=sql2225236
+SET PROD_DB_USER=sql2225236
+SET PROD_DB_PASSWORD=sP9*jG2%
+SET PROD_SECRETHASH=ilovescotchyscotch
 
 
 /* Para eliminar variables de entorno */

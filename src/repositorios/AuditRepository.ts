@@ -18,7 +18,8 @@ export class AuditRepository implements IAuditRepository {
                      fecha: audit.fecha, 
                      tipooperacion: audit.tipooperacion,
                      observacion: audit.observacion,
-                     aditionalinfo:audit.aditionalinfo}) 
+                     aditionalinfo: audit.aditionalinfo,
+                     location: audit.location}) 
             .execute();
     }
 }
