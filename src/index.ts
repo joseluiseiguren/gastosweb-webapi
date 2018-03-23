@@ -59,7 +59,8 @@ switch (process.env.NODE_ENV) {
             process.env.DEV_DB_NAME === undefined ||
             process.env.DEV_DB_USER === undefined ||
             process.env.DEV_DB_PASSWORD === undefined ||
-            process.env.DEV_SECRETHASH === undefined){
+            process.env.DEV_SECRETHASH === undefined ||
+            process.env.DEV_EXPIRACION_TOKEN === undefined){
                 logger.error({errorId: 1, message: "Variables de entorno de DEV no seteadas"});
                 process.exit(1);
             }            
@@ -73,7 +74,8 @@ switch (process.env.NODE_ENV) {
             process.env.PROD_DB_NAME === undefined ||
             process.env.PROD_DB_USER === undefined ||
             process.env.PROD_DB_PASSWORD === undefined ||
-            process.env.PROD_SECRETHASH === undefined){
+            process.env.PROD_SECRETHASH === undefined ||
+            process.env.PROD_EXPIRACION_TOKEN === undefined){
                 logger.error({errorId: 1, message: "Variables de entorno de PROD no seteadas"});
                 process.exit(1);
             }
@@ -137,7 +139,8 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
             moneda: users[0].moneda, 
         };
 
-        var token = jwt.sign(payload, app.get('jwtsecret'), { expiresIn : 60*60*24 });
+        //var token = jwt.sign(payload, app.get('jwtsecret'), { expiresIn : 60*60*24 });
+        var token = jwt.sign(payload, app.get('jwtsecret'), { expiresIn : config.app.expiraciontoken*1 });
 
         response.status(HttpStatus.OK).send({token: token});
         SaveAudit(users[0].id, "", "", TIPOOPERACION.LOGINOK, location);
@@ -886,6 +889,7 @@ apiRoutes.get('/diario/:fecha', async function (request, response, next) {
 // la aplicacion va a usar las rutas previamete seteadas
 app.use('/api', apiRoutes);
 logger.info({message: "set api routes ok"});
+logger.info({message: "expiracion AT: " + config.app.expiraciontoken});
 
 // global error handler
 app.use(function(err, req, res, next) {

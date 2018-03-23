@@ -2,7 +2,8 @@ const env = process.env.NODE_ENV; // 'dev' or 'production'
 
 const dev = {
     app: {
-        port: process.env.DEV_APP_PORT
+        port: process.env.DEV_APP_PORT,
+        expiraciontoken: process.env.DEV_EXPIRACION_TOKEN
     },
     db: {
         host: process.env.DEV_DB_HOST,
@@ -18,7 +19,8 @@ const dev = {
 
 const production = {
     app: {
-        port: process.env.PROD_APP_PORT
+        port: process.env.PROD_APP_PORT,
+        expiraciontoken: process.env.PROD_EXPIRACION_TOKEN
     },
     db: {
         host: process.env.PROD_DB_HOST,

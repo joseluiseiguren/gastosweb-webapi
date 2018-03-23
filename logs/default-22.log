@@ -82,3 +82,18 @@
        at runCallback (timers.js:672:20)
        at tryOnImmediate (timers.js:645:5)
        at processImmediate [as _immediateCallback] (timers.js:617:5) }
+[2018-03-22T20:18:39.566] [INFO] default - { message: 'Working in Dev' }
+[2018-03-22T20:18:39.573] [INFO] default - { message: 'set api routes ok' }
+[2018-03-22T20:18:39.574] [INFO] default - { message: 'init ok' }
+[2018-03-22T20:18:42.639] [ERROR] default - { errorId: '49ad0e43-4368-496e-a968-2db4f699a911',
+  message: Error: {}
+    at Immediate._onImmediate (C:\jos\gastosweb-webapi\src\index.ts:702:35)
+    at runCallback (timers.js:773:18)
+    at tryOnImmediate (timers.js:734:5)
+    at processImmediate [as _immediateCallback] (timers.js:711:5) }
+[2018-03-22T20:18:42.660] [ERROR] default - { errorId: '90dd7528-9828-4410-a3ac-5f0a53ea9dca',
+  message: Error: {}
+    at Immediate._onImmediate (C:\jos\gastosweb-webapi\src\index.ts:731:35)
+    at runCallback (timers.js:773:18)
+    at tryOnImmediate (timers.js:734:5)
+    at processImmediate [as _immediateCallback] (timers.js:711:5) }
