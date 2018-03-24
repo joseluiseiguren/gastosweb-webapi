@@ -60,7 +60,8 @@ switch (process.env.NODE_ENV) {
             process.env.DEV_DB_USER === undefined ||
             process.env.DEV_DB_PASSWORD === undefined ||
             process.env.DEV_SECRETHASH === undefined ||
-            process.env.DEV_EXPIRACION_TOKEN === undefined){
+            process.env.DEV_EXPIRACION_TOKEN === undefined ||
+            process.env.DEV_INTENTOS_FALLIDOS_LOGIN === undefined){
                 logger.error({errorId: 1, message: "Variables de entorno de DEV no seteadas"});
                 process.exit(1);
             }            
@@ -75,7 +76,8 @@ switch (process.env.NODE_ENV) {
             process.env.PROD_DB_USER === undefined ||
             process.env.PROD_DB_PASSWORD === undefined ||
             process.env.PROD_SECRETHASH === undefined ||
-            process.env.PROD_EXPIRACION_TOKEN === undefined){
+            process.env.PROD_EXPIRACION_TOKEN === undefined ||
+            process.env.PROD_INTENTOS_FALLIDOS_LOGIN === undefined){
                 logger.error({errorId: 1, message: "Variables de entorno de PROD no seteadas"});
                 process.exit(1);
             }
@@ -94,6 +96,7 @@ app.set('jwtsecret', config.secrethash.key);
 
 var apiRoutes = express.Router();
 const TIPOOPERACION = Object.freeze({LOGINOK: 1, LOGINDENIED: 2});
+const USUARIOSESTADOS = Object.freeze({NORMAL: 0, BLOQUEADO: 1});
 
 /**** USUARIOS ******************************************************************************************/
 
@@ -125,13 +128,37 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
             return;
         }
 
+        // se valida que el usuairo no este bloqueado
+        if (users[0].idestado === USUARIOSESTADOS.BLOQUEADO) {
+            let responseMessage = {message: "Usuario Bloqueado"};
+            response.status(HttpStatus.UNAUTHORIZED).send(responseMessage).end();
+            SaveAudit(0, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED, location);
+            return;
+        }
+
         // se valida el password
         if (passwordHash.verify(password, users[0].password) === false) {
+            
+            // se aumenta en uno los intentos fallidos
+            users[0].intentosfallidoslogin++;
+
+            // se bloquea el usuario
+            if (users[0].intentosfallidoslogin == config.app.intentosfallidoslogin*1) {
+                users[0].idestado = USUARIOSESTADOS.BLOQUEADO;
+            }
+
+            // se actualiza el usuario
+            await repo.Update(users[0]);
+            
             let responseMessage = {message: "Password Invalido"};
             response.status(HttpStatus.UNAUTHORIZED).send(responseMessage).end();
             SaveAudit(0, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED, location);
             return;
         }
+
+        // se actualizan los intentos fallidos del usuario
+        users[0].intentosfallidoslogin = 0;
+        await repo.Update(users[0]);
 
         const payload = {
             user: users[0].nombre,
@@ -890,6 +917,7 @@ apiRoutes.get('/diario/:fecha', async function (request, response, next) {
 app.use('/api', apiRoutes);
 logger.info({message: "set api routes ok"});
 logger.info({message: "expiracion AT: " + config.app.expiraciontoken});
+logger.info({message: "max intentos fallidos login: " + config.app.intentosfallidoslogin});
 
 // global error handler
 app.use(function(err, req, res, next) {

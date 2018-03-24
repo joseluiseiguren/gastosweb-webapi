@@ -24,7 +24,8 @@ export class UsuarioRepository implements IUsuarioRepository {
             
             // filtro por email
             if (email !== undefined && email.length > 0) {
-                filter.email = email; }
+                filter.email = email; 
+            }
 
             let user = await userRepository.find(filter);
             
@@ -49,7 +50,8 @@ export class UsuarioRepository implements IUsuarioRepository {
                 fechanacimiento: usuario.fechanacimiento,
                 password: usuario.password,
                 moneda: usuario.moneda,
-                idestado: usuario.idestado})
+                idestado: usuario.idestado,
+                intentosfallidoslogin: usuario.intentosfallidoslogin})
             .where("id = :id", 
                     { id: usuario.id}) 
             .execute();
@@ -72,7 +74,8 @@ export class UsuarioRepository implements IUsuarioRepository {
                      fechaalta: usuario.fechaalta,
                      idestado: usuario.idestado,
                      password: usuario.password,
-                     moneda: usuario.moneda}) 
+                     moneda: usuario.moneda,
+                     intentosfallidoslogin: usuario.intentosfallidoslogin}) 
             .execute();
     }
 }

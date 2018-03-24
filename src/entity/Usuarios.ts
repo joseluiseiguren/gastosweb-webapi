@@ -26,4 +26,7 @@ export class Usuarios {
 
     @Column()
     moneda: string;
+
+    @Column()
+    intentosfallidoslogin: number;
 }
