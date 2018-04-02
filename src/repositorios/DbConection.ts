@@ -2,6 +2,9 @@ import { Connection, getConnectionManager, createConnection } from "typeorm";
 import { Audit } from "../entity/Audit";
 import { AuditRepository } from "./AuditRepository";
 
+var mongoose   = require('mongoose');
+var AuditModel = require('../models/audit.model');
+
 export async function GetDbConnection(): Promise<Connection> {
     /*let connection: Connection;
     try {
@@ -60,4 +63,21 @@ export async function SaveAudit(idusuario, observacion, aditionalinfo, tipoopera
     
     let repo = new AuditRepository();
     repo.Insert(audit);
+}
+
+
+export function SaveAudit2(idusuario, observacion, aditionalinfo, tipooperacion, location): void {
+    let audit = new AuditModel({
+        idusuario: idusuario,
+        observacion: observacion,
+        aditionalinfo: aditionalinfo,
+        tipooperacion: tipooperacion,
+        location: location
+    });
+    audit.save(function(err){
+        if (err){
+            throw err;
+        }
+    });
+    
 }

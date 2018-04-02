@@ -11,7 +11,7 @@ import { AnualRepository } from "./repositorios/AnualRepository";
 import { HistoricoRepository } from "./repositorios/HistoricoRepository";
 import { Audit } from "./entity/Audit";
 import { AuditRepository } from "./repositorios/AuditRepository";
-import { SaveAudit } from "./repositorios/DbConection";
+import { SaveAudit, SaveAudit2 } from "./repositorios/DbConection";
 
 var express         = require('express');
 var cors            = require('cors');
@@ -23,6 +23,12 @@ var config          = require('./config');
 var bodyParser      = require('body-parser');
 var uuid            = require('uuid');
 var log4js          = require('log4js');
+var mongoose        = require('mongoose');
+
+// se abre la conexion con la base de datos mongo
+mongoose.connect(config.dbMongo.strconexion);
+
+var UserModel = require('../src/models/user.model');
 
 // configuracion de log4j
 log4js.configure({ 
@@ -61,7 +67,8 @@ switch (process.env.NODE_ENV) {
             process.env.DEV_DB_PASSWORD === undefined ||
             process.env.DEV_SECRETHASH === undefined ||
             process.env.DEV_EXPIRACION_TOKEN === undefined ||
-            process.env.DEV_INTENTOS_FALLIDOS_LOGIN === undefined){
+            process.env.DEV_INTENTOS_FALLIDOS_LOGIN === undefined ||
+            process.env.DEV_DBMONGO === undefined){
                 logger.error({errorId: 1, message: "Variables de entorno de DEV no seteadas"});
                 process.exit(1);
             }            
@@ -77,7 +84,8 @@ switch (process.env.NODE_ENV) {
             process.env.PROD_DB_PASSWORD === undefined ||
             process.env.PROD_SECRETHASH === undefined ||
             process.env.PROD_EXPIRACION_TOKEN === undefined ||
-            process.env.PROD_INTENTOS_FALLIDOS_LOGIN === undefined){
+            process.env.PROD_INTENTOS_FALLIDOS_LOGIN === undefined ||
+            process.env.PROD_DBMONGO === undefined){
                 logger.error({errorId: 1, message: "Variables de entorno de PROD no seteadas"});
                 process.exit(1);
             }
@@ -112,10 +120,75 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
             email === undefined) {
             let responseMessage = {message: "Email / Password no informado"};
             response.status(HttpStatus.BAD_REQUEST).send(responseMessage).end();
-            SaveAudit(0, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED, location);
+            SaveAudit2(0, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED, location);
             return;
         }
 
+       // se obtiene el usuario via email
+        UserModel.find({email: email}, function(err, results){
+            if(results.length <= 0){
+                let responseMessage = {message: "Usuario Inexistente"};
+                response.status(HttpStatus.UNAUTHORIZED).send(responseMessage).end();
+                SaveAudit2(0, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED, location);
+                return;
+            }
+            else{
+                // se valida que el usuairo no este bloqueado
+                if (results[0].idestado === USUARIOSESTADOS.BLOQUEADO) {
+                    let responseMessage = {message: "Usuario Bloqueado"};
+                    response.status(HttpStatus.UNAUTHORIZED).send(responseMessage).end();
+                    SaveAudit2(results[0]._id, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED, location);
+                    return;
+                
+                // se valida el password
+                } else if (passwordHash.verify(password, results[0].password) === false) {
+                    
+                    let fieldsToUpdate = {intentosfallidoslogin: results[0].intentosfallidoslogin + 1, 
+                                          idestado: results[0].idestado};
+
+                    // se bloquea el usuario
+                    if (results[0].intentosfallidoslogin == config.app.intentosfallidoslogin*1) {
+                        fieldsToUpdate.idestado = USUARIOSESTADOS.BLOQUEADO;
+                    }
+
+                    // se actualiza el usuario
+                    UserModel.update({_id: results[0]._id}, fieldsToUpdate, function(err, numberAffected, rawResponse){
+                        if (err){
+                            throw err;
+                        }                        
+                    });
+
+                    let responseMessage = {message: "Password Invalido"};
+                    response.status(HttpStatus.UNAUTHORIZED).send(responseMessage).end();
+                    SaveAudit2(results[0]._id, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED, location);
+                    return;
+                } else {
+                    // se actualizan los intentos fallidos del usuario
+                    UserModel.update({_id: results[0]._id}, {intentosfallidoslogin: 0}, function(err, numberAffected, rawResponse){
+                        if (err){
+                            throw err;
+                        }
+                        
+                        const payload = {
+                            user: results[0].nombre,
+                            id: results[0]._id,
+                            moneda: results[0].moneda, 
+                        };
+
+                        //var token = jwt.sign(payload, app.get('jwtsecret'), { expiresIn : 60*60*24 });
+                        var token = jwt.sign(payload, app.get('jwtsecret'), { expiresIn : config.app.expiraciontoken*1 });
+
+                        response.status(HttpStatus.OK).send({token: token});
+                        SaveAudit2(results[0]._id, null, null, TIPOOPERACION.LOGINOK, location);     
+                    });                    
+                }
+            }
+        });        
+
+
+
+
+        /*
         // se obtiene el usuario via email
         let repo = new UsuarioRepository();
         let users = await repo.GetByFilter(email);
@@ -170,7 +243,7 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
         var token = jwt.sign(payload, app.get('jwtsecret'), { expiresIn : config.app.expiraciontoken*1 });
 
         response.status(HttpStatus.OK).send({token: token});
-        SaveAudit(users[0].id, "", "", TIPOOPERACION.LOGINOK, location);
+        SaveAudit(users[0].id, "", "", TIPOOPERACION.LOGINOK, location);*/
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -229,8 +302,37 @@ apiRoutes.post('/usuarios/registracion', async (request, response, next) => {
                             0, 0, 0, 0);
         fechaParam.setUTCHours(0, 0, 0, 0);
 
-
         // valida que el usuario no exista
+        UserModel.find({email: email}, function(err, results){
+            if(results.length > 0){
+                response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe un usuario con el mismo email"}).end();
+                return;
+            }
+            else{
+                // se hashea el password
+                let hashedPassword = passwordHash.generate(password);
+
+                let userM = new UserModel({
+                    email: email,
+                    nombre: nombre,
+                    fechanacimiento: fechaParam,
+                    idestado: 0,
+                    moneda: moneda,
+                    password: hashedPassword
+                });
+                userM.save(function(err){
+                    if (err){
+                        throw err;
+                    } 
+                    else {
+                        response.status(HttpStatus.OK).send();
+                    }
+                });
+            }
+        });        
+
+
+        /*// valida que el usuario no exista
         let repo = new UsuarioRepository();
         let users = await repo.GetByFilter(email);
 
@@ -254,7 +356,7 @@ apiRoutes.post('/usuarios/registracion', async (request, response, next) => {
 
         await repo.Insert(usuario);
 
-        response.status(HttpStatus.OK).send();
+        response.status(HttpStatus.OK).send();*/
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -503,7 +605,7 @@ apiRoutes.post('/concepto', async function (request, response, next) {
             descripcion: string = request.body.descripcion,
             credito = request.body.credito;
 
-        if (isNaN(idUsuario)) {
+        if (idUsuario === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
             return;
         }
@@ -519,6 +621,27 @@ apiRoutes.post('/concepto', async function (request, response, next) {
         }
 
         // se valida que el no exista un concepto con la misma descripcion
+        UserModel.find({_id:idUsuario, "conceptos.descripcion":{ $regex : new RegExp(descripcion, "i") }}, function(err, results){
+            if(results.length > 0){
+                response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe concepto con el mismo nombre"}).end();
+                return;
+            }
+            else{
+                // se agrega el concepto al usuario
+                let concepto = {descripcion: descripcion, credito: credito};
+                UserModel.update({_id: idUsuario}, {$push:{conceptos:concepto}}, function(err, numberAffected, rawResponse){
+                    if (err){
+                        throw err;
+                    } else {
+                        response.status(HttpStatus.OK).send().end();
+                    }
+                });                
+            }
+        });     
+
+
+
+        /*// se valida que el no exista un concepto con la misma descripcion
         let repoConcepto = new ConceptosRepository();
         let conceptoSearch = await repoConcepto.GetByDescrcipcion(idUsuario, descripcion);
         if (conceptoSearch !== undefined) {
@@ -534,7 +657,7 @@ apiRoutes.post('/concepto', async function (request, response, next) {
         concepto.idusuario = idUsuario;
         await repoConcepto.Insert(concepto);
         
-        response.status(HttpStatus.OK).send().end();
+        response.status(HttpStatus.OK).send().end();*/
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }

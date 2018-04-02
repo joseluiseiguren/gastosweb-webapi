@@ -15,6 +15,9 @@ const dev = {
     },
     secrethash: { 
         key: process.env.DEV_SECRETHASH
+    },
+    dbMongo: {
+        strconexion: process.env.DEV_DBMONGO
     }
 };
 
@@ -34,6 +37,9 @@ const production = {
     secrethash: 
     { 
         key: process.env.PROD_SECRETHASH
+    },
+    dbMongo: {
+        strconexion: process.env.PROD_DBMONGO
     }
 };
 

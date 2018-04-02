@@ -17,6 +17,7 @@ SET DEV_DB_PASSWORD=admin
 SET DEV_SECRETHASH=ilovescotchyscotch
 SET DEV_EXPIRACION_TOKEN=86400
 SET DEV_INTENTOS_FALLIDOS_LOGIN=5
+SET DEV_DBMONGO=mongodb://localhost:27017
 npm start
 
 
@@ -31,7 +32,11 @@ SET PROD_DB_PASSWORD=sP9*jG2%
 SET PROD_SECRETHASH=ilovescotchyscotch
 SET PROD_EXPIRACION_TOKEN=86400
 SET PROD_INTENTOS_FALLIDOS_LOGIN=5
+SET PROD_DBMONGO=mongodb://localhost:27017
 
 
 /* Para eliminar variables de entorno */
 SET NODE_ENV=undefined
+
+/* MONGO DB prod */
+.controlgastos01
