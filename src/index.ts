@@ -124,8 +124,12 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
             return;
         }
 
-       // se obtiene el usuario via email
+        // se obtiene el usuario via email
         UserModel.find({email: email}, function(err, results){
+            if (err) {
+                setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                return;
+            }
             if(results.length <= 0){
                 let responseMessage = {message: "Usuario Inexistente"};
                 response.status(HttpStatus.UNAUTHORIZED).send(responseMessage).end();
@@ -153,9 +157,10 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
 
                     // se actualiza el usuario
                     UserModel.update({_id: results[0]._id}, fieldsToUpdate, function(err, numberAffected, rawResponse){
-                        if (err){
-                            throw err;
-                        }                        
+                        if (err) {
+                            setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                            return;
+                        }                      
                     });
 
                     let responseMessage = {message: "Password Invalido"};
@@ -165,8 +170,9 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
                 } else {
                     // se actualizan los intentos fallidos del usuario
                     UserModel.update({_id: results[0]._id}, {intentosfallidoslogin: 0}, function(err, numberAffected, rawResponse){
-                        if (err){
-                            throw err;
+                        if (err) {
+                            setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                            return;
                         }
                         
                         const payload = {
@@ -184,66 +190,6 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
                 }
             }
         });        
-
-
-
-
-        /*
-        // se obtiene el usuario via email
-        let repo = new UsuarioRepository();
-        let users = await repo.GetByFilter(email);
-
-        // usuario inexistente
-        if (users.length <= 0) {
-            let responseMessage = {message: "Usuario Inexistente"};
-            response.status(HttpStatus.UNAUTHORIZED).send(responseMessage).end();
-            SaveAudit(0, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED, location);
-            return;
-        }
-
-        // se valida que el usuairo no este bloqueado
-        if (users[0].idestado === USUARIOSESTADOS.BLOQUEADO) {
-            let responseMessage = {message: "Usuario Bloqueado"};
-            response.status(HttpStatus.UNAUTHORIZED).send(responseMessage).end();
-            SaveAudit(0, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED, location);
-            return;
-        }
-
-        // se valida el password
-        if (passwordHash.verify(password, users[0].password) === false) {
-            
-            // se aumenta en uno los intentos fallidos
-            users[0].intentosfallidoslogin++;
-
-            // se bloquea el usuario
-            if (users[0].intentosfallidoslogin == config.app.intentosfallidoslogin*1) {
-                users[0].idestado = USUARIOSESTADOS.BLOQUEADO;
-            }
-
-            // se actualiza el usuario
-            await repo.Update(users[0]);
-            
-            let responseMessage = {message: "Password Invalido"};
-            response.status(HttpStatus.UNAUTHORIZED).send(responseMessage).end();
-            SaveAudit(0, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED, location);
-            return;
-        }
-
-        // se actualizan los intentos fallidos del usuario
-        users[0].intentosfallidoslogin = 0;
-        await repo.Update(users[0]);
-
-        const payload = {
-            user: users[0].nombre,
-            id: users[0].id,
-            moneda: users[0].moneda, 
-        };
-
-        //var token = jwt.sign(payload, app.get('jwtsecret'), { expiresIn : 60*60*24 });
-        var token = jwt.sign(payload, app.get('jwtsecret'), { expiresIn : config.app.expiraciontoken*1 });
-
-        response.status(HttpStatus.OK).send({token: token});
-        SaveAudit(users[0].id, "", "", TIPOOPERACION.LOGINOK, location);*/
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -304,6 +250,10 @@ apiRoutes.post('/usuarios/registracion', async (request, response, next) => {
 
         // valida que el usuario no exista
         UserModel.find({email: email}, function(err, results){
+            if (err) {
+                setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                return;
+            }
             if(results.length > 0){
                 response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe un usuario con el mismo email"}).end();
                 return;
@@ -321,42 +271,16 @@ apiRoutes.post('/usuarios/registracion', async (request, response, next) => {
                     password: hashedPassword
                 });
                 userM.save(function(err){
-                    if (err){
-                        throw err;
-                    } 
+                    if (err) {
+                        setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                        return;
+                    }
                     else {
                         response.status(HttpStatus.OK).send();
                     }
                 });
             }
         });        
-
-
-        /*// valida que el usuario no exista
-        let repo = new UsuarioRepository();
-        let users = await repo.GetByFilter(email);
-
-        // usuario existente
-        if (users.length > 0) {
-            response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe un usuario con el mismo email"}).end();
-            return;
-        }
-
-        // se hashea el password
-        let hashedPassword = passwordHash.generate(password);
-
-        let usuario: Usuarios = new Usuarios();
-        usuario.email = email;
-        usuario.fechaalta = new Date();
-        usuario.fechanacimiento = fechaParam;
-        usuario.idestado = 0;
-        usuario.moneda = moneda;
-        usuario.nombre = nombre;
-        usuario.password = hashedPassword;
-
-        await repo.Insert(usuario);
-
-        response.status(HttpStatus.OK).send();*/
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -397,10 +321,21 @@ apiRoutes.use(function(request, response, next) {
 apiRoutes.get('/usuarios', async function(request, response, next) {
     
     try {
-        let repo = new UsuarioRepository();
-        let users = await repo.GetByFilter(request.query.email);
+        let searchFilter: {[k: string]: any} = {};
 
-        response.status(HttpStatus.OK).send(users).end();
+        // filtro por email
+        if (request.query.email != undefined &&
+            request.query.email.length > 0) {
+            searchFilter.email = request.query.email;
+        }
+
+        UserModel.find(searchFilter, { conceptos: 0, __v: 0 } , function(err, results){
+            if (err) {
+                setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                return;
+            }
+            response.status(HttpStatus.OK).send(results).end();
+        });        
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -411,15 +346,21 @@ apiRoutes.get('/usuarios/conceptos', async function (request, response, next) {
     
     try {
         const idUsuario = request.decoded.id;
-        if (isNaN(idUsuario)) {
+        if (idUsuario === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
             return;
         }
 
-        let repo = new ConceptosRepository();
-        let conceptos = await repo.GetByUsuario(idUsuario);
-
-        response.status(HttpStatus.OK).send(conceptos).end();
+        UserModel.findOne({_id:idUsuario}, 
+                          {_id:0, "conceptos._id": 1, 
+                                  "conceptos.descripcion": 1, 
+                                  "conceptos.credito": 1}, function(err, results){
+            if (err) {
+                setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                return;
+            }
+            response.status(HttpStatus.OK).send(results).end();            
+        }); 
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -430,19 +371,18 @@ apiRoutes.get('/usuarios/:id', async function (request, response, next) {
     
     try {
         let id = request.params.id;
-        if (isNaN(id)) {
+        if (id === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
             return;
         }
 
-        let repo = new UsuarioRepository();
-        let user = await repo.GetById(id);
-        if (user === undefined) {
-            response.status(HttpStatus.NOT_FOUND).end();
-            return;
-        }
-        
-        response.status(HttpStatus.OK).send(user).end();
+        UserModel.findOne({_id:id}, {_id:0, conceptos: 0, __v:0}, function(err, results){
+            if (err) {
+                setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                return;
+            }
+            response.status(HttpStatus.OK).send(results).end();            
+        });
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -461,7 +401,7 @@ apiRoutes.put('/usuario', async function (request, response, next) {
 
         let fechaNacimParsed: Date = undefined;
 
-        if (isNaN(idUsuario)) {
+        if (idUsuario === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
             return;
         }
@@ -499,36 +439,34 @@ apiRoutes.put('/usuario', async function (request, response, next) {
             fechaNacimParsed.setUTCHours(0, 0, 0, 0);
         }
 
-        let repo = new UsuarioRepository();
-        
-        // se valida que no exista otro usuario con el mismo email
-        if (email != undefined) {
-            let users = await repo.GetByFilter(email);
-
-            // otro usuario ya tiene el mismo email
-            if (users.length > 0 &&
-                users[0].id != idUsuario) {
+        // se obtiene el usuario via email
+        UserModel.find({email: email}, function(err, results){
+            if (err) {
+                setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                return;
+            }
+            if(results.length > 0 &&
+               results[0].id != idUsuario){
                 response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe un usuario con el mismo email"}).end();
                 return;
             }
-        }
-
-        // se obtienen todos los datos del usuario a actualizar
-        let user = await repo.GetById(idUsuario)
-        if (user == null) {
-            response.status(HttpStatus.BAD_REQUEST).send({message: "Usuario Inexistente"}).end();
-            return;
-        }
-
-        user.email = (email != undefined && email.length > 0) ? email : user.email;
-        user.fechanacimiento = (fechaNacimParsed != undefined) ? fechaNacimParsed : user.fechanacimiento;
-        user.moneda = (moneda != undefined && moneda.length > 0) ? moneda : user.moneda;
-        user.nombre = (nombre != undefined && nombre.length > 0) ? nombre : user.nombre;
-        user.password = (password != undefined && password.length > 0) ? passwordHash.generate(password) : user.password;
-
-        await repo.Update(user);
-
-        response.status(HttpStatus.OK).send().end();
+            else {
+                // se actualizan los datos del usuario
+                UserModel.update({_id: idUsuario}, 
+                                 {email: (email != undefined && email.length > 0) ? email : results[0].email,
+                                  fechanacimiento: (fechaNacimParsed != undefined) ? fechaNacimParsed : results[0].fechanacimiento,
+                                  moneda: (moneda != undefined && moneda.length > 0) ? moneda : results[0].moneda,
+                                  nombre: (nombre != undefined && nombre.length > 0) ? nombre : results[0].nombre,
+                                  password: (password != undefined && password.length > 0) ? passwordHash.generate(password) : results[0].password}, 
+                                 function(err, numberAffected, rawResponse){
+                    if (err) {
+                        setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                        return;
+                    }                    
+                    response.status(HttpStatus.OK).send().end();
+                });           
+            }
+        });
     } catch(err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
