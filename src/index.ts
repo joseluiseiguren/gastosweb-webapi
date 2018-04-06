@@ -560,12 +560,16 @@ apiRoutes.post('/concepto', async function (request, response, next) {
 
         // se valida que el no exista un concepto con la misma descripcion
         UserModel.find({_id:idUsuario, "conceptos.descripcion":{ $regex : new RegExp(descripcion, "i") }}, function(err, results){
+            if (err) {
+                setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                return;
+            }
             if(results.length > 0){
                 response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe concepto con el mismo nombre"}).end();
                 return;
             }
             else{
-                // se agrega el concepto al usuario
+                // se agrega el concepto al usuario                
                 let concepto = {descripcion: descripcion, credito: credito};
                 UserModel.update({_id: idUsuario}, {$push:{conceptos:concepto}}, function(err, numberAffected, rawResponse){
                     if (err){
@@ -575,27 +579,7 @@ apiRoutes.post('/concepto', async function (request, response, next) {
                     }
                 });                
             }
-        });     
-
-
-
-        /*// se valida que el no exista un concepto con la misma descripcion
-        let repoConcepto = new ConceptosRepository();
-        let conceptoSearch = await repoConcepto.GetByDescrcipcion(idUsuario, descripcion);
-        if (conceptoSearch !== undefined) {
-            response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe concepto con el mismo nombre"}).end();
-            return;
-        }
-
-        let concepto = new Conceptos();
-        concepto.credito = credito;
-        concepto.descripcion = descripcion;
-        concepto.fechaalta = new Date();
-        concepto.idestado = 0;
-        concepto.idusuario = idUsuario;
-        await repoConcepto.Insert(concepto);
-        
-        response.status(HttpStatus.OK).send().end();*/
+        });
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -857,7 +841,7 @@ apiRoutes.post('/diario', async function (request, response, next) {
             importe = request.body.importe,
             idConcepto = request.body.idConcepto;
 
-        if (isNaN(idUsuario)) {
+        if (idUsuario === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
             return;
         }
@@ -867,7 +851,7 @@ apiRoutes.post('/diario', async function (request, response, next) {
             return;
         }
 
-        if (isNaN(idConcepto)) {
+        if (idConcepto === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id concepto invalido"}).end();
             return;
         }
@@ -883,8 +867,49 @@ apiRoutes.post('/diario', async function (request, response, next) {
                             Number(fecha.substring(6, 8))+1, 
                             0, 0, 0, 0);
         fechaParam.setUTCHours(0, 0, 0, 0);
+
+        // se busca el concepto
+        UserModel.find({_id:idUsuario, "conceptos._id":idConcepto}, function(err, results){
+            if (err) {
+                setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                return;
+            }
+            if(results.length <= 0){
+                response.status(HttpStatus.BAD_REQUEST).send({message: "El conepto no pertenece al usuario"}).end();
+                return;
+            }
+            else{
+                // se verifica si ya existe el concepto cargado para esa fecha
+                UserModel.find({_id:idUsuario, 
+                                "conceptos._id":idConcepto, 
+                                "conceptos.movimientos.fecha": {$gt: new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),0,0,0), $lt: new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),23,59,59)}},
+                                function(err, results){
+                    if (err) {
+                        setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                        return;
+                    }
+                    // no existe el registro, se inserta
+                    if(results.length <= 0){
+                        let movim = {fecha: fechaParam, importe: importe, fechaalta: new Date()};
+                        UserModel.update({_id:idUsuario, "conceptos._id":idConcepto}, {$push : {'conceptos.$.movimientos': movim}}, function(err, numberAffected, rawResponse){
+                            if (err){
+                                throw err;
+                            } else {
+                                response.status(HttpStatus.OK).send("insert ok").end();
+                            }
+                        });   
+                    } else {
+                        // ya existe el concepto, se actualiza
+                        response.status(HttpStatus.OK).send("update ok").end();
+                    }
+                });
+                
+
+
+            }
+        });
         
-        // se valida que el concepto pertenezca al usuario
+        /*// se valida que el concepto pertenezca al usuario
         let repo = new ConceptosRepository();
         let concepto = await repo.GetById(idConcepto);
         
@@ -912,7 +937,7 @@ apiRoutes.post('/diario', async function (request, response, next) {
             await repoDiario.Update(diario);
         }
 
-        response.status(HttpStatus.OK).send().end();
+        response.status(HttpStatus.OK).send().end();*/
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
