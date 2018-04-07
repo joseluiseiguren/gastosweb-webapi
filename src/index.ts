@@ -29,6 +29,8 @@ var mongoose        = require('mongoose');
 mongoose.connect(config.dbMongo.strconexion);
 
 var UserModel = require('../src/models/user.model');
+var ConceptoModel = require('../src/models/concepto.model');
+var MovimientoModel = require('../src/models/movimiento.model');
 
 // configuracion de log4j
 log4js.configure({ 
@@ -125,7 +127,9 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
         }
 
         // se obtiene el usuario via email
-        UserModel.find({email: email}, function(err, results){
+        UserModel.find(
+            {email: { $regex: new RegExp("^" + email.toLowerCase(), "i")}},
+            function(err, results){
             if (err) {
                 setImmediate(() => { next(new Error(JSON.stringify(err))); });
                 return;
@@ -249,7 +253,9 @@ apiRoutes.post('/usuarios/registracion', async (request, response, next) => {
         fechaParam.setUTCHours(0, 0, 0, 0);
 
         // valida que el usuario no exista
-        UserModel.find({email: email}, function(err, results){
+        UserModel.find(
+            {email: { $regex: new RegExp("^" + email.toLowerCase(), "i")}},
+            function(err, results){
             if (err) {
                 setImmediate(() => { next(new Error(JSON.stringify(err))); });
                 return;
@@ -440,7 +446,9 @@ apiRoutes.put('/usuario', async function (request, response, next) {
         }
 
         // se obtiene el usuario via email
-        UserModel.find({email: email}, function(err, results){
+        UserModel.find(
+            {email: { $regex: new RegExp("^" + email.toLowerCase(), "i")}},
+            function(err, results){
             if (err) {
                 setImmediate(() => { next(new Error(JSON.stringify(err))); });
                 return;
@@ -481,7 +489,7 @@ apiRoutes.get('/conceptos/mensual/:mes/sumary', async function (request, respons
     
     try {
         const idUsuario = request.decoded.id;
-        if (isNaN(idUsuario)) {
+        if (idUsuario === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
             return;
         }
@@ -559,27 +567,37 @@ apiRoutes.post('/concepto', async function (request, response, next) {
         }
 
         // se valida que el no exista un concepto con la misma descripcion
-        UserModel.find({_id:idUsuario, "conceptos.descripcion":{ $regex : new RegExp(descripcion, "i") }}, function(err, results){
-            if (err) {
-                setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                return;
+        ConceptoModel.find(
+            {user:idUsuario, 
+                descripcion:{ $regex : new RegExp(descripcion, "i") }}, 
+            function(err, results){
+                if (err) {
+                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                    return;
+                }
+                if(results.length > 0){
+                    response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe concepto con el mismo nombre"}).end();
+                    return;
+                }
+                else{
+                    // se agrega el concepto al usuario                
+                    let conceptoM = new ConceptoModel({
+                        descripcion: descripcion,
+                        credito: credito,
+                        user: idUsuario
+                    });
+                    conceptoM.save(function(err){
+                        if (err) {
+                            setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                            return;
+                        }
+                        else {
+                            response.status(HttpStatus.OK).send();
+                        }
+                    }); 
+                }
             }
-            if(results.length > 0){
-                response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe concepto con el mismo nombre"}).end();
-                return;
-            }
-            else{
-                // se agrega el concepto al usuario                
-                let concepto = {descripcion: descripcion, credito: credito};
-                UserModel.update({_id: idUsuario}, {$push:{conceptos:concepto}}, function(err, numberAffected, rawResponse){
-                    if (err){
-                        throw err;
-                    } else {
-                        response.status(HttpStatus.OK).send().end();
-                    }
-                });                
-            }
-        });
+        );
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -594,52 +612,73 @@ apiRoutes.put('/concepto', async function (request, response, next) {
             credito = request.body.credito,
             idConcepto = request.body.idconcepto;
 
-            if (isNaN(idUsuario)) {
-                response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
-                return;
-            }
+        if (idUsuario === undefined) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
+            return;
+        }
 
-            if (isNaN(idConcepto)) {
-                response.status(HttpStatus.BAD_REQUEST).send({message: "Id concepto invalido"}).end();
-                return;
-            }
-    
-            if (isNaN(credito) || Number(credito) > 1) {
-                response.status(HttpStatus.BAD_REQUEST).send({message: "Credito invalido"}).end();
-                return;
-            }
-    
-            if (descripcion == undefined || descripcion.length <= 0) {
-                response.status(HttpStatus.BAD_REQUEST).send({message: "Descripcion invalida"}).end();
-                return;
-            }
-    
+        if (idConcepto === undefined) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Id concepto invalido"}).end();
+            return;
+        }
+
+        if (isNaN(credito) || Number(credito) > 1) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Credito invalido"}).end();
+            return;
+        }
+
+        if (descripcion == undefined || descripcion.length <= 0) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Descripcion invalida"}).end();
+            return;
+        }
 
         // se valida que exista el concepto y pertenezca al usuario
-        let repoConcepto = new ConceptosRepository();
-        let conceptoSearch = await repoConcepto.GetById(idConcepto);
-        
-        if (conceptoSearch === undefined ||
-            conceptoSearch.idusuario !== idUsuario) {
-            response.status(HttpStatus.BAD_REQUEST).send({message: "El concepto no pertenece al usuario"}).end();
-            return;
-        }
+        ConceptoModel.findById(idConcepto, 
+            function(err, results){
+                if (err) {
+                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                    return;
+                }
+                
+                // el concepto no existe o no pertenece al usuario
+                if (results == null || results.user != idUsuario) {
+                    response.status(HttpStatus.BAD_REQUEST).send({message: "El conepto no pertenece al usuario"}).end();
+                    return;
+                }
 
-        // se valida que no haya otro concepto con el mismo nombre para ese usuario
-        conceptoSearch = await repoConcepto.GetByDescrcipcion(idUsuario, descripcion);
-        if (conceptoSearch !== undefined &&
-            conceptoSearch.id != idConcepto) {
-            response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe otro concepto con el mismo nombre"}).end();
-            return;
-        }
+                // se valida que no haya otro concepto con el mismo nombre para ese usuario
+                ConceptoModel.find(
+                    {user:idUsuario, 
+                        descripcion: { $regex: new RegExp("^" + descripcion.toLowerCase(), "i")}}, 
+                    function(err, results){
+                        if (err) {
+                            setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                            return;
+                        }
 
-        let concepto = new Conceptos();
-        concepto.credito = credito;
-        concepto.descripcion = descripcion;
-        concepto.id = idConcepto;
-        await repoConcepto.Update(concepto);
-        
-        response.status(HttpStatus.OK).send().end();
+                        // ya existe otro concepto con el mismo nombre
+                        if (results.length > 0 && results[0]._id != idConcepto){
+                            response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe otro concepto con el mismo nombre"}).end();
+                            return;
+                        }
+
+                        ConceptoModel.update(
+                            {_id:idConcepto}, 
+                            {descripcion: descripcion,
+                             credito:credito},
+                            function(err, results){
+                                if (err) {
+                                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                                    return;
+                                }
+
+                                response.status(HttpStatus.OK).send().end();
+                            }
+                        );
+                    }
+                );
+            }
+        );
     } catch(err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -815,15 +854,43 @@ apiRoutes.get('/historico/sumary', async function (request, response, next) {
     
     try {
         const idUsuario = request.decoded.id;
-        if (isNaN(idUsuario)) {
+        if (idUsuario === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
             return;
         }
 
-        let repo = new HistoricoRepository();
-        let hist = await repo.GetTotal(idUsuario);
+        let resp = {};
 
-        response.status(HttpStatus.OK).send(hist).end();
+        // obtengo el total de ingresos
+        MovimientoModel.aggregate(
+            [
+                {"$match": {"user": new  mongoose.Types.ObjectId(idUsuario), "importe":{$gt:0}}},
+                {$group: {_id: '$user', ingresos: {$sum: "$importe"}}}
+            ], 
+            function(err, result){
+            if (err) {
+                setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                return;
+            }
+
+            resp['ingresos'] = (result[0] !== undefined) ? result[0].ingresos : 0;
+
+            // obtengo el total de egresos
+            MovimientoModel.aggregate(
+                [
+                    {"$match": {"user": new  mongoose.Types.ObjectId(idUsuario), "importe":{$lt:0}}},
+                    {$group: {_id: '$user', egresos: {$sum: "$importe"}}}
+                ], 
+                function(err, result){
+                if (err) {
+                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                    return;
+                }
+
+                resp['egresos'] = (result[0] !== undefined) ? result[0].egresos : 0;
+                response.status(HttpStatus.OK).send(resp).end();
+            });
+        });
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -868,76 +935,68 @@ apiRoutes.post('/diario', async function (request, response, next) {
                             0, 0, 0, 0);
         fechaParam.setUTCHours(0, 0, 0, 0);
 
-        // se busca el concepto
-        UserModel.find({_id:idUsuario, "conceptos._id":idConcepto}, function(err, results){
-            if (err) {
-                setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                return;
-            }
-            if(results.length <= 0){
-                response.status(HttpStatus.BAD_REQUEST).send({message: "El conepto no pertenece al usuario"}).end();
-                return;
-            }
-            else{
-                // se verifica si ya existe el concepto cargado para esa fecha
-                UserModel.find({_id:idUsuario, 
-                                "conceptos._id":idConcepto, 
-                                "conceptos.movimientos.fecha": {$gt: new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),0,0,0), $lt: new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),23,59,59)}},
-                                function(err, results){
-                    if (err) {
-                        setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                        return;
-                    }
-                    // no existe el registro, se inserta
-                    if(results.length <= 0){
-                        let movim = {fecha: fechaParam, importe: importe, fechaalta: new Date()};
-                        UserModel.update({_id:idUsuario, "conceptos._id":idConcepto}, {$push : {'conceptos.$.movimientos': movim}}, function(err, numberAffected, rawResponse){
-                            if (err){
-                                throw err;
-                            } else {
-                                response.status(HttpStatus.OK).send("insert ok").end();
-                            }
-                        });   
-                    } else {
-                        // ya existe el concepto, se actualiza
-                        response.status(HttpStatus.OK).send("update ok").end();
-                    }
-                });
+        // se busca el concepto para el cual se va a cargar el movimiento
+        ConceptoModel.findById(idConcepto, 
+            function(err, results){
+                if (err) {
+                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                    return;
+                }
                 
+                // el concepto no existe o no pertenece al usuario
+                if (results == null || results.user != idUsuario) {
+                    response.status(HttpStatus.BAD_REQUEST).send({message: "El conepto no pertenece al usuario"}).end();
+                    return;
+                }
 
+                // se busca el movimiento para la fecha solicitada
+                MovimientoModel.findOne(
+                    {concepto: idConcepto, 
+                        fecha: {$gt: new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),0,0,0), $lt: new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),23,59,59)}}, 
+                    function(err, results){
+                        if (err) {
+                            setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                            return;
+                        }
+                        
+                        // no existe un movimiento cargado para la fecha solicitada, hay que hacer un insert
+                        if (results == null) {
+                            let movimientoM = new MovimientoModel({
+                                user: idUsuario,
+                                concepto: idConcepto,
+                                fecha: fechaParam,
+                                importe: importe
+                            });
+                            movimientoM.save(function(err){
+                                if (err) {
+                                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                                    return;
+                                }
+                                else {
+                                    response.status(HttpStatus.OK).send();
+                                }
+                            });                             
+                        }
+                        else{
+                            // ya existe el movimiento para la fecha solicitada, se actualiza
+                            MovimientoModel.update(
+                                {_id:results._id},
+                                {importe:importe,
+                                 fechaalta: new Date()},
+                                function(err, results){
+                                    if (err) {
+                                        setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                                        return;
+                                    }
 
+                                    response.status(HttpStatus.OK).send();
+                                }
+                            );                            
+                        }            
+                    }
+                ); 
             }
-        });
-        
-        /*// se valida que el concepto pertenezca al usuario
-        let repo = new ConceptosRepository();
-        let concepto = await repo.GetById(idConcepto);
-        
-        if (concepto === undefined ||
-            concepto.idusuario !== idUsuario) {
-            response.status(HttpStatus.BAD_REQUEST).send({message: "El conepto no pertenece al usuario"}).end();
-            return;
-        }
-
-        // se verifica si ya exisgte el item cargado para esa fecha
-        let repoDiario = new DiarioRepository();
-        let diario = await repoDiario.GetById(idConcepto, fechaParam);
-
-        // no existe el item, hay que insertarlo
-        if (diario === undefined) {
-            diario = new Diario();
-            diario.fecha = fechaParam;
-            diario.fechaalta = new Date();
-            diario.idconcepto = idConcepto;
-            diario.importe = importe;
-            await repoDiario.Insert(diario);
-        } else {
-            // ya existe el item, hay que actualizarlo
-            diario.importe = importe;
-            await repoDiario.Update(diario);
-        }
-
-        response.status(HttpStatus.OK).send().end();*/
+        ); 
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -948,15 +1007,44 @@ apiRoutes.get('/diario/first', async function (request, response, next) {
     
     try {
         const idUsuario = request.decoded.id;
-        if (isNaN(idUsuario)) {
+        if (idUsuario === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
             return;
         }
 
-        let repo = new DiarioRepository();
-        let minDiario = await repo.GetMinConsumoByUsuario(idUsuario);
+        var fechaMax = null;
+        var fechaMin = null;
 
-        response.status(HttpStatus.OK).send(minDiario).end();
+        // busca el max de fecha
+        MovimientoModel.findOne()
+            .where({user:idUsuario})
+            .sort('-fecha')
+            .exec(function(err, result)
+            {
+                if (err) {
+                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                    return;
+                }
+
+                fechaMax = result.fecha;
+
+                // busca el min de fecha
+                MovimientoModel.findOne()
+                    .where({user:idUsuario})
+                    .sort('fecha')
+                    .exec(function(err, result)
+                    {
+                        if (err) {
+                            setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                            return;
+                        }
+
+                        fechaMin = result.fecha;                    
+                        response.status(HttpStatus.OK).send({fechaMin: fechaMin, fechaMax: fechaMax}).end();
+                    }
+                );
+            }
+        );
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -967,7 +1055,7 @@ apiRoutes.get('/diario/:fecha', async function (request, response, next) {
     
     try {
         const idUsuario = request.decoded.id;
-        if (isNaN(idUsuario)) {
+        if (idUsuario === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
             return;
         }
@@ -986,10 +1074,33 @@ apiRoutes.get('/diario/:fecha', async function (request, response, next) {
                                     0, 0, 0, 0);
         fechaParam.setUTCHours(0, 0, 0, 0);
 
-        let repo = new DiarioRepository();
-        let diario = await repo.GetByUsuario(idUsuario, fechaParam);
+        var resp = new Array();
+        let conceptos = ConceptoModel.find({user:idUsuario}).sort('descripcion').cursor();
+        for (let doc = await conceptos.next(); doc != null; doc = await conceptos.next()) {
+            let foo = {};
+            foo['idconcepto'] = doc._id.toString();
+            foo['descripcion'] = doc.descripcion;
+            foo['credito'] = doc.credito;
+            
+            let movimiento = MovimientoModel.find(
+                {concepto:doc._id, 
+                 fecha: {$gt: new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),0,0,0), $lt: new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),23,59,59)}}).cursor();
 
-        response.status(HttpStatus.OK).send(diario).end();
+            for (let mov = await movimiento.next(); mov != null; mov = await movimiento.next()) {
+                foo['fecha'] = mov.fecha;
+                foo['importe'] = mov.importe;
+            }
+
+            // el concepto no tiene movimientos
+            if(foo['importe'] === undefined){
+                foo['fecha'] = null;
+                foo['importe'] = null;
+            }
+            
+            resp.push(foo);            
+        }
+
+        response.status(HttpStatus.OK).send(resp).end();
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
