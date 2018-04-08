@@ -1,8 +1,7 @@
 {
 	"info": {
+		"_postman_id": "8ba67bc7-7178-4c97-1c81-90a4d684d898",
 		"name": "Anual",
-		"_postman_id": "31a94bd7-0341-4c54-d096-6ab56d1be69c",
-		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -18,7 +17,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://{{host}}/api/anual/2018/sumary",
+					"raw": "http://{{host}}/api/anual/2017/sumary",
 					"protocol": "http",
 					"host": [
 						"{{host}}"
@@ -26,7 +25,7 @@
 					"path": [
 						"api",
 						"anual",
-						"2018",
+						"2017",
 						"sumary"
 					]
 				},

@@ -8,3 +8,4 @@
     - Tener un ormconfig.json de dev y otro de prod
 - migrar a mongo db
 - implementar signalR
+- pàtron repository urgente: index.ts no tiene que saber de sintaxis mongoose

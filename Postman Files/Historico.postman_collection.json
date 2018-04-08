@@ -1,8 +1,7 @@
 {
 	"info": {
+		"_postman_id": "30f0ead8-1b00-7ac1-1aeb-8222057852da",
 		"name": "Historico",
-		"_postman_id": "ab20af99-acb4-006a-27aa-82daa76d1cdc",
-		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -73,7 +72,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://{{host}}/api/conceptos/4/movimientos/historico",
+					"raw": "http://{{host}}/api/conceptos/5ac8e8ac551d202cb82ce9d1/movimientos/historico",
 					"protocol": "http",
 					"host": [
 						"{{host}}"
@@ -81,7 +80,7 @@
 					"path": [
 						"api",
 						"conceptos",
-						"4",
+						"5ac8e8ac551d202cb82ce9d1",
 						"movimientos",
 						"historico"
 					]

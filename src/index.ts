@@ -746,15 +746,35 @@ apiRoutes.get('/conceptos/historico/sumary', async function (request, response, 
     
     try {
         const idUsuario = request.decoded.id;
-        if (isNaN(idUsuario)) {
+        if (idUsuario === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
             return;
         }
 
-        let repo = new ConceptosRepository();
-        let conceptosTotalHist = await repo.GetConceptosHistorico(idUsuario);
+        var resp = new Array();
+        let conceptos = ConceptoModel.find({user:idUsuario}).sort('descripcion').cursor();
+        for (let doc = await conceptos.next(); doc != null; doc = await conceptos.next()) {
+            let foo = {};
+            foo['idconcepto'] = doc._id.toString();
+            foo['descripcion'] = doc.descripcion;
 
-        response.status(HttpStatus.OK).send(conceptosTotalHist).end();
+            var totalconcepto = await MovimientoModel.aggregate(
+                [
+                    {"$match": {
+                        "user": new  mongoose.Types.ObjectId(idUsuario),
+                        "concepto": new  mongoose.Types.ObjectId(doc._id)}
+                    },
+                    {$group: {
+                        _id : "$concepto",
+                        importe : { $sum : "$importe" }
+                        }
+                    }
+                ]
+            );
+
+            resp.push({idConcepto:doc._id.toString(), descripcion: doc.descripcion, saldo: (totalconcepto.length > 0) ? totalconcepto[0].importe : 0 });
+        }
+        response.status(HttpStatus.OK).send(resp).end();
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -766,21 +786,44 @@ apiRoutes.get('/conceptos/:id/movimientos/historico', async function (request, r
     
     try {
         const idUsuario = request.decoded.id;
-        if (isNaN(idUsuario)) {
+        if (idUsuario === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
             return;
         }
 
         const idConcepto = request.params.id;
-        if (isNaN(idConcepto)) {
+        if (idConcepto === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id concepto invalido"}).end();
             return;
         }
 
-        let repo = new ConceptosRepository();
-        let concep = await repo.GetConceptosMovimHistorico(idUsuario, idConcepto);
-
-        response.status(HttpStatus.OK).send(concep).end();
+        var resp = new Array();
+        
+        MovimientoModel.aggregate(
+            [
+                {"$match": {
+                    "user": new  mongoose.Types.ObjectId(idUsuario),
+                    "concepto": new  mongoose.Types.ObjectId(idConcepto),
+                    "importe": {$ne:0}}
+                },
+                {$group: {
+                    _id : { $year : "$fecha" } ,
+                    importe : { $sum : "$importe" }
+                    }
+                }
+            ],
+            function(err, result){
+                if (err) {
+                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                    return;
+                }
+                result.forEach(element => {
+                    resp.push({anio: element._id, importe: element.importe})
+                });
+                
+                response.status(HttpStatus.OK).send(resp).end();
+            }
+        );
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -795,23 +838,65 @@ apiRoutes.get('/mensual/:fecha/sumary', async function (request, response, next)
     
     try {
         const idUsuario = request.decoded.id;
-        if (isNaN(idUsuario)) {
+        if (idUsuario === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
             return;
         }
 
+        // YYYYMM
         let fecha = request.params.fecha;
         if (isNaN(fecha) ||
-            fecha.length < 5 || 
-            fecha.length > 6) {
+            fecha.length != 6) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Fecha invalida"}).end();
             return;
         }
+        
+        let anio = Number(fecha.substring(0, 4));
+        let mes = Number(fecha.substring(4, 6));
 
-        let repo = new MensualRepository();
-        let mensual = await repo.GetTotal(idUsuario, fecha);
+        let fechadesde = new Date(anio,mes-1,1,0,0,0);
+        let fechahasta = new Date(anio,mes,1,0,0,0);
 
-        response.status(HttpStatus.OK).send(mensual).end();
+        let resp = {};
+        
+        // obtengo el total de ingresos
+        MovimientoModel.aggregate(
+            [
+                {"$match": {
+                    "user": new  mongoose.Types.ObjectId(idUsuario), 
+                    "importe":{$gt:0},
+                    "fecha": {$gt:fechadesde, $lt: fechahasta}}
+                },
+                {$group: {_id: '$user', ingresos: {$sum: "$importe"}}}
+            ], 
+            function(err, result){
+            if (err) {
+                setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                return;
+            }
+
+            resp['ingresos'] = (result[0] !== undefined) ? result[0].ingresos : 0;
+
+            // obtengo el total de egresos
+            MovimientoModel.aggregate(
+                [
+                    {"$match": {
+                        "user": new  mongoose.Types.ObjectId(idUsuario), 
+                        "importe":{$lt:0},
+                        "fecha": {$gt:fechadesde, $lt: fechahasta}}
+                    },
+                    {$group: {_id: '$user', egresos: {$sum: "$importe"}}}
+                ], 
+                function(err, result){
+                if (err) {
+                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                    return;
+                }
+
+                resp['egresos'] = (result[0] !== undefined) ? result[0].egresos : 0;
+                response.status(HttpStatus.OK).send(resp).end();
+            });
+        });
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -825,7 +910,7 @@ apiRoutes.get('/anual/:fecha/sumary', async function (request, response, next) {
     
     try {
         const idUsuario = request.decoded.id;
-        if (isNaN(idUsuario)) {
+        if (idUsuario === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
             return;
         }
@@ -837,10 +922,46 @@ apiRoutes.get('/anual/:fecha/sumary', async function (request, response, next) {
             return;
         }
 
-        let repo = new AnualRepository();
-        let anual = await repo.GetTotal(idUsuario, fecha);
+        let resp = {};
+        
+        // obtengo el total de ingresos
+        MovimientoModel.aggregate(
+            [
+                {"$match": {
+                    "user": new  mongoose.Types.ObjectId(idUsuario), 
+                    "importe":{$gt:0},
+                    "fecha": {$gt: new Date(Number(fecha),0,1,0,0,0), $lt: new Date(Number(fecha),11,31,23,59,59)}}
+                },
+                {$group: {_id: '$user', ingresos: {$sum: "$importe"}}}
+            ], 
+            function(err, result){
+            if (err) {
+                setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                return;
+            }
 
-        response.status(HttpStatus.OK).send(anual).end();
+            resp['ingresos'] = (result[0] !== undefined) ? result[0].ingresos : 0;
+
+            // obtengo el total de egresos
+            MovimientoModel.aggregate(
+                [
+                    {"$match": {
+                        "user": new  mongoose.Types.ObjectId(idUsuario), 
+                        "importe":{$lt:0},
+                        "fecha": {$gt: new Date(Number(fecha),1,1,0,0,0), $lt: new Date(Number(fecha),12,31,23,59,59)}}
+                    },
+                    {$group: {_id: '$user', egresos: {$sum: "$importe"}}}
+                ], 
+                function(err, result){
+                if (err) {
+                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                    return;
+                }
+
+                resp['egresos'] = (result[0] !== undefined) ? result[0].egresos : 0;
+                response.status(HttpStatus.OK).send(resp).end();
+            });
+        });
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }

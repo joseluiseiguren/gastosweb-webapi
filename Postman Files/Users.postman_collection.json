@@ -127,7 +127,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"email\":\"joseluiseiguren42@gmail.com\",\n\t\"password\":\"mataderos\",\n\t\"location\":\"\"\n}"
+					"raw": "{\n\t\"email\":\"joseluiseiguren44@gmail.com\",\n\t\"password\":\"mataderos\",\n\t\"location\":\"\"\n}"
 				},
 				"url": {
 					"raw": "http://{{host}}/api/usuarios/login",
@@ -179,7 +179,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"email\":\"joseluiseiguren55@gmail.com\",\n\t\"password\":\"mataderos1\",\n\t\"nombre\":\"Martin\",\n\t\"fechanacimiento\":\"19800514\",\n\t\"moneda\":\"E\"\n}"
+					"raw": "{\n\t\"email\":\"JOSeluiseiguren66@gmail.com\",\n\t\"password\":\"mataderos1\",\n\t\"nombre\":\"Olga\",\n\t\"fechanacimiento\":\"19800514\",\n\t\"moneda\":\"E\"\n}"
 				},
 				"url": {
 					"raw": "http://{{host}}/api/usuarios/registracion",
@@ -213,7 +213,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"descripcion\":\"MUEBLES2\",\n\t\"credito\":false\n}"
+					"raw": "{\n\t\"descripcion\":\"Salidas\",\n\t\"credito\":false\n}"
 				},
 				"url": {
 					"raw": "http://{{host}}/api/concepto",
@@ -246,7 +246,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"descripcion\":\"Supermercado\",\n\t\"credito\":false,\n\t\"idconcepto\":1\n}"
+					"raw": "{\n\t\"descripcion\":\"auto\",\n\t\"credito\":false,\n\t\"idconcepto\":\"5ac8e5968e3fe217eca01700\"\n}"
 				},
 				"url": {
 					"raw": "http://{{host}}/api/concepto",
@@ -279,7 +279,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"email\":\"flopyglorias@gmail.com\",\n\t\"password\":\"mataderos\",\n\t\"nombre\":\"Flor\",\n\t\"fechanacimiento\":\"19861227\",\n\t\"moneda\":\"€\"\n}"
+					"raw": "{\n\t\"email\":\"flopyglorias@gmail.com\",\n\t\"password\":\"mataderos\",\n\t\"nombre\":\"Flora\",\n\t\"fechanacimiento\":\"19861227\",\n\t\"moneda\":\"€\"\n}"
 				},
 				"url": {
 					"raw": "http://{{host}}/api/usuario",

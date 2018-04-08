@@ -1,8 +1,7 @@
 {
 	"info": {
+		"_postman_id": "53133420-988a-2a42-db51-979a8b3052a8",
 		"name": "Diario",
-		"_postman_id": "b79ca0cc-3910-e97b-4256-e47d31a00020",
-		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -18,17 +17,15 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://{{host}}/api/usuarios/1/diario/20180201",
+					"raw": "http://{{host}}/api/diario/20180529",
 					"protocol": "http",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
-						"usuarios",
-						"1",
 						"diario",
-						"20180201"
+						"20180529"
 					]
 				},
 				"description": "X\t"
@@ -78,7 +75,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"fecha\":\"20180531\",\n\t\"importe\":\"51\",\n\t\"idConcepto\": 4\n}"
+					"raw": "{\n\t\"fecha\":\"20160230\",\n\t\"importe\":\"-900\",\n\t\"idConcepto\": \"5ac9f70084f916379c7bc5ab\"\n}"
 				},
 				"url": {
 					"raw": "http://{{host}}/api/diario",
