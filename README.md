@@ -1,5 +1,5 @@
 # WebApi del proyecto de control de gastos
         
-- Orm: typeorm
+- Orm: mongoose
 - Database: mysql
 - Http: express.js

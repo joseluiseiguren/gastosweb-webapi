@@ -1,17 +1,5 @@
 import "reflect-metadata";
-import { createConnection, Connection, getConnectionManager} from "typeorm";
-import { Usuarios } from "./entity/Usuarios";
-import { Conceptos } from "./entity/Conceptos";
-import { UsuarioRepository } from "./repositorios/UsuariosRepository";
-import { ConceptosRepository } from "./repositorios/ConceptosRepository";
-import { DiarioRepository } from "./repositorios/DiarioRepository";
-import { Diario } from "./entity/Diarios";
-import { MensualRepository } from "./repositorios/MensualRepository";
-import { AnualRepository } from "./repositorios/AnualRepository";
-import { HistoricoRepository } from "./repositorios/HistoricoRepository";
-import { Audit } from "./entity/Audit";
-import { AuditRepository } from "./repositorios/AuditRepository";
-import { SaveAudit, SaveAudit2 } from "./repositorios/DbConection";
+import { SaveAudit2 } from "./GenericFunctions";
 
 var express         = require('express');
 var cors            = require('cors');
@@ -357,16 +345,15 @@ apiRoutes.get('/usuarios/conceptos', async function (request, response, next) {
             return;
         }
 
-        UserModel.findOne({_id:idUsuario}, 
-                          {_id:0, "conceptos._id": 1, 
-                                  "conceptos.descripcion": 1, 
-                                  "conceptos.credito": 1}, function(err, results){
-            if (err) {
-                setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                return;
+        ConceptoModel.find({user: idUsuario}, {user:0, __v:0},
+            function(err, results){
+                if (err) {                    
+                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                    return;
+                }
+                response.status(HttpStatus.OK).send(results).end();
             }
-            response.status(HttpStatus.OK).send(results).end();            
-        }); 
+        ).sort('descripcion'); 
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -484,7 +471,7 @@ apiRoutes.put('/usuario', async function (request, response, next) {
 
 /**** CONCEPTOS ****************************************************************************************/
 
-//obtiene el total de cada concepto para un mes parametrizado para un usuario
+//obtiene el total de cada concepto para un mes (YYYYMM) parametrizado para un usuario
 apiRoutes.get('/conceptos/mensual/:mes/sumary', async function (request, response, next) {
     
     try {
@@ -502,10 +489,34 @@ apiRoutes.get('/conceptos/mensual/:mes/sumary', async function (request, respons
             return;
         }
 
-        let repo = new ConceptosRepository();
-        let conceptosTotalMes = await repo.GetConceptosMensual(idUsuario, fecha);
+        let mes = Number(fecha.toString().substring(4, 6));
+        let anio = Number(fecha.toString().substring(0, 4));
 
-        response.status(HttpStatus.OK).send(conceptosTotalMes).end();
+        var resp = new Array();
+        let conceptos = ConceptoModel.find({user:idUsuario}).sort('descripcion').cursor();
+        for (let doc = await conceptos.next(); doc != null; doc = await conceptos.next()) {
+            let foo = {};
+            foo['idconcepto'] = doc._id.toString();
+            foo['descripcion'] = doc.descripcion;
+
+            var totalconcepto = await MovimientoModel.aggregate(
+                [
+                    {"$match": {
+                        "user": new mongoose.Types.ObjectId(idUsuario),
+                        "concepto": new  mongoose.Types.ObjectId(doc._id),
+                        "fecha": {$gt: new Date(anio,mes-1,1,0,0,0), $lt: new Date(anio,mes,1,0,0,0)}}
+                    },
+                    {$group: {
+                        _id : "$concepto",
+                        importe : { $sum : "$importe" }
+                        }
+                    }
+                ]
+            );
+
+            resp.push({idConcepto:doc._id.toString(), descripcion: doc.descripcion, saldo: (totalconcepto.length > 0) ? totalconcepto[0].importe : 0 });
+        }
+        response.status(HttpStatus.OK).send(resp).end();
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -517,13 +528,13 @@ apiRoutes.get('/conceptos/:id/movimientos/mensual/:mes', async function (request
     
     try {
         const idUsuario = request.decoded.id;
-        if (isNaN(idUsuario)) {
+        if (idUsuario === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
             return;
         }
 
         const idConcepto = request.params.id;
-        if (isNaN(idConcepto)) {
+        if (idConcepto === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id concepto invalido"}).end();
             return;
         }
@@ -534,10 +545,38 @@ apiRoutes.get('/conceptos/:id/movimientos/mensual/:mes', async function (request
             return;
         }
 
-        let repo = new ConceptosRepository();
-        let concep = await repo.GetConceptosMovimMensual(idUsuario, fecha, idConcepto);
+        let mes = Number(fecha.toString().substring(4, 6));
+        let anio = Number(fecha.toString().substring(0, 4));
 
-        response.status(HttpStatus.OK).send(concep).end();
+        var resp = new Array();
+        
+        MovimientoModel.aggregate(
+            [
+                {"$match": {
+                    "user": new  mongoose.Types.ObjectId(idUsuario),
+                    "concepto": new  mongoose.Types.ObjectId(idConcepto),
+                    "fecha": {$gt: new Date(anio,mes-1,1,0,0,0), $lt: new Date(anio,mes,1,0,0,0)},
+                    "importe": {$ne:0}}
+                },
+                {$group: {
+                    _id : "$fecha" ,
+                    importe : { $sum : "$importe" }
+                    }
+                },
+                { $sort : { _id : 1 } }
+            ],
+            function(err, result){
+                if (err) {
+                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                    return;
+                }
+                result.forEach(element => {
+                    resp.push({fecha: element._id, importe: element.importe})
+                });
+                
+                response.status(HttpStatus.OK).send(resp).end();
+            }
+        );
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -689,7 +728,7 @@ apiRoutes.get('/conceptos/anual/:anio/sumary', async function (request, response
     
     try {
         const idUsuario = request.decoded.id;
-        if (isNaN(idUsuario)) {
+        if (idUsuario === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
             return;
         }
@@ -700,10 +739,31 @@ apiRoutes.get('/conceptos/anual/:anio/sumary', async function (request, response
             return;
         }
 
-        let repo = new ConceptosRepository();
-        let conceptosTotalAnio = await repo.GetConceptosAnual(idUsuario, anio);
+        var resp = new Array();
+        let conceptos = ConceptoModel.find({user:idUsuario}).sort('descripcion').cursor();
+        for (let doc = await conceptos.next(); doc != null; doc = await conceptos.next()) {
+            let foo = {};
+            foo['idconcepto'] = doc._id.toString();
+            foo['descripcion'] = doc.descripcion;
 
-        response.status(HttpStatus.OK).send(conceptosTotalAnio).end();
+            var totalconcepto = await MovimientoModel.aggregate(
+                [
+                    {"$match": {
+                        "user": new  mongoose.Types.ObjectId(idUsuario),
+                        "concepto": new  mongoose.Types.ObjectId(doc._id),
+                        "fecha": {$gt: new Date(Number(anio),0,1,0,0,0), $lt: new Date(Number(anio),11,31,23,59,59)}}
+                    },
+                    {$group: {
+                        _id : "$concepto",
+                        importe : { $sum : "$importe" }
+                        }
+                    }
+                ]
+            );
+
+            resp.push({idConcepto:doc._id.toString(), descripcion: doc.descripcion, saldo: (totalconcepto.length > 0) ? totalconcepto[0].importe : 0 });
+        }
+        response.status(HttpStatus.OK).send(resp).end();
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -715,13 +775,13 @@ apiRoutes.get('/conceptos/:id/movimientos/anual/:anio', async function (request,
     
     try {
         const idUsuario = request.decoded.id;
-        if (isNaN(idUsuario)) {
+        if (idUsuario === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
             return;
         }
 
         const idConcepto = request.params.id;
-        if (isNaN(idConcepto)) {
+        if (idConcepto === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id concepto invalido"}).end();
             return;
         }
@@ -732,10 +792,35 @@ apiRoutes.get('/conceptos/:id/movimientos/anual/:anio', async function (request,
             return;
         }
 
-        let repo = new ConceptosRepository();
-        let concep = await repo.GetConceptosMovimAnual(idUsuario, anio, idConcepto);
-
-        response.status(HttpStatus.OK).send(concep).end();
+        var resp = new Array();
+        
+        MovimientoModel.aggregate(
+            [
+                {"$match": {
+                    "user": new  mongoose.Types.ObjectId(idUsuario),
+                    "concepto": new  mongoose.Types.ObjectId(idConcepto),
+                    "fecha": {$gt: new Date(Number(anio),0,1,0,0,0), $lt: new Date(Number(anio),11,31,23,59,59)},
+                    "importe": {$ne:0}}
+                },
+                {$group: {
+                    _id : { $month : "$fecha" } ,
+                    importe : { $sum : "$importe" }
+                    }
+                },
+                { $sort : { _id : 1 } }
+            ],
+            function(err, result){
+                if (err) {
+                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                    return;
+                }
+                result.forEach(element => {
+                    resp.push({mes: element._id.toString().padStart(2, '0') + anio, importe: element.importe})
+                });
+                
+                response.status(HttpStatus.OK).send(resp).end();
+            }
+        );
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -810,7 +895,8 @@ apiRoutes.get('/conceptos/:id/movimientos/historico', async function (request, r
                     _id : { $year : "$fecha" } ,
                     importe : { $sum : "$importe" }
                     }
-                }
+                },
+                { $sort : { _id : 1 } }
             ],
             function(err, result){
                 if (err) {
@@ -1214,8 +1300,8 @@ apiRoutes.get('/diario/:fecha', async function (request, response, next) {
 
             // el concepto no tiene movimientos
             if(foo['importe'] === undefined){
-                foo['fecha'] = null;
-                foo['importe'] = null;
+                foo['fecha'] = fechaParam;
+                foo['importe'] = 0;
             }
             
             resp.push(foo);            
