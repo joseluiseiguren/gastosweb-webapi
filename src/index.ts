@@ -1267,6 +1267,9 @@ apiRoutes.get('/diario/:fecha', async function (request, response, next) {
                                     0, 0, 0, 0);
         fechaParam.setUTCHours(0, 0, 0, 0);
 
+        logger.info({message: new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),0,0,0)});
+        logger.info({message: new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),23,59,59)});
+
         /*console.log(new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),0,0,0));
         console.log(new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),23,59,59));*/
 
