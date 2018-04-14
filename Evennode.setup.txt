@@ -9,34 +9,33 @@ Cada v ez que hay un cambio
 /* Variables de entorno DEV LOCAL */
 SET NODE_ENV=dev
 SET DEV_APP_PORT=3000
-SET DEV_DB_HOST=localhost
-SET DEV_DB_PORT=3306
-SET DEV_DB_NAME=controlgastos
-SET DEV_DB_USER=controlgastos
-SET DEV_DB_PASSWORD=admin
 SET DEV_SECRETHASH=ilovescotchyscotch
 SET DEV_EXPIRACION_TOKEN=86400
 SET DEV_INTENTOS_FALLIDOS_LOGIN=5
-SET DEV_DBMONGO=mongodb://localhost:27017
+SET DEV_DB=mongodb://localhost:27017
 npm start
 
 
 /* Variables de entorno PROD */
 SET NODE_ENV=production
 SET PROD_APP_PORT=3000
-SET PROD_DB_HOST=sql2.freemysqlhosting.net
-SET PROD_DB_PORT=3306
-SET PROD_DB_NAME=sql2225236
-SET PROD_DB_USER=sql2225236
-SET PROD_DB_PASSWORD=sP9*jG2%
 SET PROD_SECRETHASH=ilovescotchyscotch
 SET PROD_EXPIRACION_TOKEN=86400
 SET PROD_INTENTOS_FALLIDOS_LOGIN=5
-SET PROD_DBMONGO=mongodb://localhost:27017
+SET PROD_DB=mongodb://147cda85e5f36bc5a7e386d45d3a79d1:cgmongo01@6b.mongo.evennode.com:27017/147cda85e5f36bc5a7e386d45d3a79d1
 
 
 /* Para eliminar variables de entorno */
 SET NODE_ENV=undefined
 
-/* MONGO DB prod */
-.controlgastos01
+
+/* Ejemplo string conexion mongo */
+mongodb://user:password@host:port/database
+
+
+/*Mysql production */
+HOST=sql2.freemysqlhosting.net
+PORT=3306
+NAME=sql2225236
+USER=sql2225236
+PASSWORD=sP9*jG2%

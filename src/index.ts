@@ -13,9 +13,6 @@ var uuid            = require('uuid');
 var log4js          = require('log4js');
 var mongoose        = require('mongoose');
 
-// se abre la conexion con la base de datos mongo
-mongoose.connect(config.dbMongo.strconexion);
-
 var UserModel = require('../src/models/user.model');
 var ConceptoModel = require('../src/models/concepto.model');
 var MovimientoModel = require('../src/models/movimiento.model');
@@ -50,15 +47,10 @@ switch (process.env.NODE_ENV) {
     case "dev":
         logger.info({message: "Working in Dev"});
         if (process.env.DEV_APP_PORT === undefined ||
-            process.env.DEV_DB_HOST === undefined ||
-            process.env.DEV_DB_PORT === undefined ||
-            process.env.DEV_DB_NAME === undefined ||
-            process.env.DEV_DB_USER === undefined ||
-            process.env.DEV_DB_PASSWORD === undefined ||
             process.env.DEV_SECRETHASH === undefined ||
             process.env.DEV_EXPIRACION_TOKEN === undefined ||
             process.env.DEV_INTENTOS_FALLIDOS_LOGIN === undefined ||
-            process.env.DEV_DBMONGO === undefined){
+            process.env.DEV_DB === undefined){
                 logger.error({errorId: 1, message: "Variables de entorno de DEV no seteadas"});
                 process.exit(1);
             }            
@@ -67,15 +59,10 @@ switch (process.env.NODE_ENV) {
     case "production":
         logger.info({message: "Working in Prod"});
         if (process.env.PROD_APP_PORT === undefined ||
-            process.env.PROD_DB_HOST === undefined ||
-            process.env.PROD_DB_PORT === undefined ||
-            process.env.PROD_DB_NAME === undefined ||
-            process.env.PROD_DB_USER === undefined ||
-            process.env.PROD_DB_PASSWORD === undefined ||
             process.env.PROD_SECRETHASH === undefined ||
             process.env.PROD_EXPIRACION_TOKEN === undefined ||
             process.env.PROD_INTENTOS_FALLIDOS_LOGIN === undefined ||
-            process.env.PROD_DBMONGO === undefined){
+            process.env.PROD_DB === undefined){
                 logger.error({errorId: 1, message: "Variables de entorno de PROD no seteadas"});
                 process.exit(1);
             }
@@ -86,6 +73,8 @@ switch (process.env.NODE_ENV) {
         process.exit(1);
 }
 
+// se abre la conexion con la base de datos mongo
+mongoose.connect(config.db.strconexion);
 
 let app = express();
 app.use(cors())
@@ -979,7 +968,7 @@ apiRoutes.get('/mensual/:fecha/sumary', async function (request, response, next)
                     return;
                 }
 
-                resp['egresos'] = (result[0] !== undefined) ? result[0].egresos : 0;
+                resp['egresos'] = (result[0] !== undefined) ? Math.abs(result[0].egresos) : 0;
                 response.status(HttpStatus.OK).send(resp).end();
             });
         });
@@ -1044,7 +1033,7 @@ apiRoutes.get('/anual/:fecha/sumary', async function (request, response, next) {
                     return;
                 }
 
-                resp['egresos'] = (result[0] !== undefined) ? result[0].egresos : 0;
+                resp['egresos'] = (result[0] !== undefined) ? Math.abs(result[0].egresos) : 0;
                 response.status(HttpStatus.OK).send(resp).end();
             });
         });
@@ -1094,7 +1083,7 @@ apiRoutes.get('/historico/sumary', async function (request, response, next) {
                     return;
                 }
 
-                resp['egresos'] = (result[0] !== undefined) ? result[0].egresos : 0;
+                resp['egresos'] = (result[0] !== undefined) ? Math.abs(result[0].egresos) : 0;
                 response.status(HttpStatus.OK).send(resp).end();
             });
         });
@@ -1140,7 +1129,7 @@ apiRoutes.post('/diario', async function (request, response, next) {
                             Number(fecha.substring(4, 6))-1, 
                             Number(fecha.substring(6, 8))+1, 
                             0, 0, 0, 0);
-        fechaParam.setUTCHours(0, 0, 0, 0);
+        fechaParam.setUTCHours(0, 0, 0, 1);
 
         // se busca el concepto para el cual se va a cargar el movimiento
         ConceptoModel.findById(idConcepto, 
@@ -1281,6 +1270,9 @@ apiRoutes.get('/diario/:fecha', async function (request, response, next) {
                                     0, 0, 0, 0);
         fechaParam.setUTCHours(0, 0, 0, 0);
 
+        /*console.log(new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),0,0,0));
+        console.log(new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),23,59,59));*/
+
         var resp = new Array();
         let conceptos = ConceptoModel.find({user:idUsuario}).sort('descripcion').cursor();
         for (let doc = await conceptos.next(); doc != null; doc = await conceptos.next()) {
@@ -1335,3 +1327,173 @@ app.use(function(err, req, res, next) {
 
 logger.info({message: "init ok"});
 app.listen(config.app.port);
+
+
+
+/***************************** MIGRATION *******************************/
+/*
+// se migran los usuarios
+apiRoutes.post('/usuarios/migration', async (request, response, next) => {
+    
+    try {
+        let user1 = new UserModel({
+            email: "flopyglorias@gmail.com",
+            nombre: "Flor",
+            fechanacimiento: "1986-12-27 00:00:00",
+            idestado: 0,
+            moneda: "€",
+            password: "sha1$0aba42ea$1$ffb674911b122a75a8721d1bd47c54a28670acb5"
+        });
+        user1.save(function(err){
+            if (err) {
+                setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                return;
+            }
+            else {
+                response.status(HttpStatus.OK).send();
+            }
+        });
+
+        let user2 = new UserModel({
+            email: "joseluiseiguren@gmail.com",
+            nombre: "Joseph",
+            fechanacimiento: "1980-05-13 00:00:00",
+            idestado: 0,
+            moneda: "$",
+            password: "sha1$790e9674$1$4afb8e2b92a59dd3f25e25c088e5b9a90d9af4c3"
+        });
+        user2.save(function(err){
+            if (err) {
+                setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                return;
+            }
+            else {
+                response.status(HttpStatus.OK).send();
+            }
+        });
+
+        let user3 = new UserModel({
+            email: "fernanda.eiguren@gmail.com",
+            nombre: "Fernanda Eiguren",
+            fechanacimiento: "1988-05-13 00:00:00",
+            idestado: 0,
+            moneda: "$",
+            password: "sha1$a53c3e8c$1$479923b420203b70ed2a71a18426119aa00c4822"
+        });
+        user3.save(function(err){
+            if (err) {
+                setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                return;
+            }
+            else {
+                response.status(HttpStatus.OK).send();
+            }
+        });
+    } catch (err) {
+        setImmediate(() => { next(new Error(JSON.stringify(err))); });
+    }
+});
+
+// se migran los conceptos
+apiRoutes.post('/conceptos/migration/', async (request, response, next) => {
+    
+    try {
+        let idUsuario = "5ad1ce4cbefd252f74b413cb";
+        let conceptos = new Array();
+
+        // flor 
+        conceptos.push({descripcion: 'Suedo', credito: 1});
+        conceptos.push({descripcion: 'Supermercado', credito: 0});
+        conceptos.push({descripcion: 'Perros', credito: 0});
+        conceptos.push({descripcion: 'Viajes Work',credito: 0});
+        conceptos.push({descripcion: 'Comida Work',credito: 0});
+        conceptos.push({descripcion: 'Gym', credito: 0});
+        conceptos.push({descripcion: 'Beauty', credito: 0});
+        conceptos.push({descripcion: 'Salidas', credito: 0});
+        conceptos.push({descripcion: 'Ahorro', credito: 1});
+        conceptos.push({descripcion: 'Alquiler', credito: 0});
+        conceptos.push({descripcion: 'Orange', credito: 0});
+        conceptos.push({descripcion: 'Luz', credito: 0});
+        conceptos.push({descripcion: 'Gas', credito: 0});
+        conceptos.push({descripcion: 'Agua', credito: 0});
+        conceptos.push({descripcion: 'Seguros', credito: 0});
+        conceptos.push({descripcion: 'Odontólogo', credito: 0});
+        conceptos.push({descripcion: 'Cursos', credito: 0});
+        conceptos.push({descripcion: 'Salud', credito: 0});
+        conceptos.push({descripcion: 'Reposteria', credito: 0});
+        conceptos.push({descripcion: 'Deco Casa',credito:  0});
+        conceptos.push({descripcion: 'Ajuste', credito: 1});
+        conceptos.push({descripcion: 'Varios', credito: 0});
+        conceptos.push({descripcion: 'Viajes Mundo',credito: 0});
+        conceptos.push({descripcion: 'Look', credito: 0});
+        
+        //joseph
+        conceptos.push({descripcion: 'Plazo Fijo', credito: 1});
+        conceptos.push({descripcion: 'Varios', credito: 0});
+        conceptos.push({descripcion: 'Haras', credito: 0});
+        conceptos.push({descripcion: 'Ahorros Arg', credito: 1});
+        conceptos.push({descripcion: 'Netflix', credito: 0});
+        conceptos.push({descripcion: 'Venta Muebles', credito: 1});
+        conceptos.push({descripcion: 'Pluralsight', credito: 0});
+        conceptos.push({descripcion: 'Tarjeta flor', credito: 0});
+        
+        //maria
+        conceptos.push({descripcion: 'Suedo', credito: 1});
+        
+
+        conceptos.forEach(element => {
+            let concepto1 = new ConceptoModel({
+                descripcion: element.descripcion,
+                credito: element.credito,
+                user: idUsuario
+            });
+            concepto1.save(function(err){
+                if (err) {
+                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                    return;
+                }
+                else {
+                    response.status(HttpStatus.OK).send();
+                }
+            });
+        });
+    } catch (err) {
+        setImmediate(() => { next(new Error(JSON.stringify(err))); });
+    }
+});
+
+// se migran los movimientos
+apiRoutes.post('/movimientos/migration/', async (request, response, next) => {
+    
+    try {
+        let idUsuario = "5ad1ce4cbefd252f74b413cb";
+        let idConcepto = "5ad1d09c922a5e05dc0f8c5a";
+        let movimientos = new Array();
+
+        
+        movimientos.push({fecha: '2018-03-18 02:00:00', importe: '20000.00'});
+
+
+
+        movimientos.forEach(element => {
+            let movimientoM = new MovimientoModel({
+                user: idUsuario,
+                concepto: idConcepto,
+                fecha: element.fecha,
+                importe: element.importe
+            });
+            movimientoM.save(function(err){
+                if (err) {
+                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
+                    return;
+                }
+                else {
+                    response.status(HttpStatus.OK).send();
+                }
+            });          
+        });                
+    } catch (err) {
+        setImmediate(() => { next(new Error(JSON.stringify(err))); });
+    }
+});
+*/
