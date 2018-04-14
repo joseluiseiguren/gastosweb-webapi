@@ -1331,6 +1331,7 @@ try{
     });    
 
     app.listen(config.app.port);
+    logger.info({message: "Fecha Server: " + new Date()});
     logger.info({message: "App iniciada..."});
 }
 catch(e){
