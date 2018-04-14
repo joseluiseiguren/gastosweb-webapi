@@ -17,15 +17,14 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://{{host}}/api/mensual/201806/sumary",
-					"protocol": "http",
+					"raw": "{{host}}/api/mensual/201804/sumary",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"mensual",
-						"201806",
+						"201804",
 						"sumary"
 					]
 				},
@@ -45,8 +44,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://{{host}}/api/conceptos/mensual/201803/sumary",
-					"protocol": "http",
+					"raw": "{{host}}/api/conceptos/mensual/201804/sumary",
 					"host": [
 						"{{host}}"
 					],
@@ -54,7 +52,7 @@
 						"api",
 						"conceptos",
 						"mensual",
-						"201803",
+						"201804",
 						"sumary"
 					]
 				},
@@ -74,15 +72,14 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://{{host}}/api/conceptos/1/movimientos/mensual/201802",
-					"protocol": "http",
+					"raw": "{{host}}/api/conceptos/5ad107431a3a653734477496/movimientos/mensual/201802",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"conceptos",
-						"1",
+						"5ad107431a3a653734477496",
 						"movimientos",
 						"mensual",
 						"201802"

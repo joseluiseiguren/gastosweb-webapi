@@ -219,12 +219,14 @@ apiRoutes.post('/usuarios/registracion', async (request, response, next) => {
             return;
         }
 
-        let fechaParam: Date = new Date(
-                            Number(fechanacimiento.substring(0, 4)), 
-                            Number(fechanacimiento.substring(4, 6))-1, 
-                            Number(fechanacimiento.substring(6, 8))+1, 
-                            0, 0, 0, 0);
-        fechaParam.setUTCHours(0, 0, 0, 0);
+        let fechaParam: Date = new Date();
+        fechaParam.setFullYear(Number(fechanacimiento.substring(0, 4)));
+        fechaParam.setUTCMonth(Number(fechanacimiento.substring(4, 6))-1);
+        fechaParam.setUTCDate(Number(fechanacimiento.substring(6, 8)));
+        fechaParam.setUTCHours(0);
+        fechaParam.setUTCMinutes(0);
+        fechaParam.setUTCSeconds(0);
+        fechaParam.setUTCMilliseconds(0);
 
         // valida que el usuario no exista
         UserModel.find(
@@ -410,12 +412,14 @@ apiRoutes.put('/usuario', async function (request, response, next) {
         }
 
         if (fechanacimiento != undefined) {
-            fechaNacimParsed = new Date(
-                Number(fechanacimiento.substring(0, 4)), 
-                Number(fechanacimiento.substring(4, 6))-1, 
-                Number(fechanacimiento.substring(6, 8))+1, 
-                0, 0, 0, 0);
-            fechaNacimParsed.setUTCHours(0, 0, 0, 0);
+            fechaNacimParsed = new Date();
+            fechaNacimParsed.setFullYear(Number(fechanacimiento.substring(0, 4)));
+            fechaNacimParsed.setUTCMonth(Number(fechanacimiento.substring(4, 6))-1);
+            fechaNacimParsed.setUTCDate(Number(fechanacimiento.substring(6, 8)));
+            fechaNacimParsed.setUTCHours(0);
+            fechaNacimParsed.setUTCMinutes(0);
+            fechaNacimParsed.setUTCSeconds(0);
+            fechaNacimParsed.setUTCMilliseconds(0);
         }
 
         // se obtiene el usuario via email
@@ -478,6 +482,24 @@ apiRoutes.get('/conceptos/mensual/:mes/sumary', async function (request, respons
         let mes = Number(fecha.toString().substring(4, 6));
         let anio = Number(fecha.toString().substring(0, 4));
 
+        let fechaDesde: Date = new Date();
+        fechaDesde.setFullYear(anio);
+        fechaDesde.setUTCMonth(mes-1);
+        fechaDesde.setUTCDate(1);
+        fechaDesde.setUTCHours(0);
+        fechaDesde.setUTCMinutes(0);
+        fechaDesde.setUTCSeconds(0);
+        fechaDesde.setUTCMilliseconds(0);
+
+        let fechaHasta: Date = new Date();
+        fechaHasta.setFullYear(anio);
+        fechaHasta.setUTCMonth(mes);
+        fechaHasta.setUTCDate(1);
+        fechaHasta.setUTCHours(0);
+        fechaHasta.setUTCMinutes(0);
+        fechaHasta.setUTCSeconds(0);
+        fechaHasta.setUTCMilliseconds(0);
+
         var resp = new Array();
         let conceptos = ConceptoModel.find({user:idUsuario}).sort('descripcion').cursor();
         for (let doc = await conceptos.next(); doc != null; doc = await conceptos.next()) {
@@ -490,7 +512,7 @@ apiRoutes.get('/conceptos/mensual/:mes/sumary', async function (request, respons
                     {"$match": {
                         "user": new mongoose.Types.ObjectId(idUsuario),
                         "concepto": new  mongoose.Types.ObjectId(doc._id),
-                        "fecha": {$gt: new Date(anio,mes-1,1,0,0,0), $lt: new Date(anio,mes,1,0,0,0)}}
+                        "fecha": {$gte: fechaDesde, $lt: fechaHasta}}
                     },
                     {$group: {
                         _id : "$concepto",
@@ -534,6 +556,24 @@ apiRoutes.get('/conceptos/:id/movimientos/mensual/:mes', async function (request
         let mes = Number(fecha.toString().substring(4, 6));
         let anio = Number(fecha.toString().substring(0, 4));
 
+        let fechaDesde: Date = new Date();
+        fechaDesde.setFullYear(anio);
+        fechaDesde.setUTCMonth(mes-1);
+        fechaDesde.setUTCDate(1);
+        fechaDesde.setUTCHours(0);
+        fechaDesde.setUTCMinutes(0);
+        fechaDesde.setUTCSeconds(0);
+        fechaDesde.setUTCMilliseconds(0);
+
+        let fechaHasta: Date = new Date();
+        fechaHasta.setFullYear(anio);
+        fechaHasta.setUTCMonth(mes);
+        fechaHasta.setUTCDate(1);
+        fechaHasta.setUTCHours(0);
+        fechaHasta.setUTCMinutes(0);
+        fechaHasta.setUTCSeconds(0);
+        fechaHasta.setUTCMilliseconds(0);
+
         var resp = new Array();
         
         MovimientoModel.aggregate(
@@ -541,7 +581,7 @@ apiRoutes.get('/conceptos/:id/movimientos/mensual/:mes', async function (request
                 {"$match": {
                     "user": new  mongoose.Types.ObjectId(idUsuario),
                     "concepto": new  mongoose.Types.ObjectId(idConcepto),
-                    "fecha": {$gt: new Date(anio,mes-1,1,0,0,0), $lt: new Date(anio,mes,1,0,0,0)},
+                    "fecha": {$gte: fechaDesde, $lt: fechaHasta},
                     "importe": {$ne:0}}
                 },
                 {$group: {
@@ -725,6 +765,24 @@ apiRoutes.get('/conceptos/anual/:anio/sumary', async function (request, response
             return;
         }
 
+        let fechaDesde: Date = new Date();
+        fechaDesde.setFullYear(anio);
+        fechaDesde.setUTCMonth(0);
+        fechaDesde.setUTCDate(1);
+        fechaDesde.setUTCHours(0);
+        fechaDesde.setUTCMinutes(0);
+        fechaDesde.setUTCSeconds(0);
+        fechaDesde.setUTCMilliseconds(0);
+
+        let fechaHasta: Date = new Date();
+        fechaHasta.setFullYear(anio);
+        fechaHasta.setUTCMonth(11);
+        fechaHasta.setUTCDate(31);
+        fechaHasta.setUTCHours(23);
+        fechaHasta.setUTCMinutes(59);
+        fechaHasta.setUTCSeconds(59);
+        fechaHasta.setUTCMilliseconds(0);
+
         var resp = new Array();
         let conceptos = ConceptoModel.find({user:idUsuario}).sort('descripcion').cursor();
         for (let doc = await conceptos.next(); doc != null; doc = await conceptos.next()) {
@@ -737,7 +795,7 @@ apiRoutes.get('/conceptos/anual/:anio/sumary', async function (request, response
                     {"$match": {
                         "user": new  mongoose.Types.ObjectId(idUsuario),
                         "concepto": new  mongoose.Types.ObjectId(doc._id),
-                        "fecha": {$gt: new Date(Number(anio),0,1,0,0,0), $lt: new Date(Number(anio),11,31,23,59,59)}}
+                        "fecha": {$gte: fechaDesde, $lte: fechaHasta}}
                     },
                     {$group: {
                         _id : "$concepto",
@@ -778,6 +836,24 @@ apiRoutes.get('/conceptos/:id/movimientos/anual/:anio', async function (request,
             return;
         }
 
+        let fechaDesde: Date = new Date();
+        fechaDesde.setFullYear(anio);
+        fechaDesde.setUTCMonth(0);
+        fechaDesde.setUTCDate(1);
+        fechaDesde.setUTCHours(0);
+        fechaDesde.setUTCMinutes(0);
+        fechaDesde.setUTCSeconds(0);
+        fechaDesde.setUTCMilliseconds(0);
+
+        let fechaHasta: Date = new Date();
+        fechaHasta.setFullYear(anio);
+        fechaHasta.setUTCMonth(11);
+        fechaHasta.setUTCDate(31);
+        fechaHasta.setUTCHours(23);
+        fechaHasta.setUTCMinutes(59);
+        fechaHasta.setUTCSeconds(59);
+        fechaHasta.setUTCMilliseconds(0);
+
         var resp = new Array();
         
         MovimientoModel.aggregate(
@@ -785,7 +861,7 @@ apiRoutes.get('/conceptos/:id/movimientos/anual/:anio', async function (request,
                 {"$match": {
                     "user": new  mongoose.Types.ObjectId(idUsuario),
                     "concepto": new  mongoose.Types.ObjectId(idConcepto),
-                    "fecha": {$gt: new Date(Number(anio),0,1,0,0,0), $lt: new Date(Number(anio),11,31,23,59,59)},
+                    "fecha": {$gte: fechaDesde, $lte: fechaHasta},
                     "importe": {$ne:0}}
                 },
                 {$group: {
@@ -926,8 +1002,23 @@ apiRoutes.get('/mensual/:fecha/sumary', async function (request, response, next)
         let anio = Number(fecha.substring(0, 4));
         let mes = Number(fecha.substring(4, 6));
 
-        let fechadesde = new Date(anio,mes-1,1,0,0,0);
-        let fechahasta = new Date(anio,mes,1,0,0,0);
+        let fechaDesde: Date = new Date();
+        fechaDesde.setFullYear(anio);
+        fechaDesde.setUTCMonth(mes-1);
+        fechaDesde.setUTCDate(1);
+        fechaDesde.setUTCHours(0);
+        fechaDesde.setUTCMinutes(0);
+        fechaDesde.setUTCSeconds(0);
+        fechaDesde.setUTCMilliseconds(0);
+
+        let fechaHasta: Date = new Date();
+        fechaHasta.setFullYear(anio);
+        fechaHasta.setUTCMonth(mes);
+        fechaHasta.setUTCDate(1);
+        fechaHasta.setUTCHours(0);
+        fechaHasta.setUTCMinutes(0);
+        fechaHasta.setUTCSeconds(0);
+        fechaHasta.setUTCMilliseconds(0);
 
         let resp = {};
         
@@ -937,7 +1028,7 @@ apiRoutes.get('/mensual/:fecha/sumary', async function (request, response, next)
                 {"$match": {
                     "user": new  mongoose.Types.ObjectId(idUsuario), 
                     "importe":{$gt:0},
-                    "fecha": {$gt:fechadesde, $lt: fechahasta}}
+                    "fecha": {$gte:fechaDesde, $lt: fechaHasta}}
                 },
                 {$group: {_id: '$user', ingresos: {$sum: "$importe"}}}
             ], 
@@ -955,7 +1046,7 @@ apiRoutes.get('/mensual/:fecha/sumary', async function (request, response, next)
                     {"$match": {
                         "user": new  mongoose.Types.ObjectId(idUsuario), 
                         "importe":{$lt:0},
-                        "fecha": {$gt:fechadesde, $lt: fechahasta}}
+                        "fecha": {$gte:fechaDesde, $lt: fechaHasta}}
                     },
                     {$group: {_id: '$user', egresos: {$sum: "$importe"}}}
                 ], 
@@ -994,6 +1085,24 @@ apiRoutes.get('/anual/:fecha/sumary', async function (request, response, next) {
             return;
         }
 
+        let fechaDesde: Date = new Date();
+        fechaDesde.setFullYear(fecha);
+        fechaDesde.setUTCMonth(0);
+        fechaDesde.setUTCDate(1);
+        fechaDesde.setUTCHours(0);
+        fechaDesde.setUTCMinutes(0);
+        fechaDesde.setUTCSeconds(0);
+        fechaDesde.setUTCMilliseconds(0);
+
+        let fechaHasta: Date = new Date();
+        fechaHasta.setFullYear(fecha);
+        fechaHasta.setUTCMonth(11);
+        fechaHasta.setUTCDate(31);
+        fechaHasta.setUTCHours(23);
+        fechaHasta.setUTCMinutes(59);
+        fechaHasta.setUTCSeconds(59);
+        fechaHasta.setUTCMilliseconds(0);
+
         let resp = {};
         
         // obtengo el total de ingresos
@@ -1002,7 +1111,7 @@ apiRoutes.get('/anual/:fecha/sumary', async function (request, response, next) {
                 {"$match": {
                     "user": new  mongoose.Types.ObjectId(idUsuario), 
                     "importe":{$gt:0},
-                    "fecha": {$gt: new Date(Number(fecha),0,1,0,0,0), $lt: new Date(Number(fecha),11,31,23,59,59)}}
+                    "fecha": {$gte: fechaDesde, $lte: fechaHasta}}
                 },
                 {$group: {_id: '$user', ingresos: {$sum: "$importe"}}}
             ], 
@@ -1020,7 +1129,7 @@ apiRoutes.get('/anual/:fecha/sumary', async function (request, response, next) {
                     {"$match": {
                         "user": new  mongoose.Types.ObjectId(idUsuario), 
                         "importe":{$lt:0},
-                        "fecha": {$gt: new Date(Number(fecha),1,1,0,0,0), $lt: new Date(Number(fecha),12,31,23,59,59)}}
+                        "fecha": {$gte: fechaDesde, $lte: fechaHasta}}
                     },
                     {$group: {_id: '$user', egresos: {$sum: "$importe"}}}
                 ], 
@@ -1121,12 +1230,23 @@ apiRoutes.post('/diario', async function (request, response, next) {
             return;
         }
 
-        let fechaParam: Date = new Date(
-                            Number(fecha.substring(0, 4)), 
-                            Number(fecha.substring(4, 6))-1, 
-                            Number(fecha.substring(6, 8))+1, 
-                            0, 0, 0, 0);
-        fechaParam.setUTCHours(0, 0, 0, 1);
+        let fechaMov: Date = new Date();
+        fechaMov.setFullYear(Number(fecha.substring(0, 4)));
+        fechaMov.setUTCMonth(Number(fecha.substring(4, 6))-1);
+        fechaMov.setUTCDate(Number(fecha.substring(6, 8)));
+        fechaMov.setUTCHours(0);
+        fechaMov.setUTCMinutes(0);
+        fechaMov.setUTCSeconds(0);
+        fechaMov.setUTCMilliseconds(0);
+
+        let fechaHasta: Date = new Date();
+        fechaHasta.setFullYear(Number(fecha.substring(0, 4)));
+        fechaHasta.setUTCMonth(Number(fecha.substring(4, 6))-1);
+        fechaHasta.setUTCDate(Number(fecha.substring(6, 8)));
+        fechaHasta.setUTCHours(23);
+        fechaHasta.setUTCMinutes(59);
+        fechaHasta.setUTCSeconds(59);
+        fechaHasta.setUTCMilliseconds(0);
 
         // se busca el concepto para el cual se va a cargar el movimiento
         ConceptoModel.findById(idConcepto, 
@@ -1145,7 +1265,7 @@ apiRoutes.post('/diario', async function (request, response, next) {
                 // se busca el movimiento para la fecha solicitada
                 MovimientoModel.findOne(
                     {concepto: idConcepto, 
-                        fecha: {$gt: new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),0,0,0), $lt: new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),23,59,59)}}, 
+                        fecha: {$gte: fechaMov, $lte: fechaHasta}}, 
                     function(err, results){
                         if (err) {
                             setImmediate(() => { next(new Error(JSON.stringify(err))); });
@@ -1157,7 +1277,7 @@ apiRoutes.post('/diario', async function (request, response, next) {
                             let movimientoM = new MovimientoModel({
                                 user: idUsuario,
                                 concepto: idConcepto,
-                                fecha: fechaParam,
+                                fecha: fechaMov,
                                 importe: importe
                             });
                             movimientoM.save(function(err){
@@ -1260,20 +1380,23 @@ apiRoutes.get('/diario/:fecha', async function (request, response, next) {
             return;
         }
 
-        let fechaParam: Date = new Date(
-                                    Number(fecha.substring(0, 4)), 
-                                    Number(fecha.substring(4, 6))-1, 
-                                    Number(fecha.substring(6, 8))+1, 
-                                    0, 0, 0, 0);
-        fechaParam.setUTCHours(0, 0, 0, 0);
+        let fechaDesde: Date = new Date();
+        fechaDesde.setFullYear(Number(fecha.substring(0, 4)));
+        fechaDesde.setUTCMonth(Number(fecha.substring(4, 6))-1);
+        fechaDesde.setUTCDate(Number(fecha.substring(6, 8)));
+        fechaDesde.setUTCHours(0);
+        fechaDesde.setUTCMinutes(0);
+        fechaDesde.setUTCSeconds(0);
+        fechaDesde.setUTCMilliseconds(0);
 
-        logger.info({message: fecha});
-        logger.info({message: fechaParam});
-        logger.info({message: new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),0,0,0)});
-        logger.info({message: new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),23,59,59)});
-
-        /*console.log(new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),0,0,0));
-        console.log(new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),23,59,59));*/
+        let fechaHasta: Date = new Date();
+        fechaHasta.setFullYear(Number(fecha.substring(0, 4)));
+        fechaHasta.setUTCMonth(Number(fecha.substring(4, 6))-1);
+        fechaHasta.setUTCDate(Number(fecha.substring(6, 8)));
+        fechaHasta.setUTCHours(23);
+        fechaHasta.setUTCMinutes(59);
+        fechaHasta.setUTCSeconds(59);
+        fechaHasta.setUTCMilliseconds(0);
 
         var resp = new Array();
         let conceptos = ConceptoModel.find({user:idUsuario}).sort('descripcion').cursor();
@@ -1285,7 +1408,7 @@ apiRoutes.get('/diario/:fecha', async function (request, response, next) {
             
             let movimiento = MovimientoModel.find(
                 {concepto:doc._id, 
-                 fecha: {$gt: new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),0,0,0), $lt: new Date(fechaParam.getFullYear(),fechaParam.getMonth(),fechaParam.getDate(),23,59,59)}}).cursor();
+                 fecha: {$gte: fechaDesde, $lte: fechaHasta}}).cursor();
 
             for (let mov = await movimiento.next(); mov != null; mov = await movimiento.next()) {
                 foo['fecha'] = mov.fecha;
@@ -1294,7 +1417,7 @@ apiRoutes.get('/diario/:fecha', async function (request, response, next) {
 
             // el concepto no tiene movimientos
             if(foo['importe'] === undefined){
-                foo['fecha'] = fechaParam;
+                foo['fecha'] = fechaDesde;
                 foo['importe'] = 0;
             }
             

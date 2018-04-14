@@ -17,15 +17,14 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://{{host}}/api/usuarios/5ac2710ab6dfa21cd868ad4d",
-					"protocol": "http",
+					"raw": "{{host}}/api/usuarios/5ac89e2c88ed9d22a00b71d9",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"usuarios",
-						"5ac2710ab6dfa21cd868ad4d"
+						"5ac89e2c88ed9d22a00b71d9"
 					]
 				},
 				"description": "X\t"
@@ -44,8 +43,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://{{host}}/api/usuarios/conceptos",
-					"protocol": "http",
+					"raw": "{{host}}/api/usuarios/conceptos",
 					"host": [
 						"{{host}}"
 					],
@@ -71,8 +69,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://{{host}}/api/usuarios?",
-					"protocol": "http",
+					"raw": "{{host}}/api/usuarios?",
 					"host": [
 						"{{host}}"
 					],
@@ -127,11 +124,10 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"email\":\"joseluiseiguren44@gmail.com\",\n\t\"password\":\"mataderos\",\n\t\"location\":\"\"\n}"
+					"raw": "{\n\t\"email\":\"flopyglorias@gmail.com\",\n\t\"password\":\"mataderos\",\n\t\"location\":\"\"\n}"
 				},
 				"url": {
-					"raw": "http://{{host}}/api/usuarios/login",
-					"protocol": "http",
+					"raw": "{{host}}/api/usuarios/login",
 					"host": [
 						"{{host}}"
 					],
@@ -179,11 +175,10 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"email\":\"JOSeluiseiguren66@gmail.com\",\n\t\"password\":\"mataderos1\",\n\t\"nombre\":\"Olga\",\n\t\"fechanacimiento\":\"19800514\",\n\t\"moneda\":\"E\"\n}"
+					"raw": "{\n\t\"email\":\"JOSeluiseiguren99@gmail.com\",\n\t\"password\":\"mataderos1\",\n\t\"nombre\":\"Pweres\",\n\t\"fechanacimiento\":\"19800514\",\n\t\"moneda\":\"E\"\n}"
 				},
 				"url": {
-					"raw": "http://{{host}}/api/usuarios/registracion",
-					"protocol": "http",
+					"raw": "{{host}}/api/usuarios/registracion",
 					"host": [
 						"{{host}}"
 					],
@@ -213,11 +208,10 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"descripcion\":\"Salidas\",\n\t\"credito\":false\n}"
+					"raw": "{\n\t\"descripcion\":\"Motos\",\n\t\"credito\":false\n}"
 				},
 				"url": {
-					"raw": "http://{{host}}/api/concepto",
-					"protocol": "http",
+					"raw": "{{host}}/api/concepto",
 					"host": [
 						"{{host}}"
 					],
@@ -246,11 +240,10 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"descripcion\":\"auto\",\n\t\"credito\":false,\n\t\"idconcepto\":\"5ac8e5968e3fe217eca01700\"\n}"
+					"raw": "{\n\t\"descripcion\":\"Cel\",\n\t\"credito\":false,\n\t\"idconcepto\":\"5ad0f0c8e4311e392c8e4b89\"\n}"
 				},
 				"url": {
-					"raw": "http://{{host}}/api/concepto",
-					"protocol": "http",
+					"raw": "{{host}}/api/concepto",
 					"host": [
 						"{{host}}"
 					],
@@ -279,17 +272,169 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"email\":\"flopyglorias@gmail.com\",\n\t\"password\":\"mataderos\",\n\t\"nombre\":\"Flora\",\n\t\"fechanacimiento\":\"19861227\",\n\t\"moneda\":\"€\"\n}"
+					"raw": "{\n\t\"email\":\"joseluiseiguren44@gmail.com\",\n\t\"password\":\"mataderos\",\n\t\"nombre\":\"Yield\",\n\t\"fechanacimiento\":\"19861227\",\n\t\"moneda\":\"€\"\n}"
 				},
 				"url": {
-					"raw": "http://{{host}}/api/usuario",
-					"protocol": "http",
+					"raw": "{{host}}/api/usuario",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"usuario"
+					]
+				},
+				"description": "X\t"
+			},
+			"response": []
+		},
+		{
+			"name": "Migracion",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cb44f03a-b82f-47fb-bd8e-8161a801148c",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "fb711e81-1c9f-46cc-92b4-6a0df479bccf",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{host}}/api/usuarios/migration",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"usuarios",
+						"migration"
+					]
+				},
+				"description": "X\t"
+			},
+			"response": []
+		},
+		{
+			"name": "ConceptosMigration",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cb44f03a-b82f-47fb-bd8e-8161a801148c",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "fb711e81-1c9f-46cc-92b4-6a0df479bccf",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{host}}/api/conceptos/migration",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"conceptos",
+						"migration"
+					]
+				},
+				"description": "X\t"
+			},
+			"response": []
+		},
+		{
+			"name": "MovimientosMigration",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "cb44f03a-b82f-47fb-bd8e-8161a801148c",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "fb711e81-1c9f-46cc-92b4-6a0df479bccf",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{host}}/api/movimientos/migration",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"movimientos",
+						"migration"
 					]
 				},
 				"description": "X\t"

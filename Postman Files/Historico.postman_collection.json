@@ -17,8 +17,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://{{host}}/api/historico/sumary",
-					"protocol": "http",
+					"raw": "{{host}}/api/historico/sumary",
 					"host": [
 						"{{host}}"
 					],
@@ -44,8 +43,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://{{host}}/api/conceptos/historico/sumary",
-					"protocol": "http",
+					"raw": "{{host}}/api/conceptos/historico/sumary",
 					"host": [
 						"{{host}}"
 					],
@@ -72,8 +70,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://{{host}}/api/conceptos/5ac8e8ac551d202cb82ce9d1/movimientos/historico",
-					"protocol": "http",
+					"raw": "{{host}}/api/conceptos/5ac8e8ac551d202cb82ce9d1/movimientos/historico",
 					"host": [
 						"{{host}}"
 					],

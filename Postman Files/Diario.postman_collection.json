@@ -17,15 +17,14 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://{{host}}/api/diario/20180529",
-					"protocol": "http",
+					"raw": "{{host}}/api/diario/20180414",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"api",
 						"diario",
-						"20180529"
+						"20180414"
 					]
 				},
 				"description": "X\t"
@@ -44,8 +43,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://{{host}}/api/diario/first",
-					"protocol": "http",
+					"raw": "{{host}}/api/diario/first",
 					"host": [
 						"{{host}}"
 					],
@@ -75,11 +73,10 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"fecha\":\"20160230\",\n\t\"importe\":\"-900\",\n\t\"idConcepto\": \"5ac9f70084f916379c7bc5ab\"\n}"
+					"raw": "{\n\t\"fecha\":\"20180501\",\n\t\"importe\":\"-60\",\n\t\"idConcepto\": \"5ad0f0c8e4311e392c8e4b86\"\n}"
 				},
 				"url": {
-					"raw": "http://{{host}}/api/diario",
-					"protocol": "http",
+					"raw": "{{host}}/api/diario",
 					"host": [
 						"{{host}}"
 					],
