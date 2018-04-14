@@ -1,5 +1,9 @@
 import "reflect-metadata";
-import { SaveAudit2 } from "./GenericFunctions";
+import { userRepositoryMongo } from "./mongo.repositories/user.mongo.repository";
+import { conceptoRepositoryMongo } from "./mongo.repositories/concepto.mongo.repository";
+import { auditRepositoryMongo } from "./mongo.repositories/audit.mongo.repository";
+import { user } from "./app.models/user.app.model";
+import { audit } from "./app.models/audit.app.model";
 
 var express         = require('express');
 var cors            = require('cors');
@@ -13,9 +17,8 @@ var uuid            = require('uuid');
 var log4js          = require('log4js');
 var mongoose        = require('mongoose');
 
-var UserModel = require('../src/models/user.model');
-var ConceptoModel = require('../src/models/concepto.model');
-var MovimientoModel = require('../src/models/movimiento.model');
+var ConceptoModel = require('../src/mongo.models/concepto.mongo.model');
+var MovimientoModel = require('../src/mongo.models/movimiento.mongo.model');
 
 // configuracion de log4j
 log4js.configure({ 
@@ -82,6 +85,12 @@ var apiRoutes = express.Router();
 const TIPOOPERACION = Object.freeze({LOGINOK: 1, LOGINDENIED: 2});
 const USUARIOSESTADOS = Object.freeze({NORMAL: 0, BLOQUEADO: 1});
 
+// The only place where we define the repositories to use in the app
+var reporitoryUser = new userRepositoryMongo();
+var reporitoryConcepto = new conceptoRepositoryMongo();
+var reporitoryAuditoria = new auditRepositoryMongo();
+
+
 /**** USUARIOS ******************************************************************************************/
 
 // se pide un login y se entrega un token
@@ -96,78 +105,73 @@ apiRoutes.post('/usuarios/login', async (request, response, next) => {
             email === undefined) {
             let responseMessage = {message: "Email / Password no informado"};
             response.status(HttpStatus.BAD_REQUEST).send(responseMessage).end();
-            SaveAudit2(0, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED, location);
+            
+            let auditoria = new audit({idusuario:"", observacion:JSON.stringify(responseMessage), aditionalinfo:JSON.stringify(request.body), tipooperacion:TIPOOPERACION.LOGINDENIED, location:location});            
+            await reporitoryAuditoria.Insert(auditoria);
             return;
         }
 
         // se obtiene el usuario via email
-        UserModel.find(
-            {email: { $regex: new RegExp("^" + email.toLowerCase(), "i")}},
-            function(err, results){
-            if (err) {
-                setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                return;
-            }
-            if(results.length <= 0){
-                let responseMessage = {message: "Usuario Inexistente"};
-                response.status(HttpStatus.UNAUTHORIZED).send(responseMessage).end();
-                SaveAudit2(0, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED, location);
-                return;
-            }
-            else{
-                // se valida que el usuairo no este bloqueado
-                if (results[0].idestado === USUARIOSESTADOS.BLOQUEADO) {
-                    let responseMessage = {message: "Usuario Bloqueado"};
-                    response.status(HttpStatus.UNAUTHORIZED).send(responseMessage).end();
-                    SaveAudit2(results[0]._id, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED, location);
-                    return;
-                
-                // se valida el password
-                } else if (passwordHash.verify(password, results[0].password) === false) {
+        let result = await reporitoryUser.GetByFilter(email);
+        if(result.length <= 0){
+            let responseMessage = {message: "Usuario Inexistente"};
+            response.status(HttpStatus.UNAUTHORIZED).send(responseMessage).end();
+
+            let auditoria = new audit({idusuario:"", observacion:JSON.stringify(responseMessage), aditionalinfo:JSON.stringify(request.body), tipooperacion:TIPOOPERACION.LOGINDENIED, location:location});            
+            await reporitoryAuditoria.Insert(auditoria);
+            return;
+        }
+        
+        let usuario = result[0];
+
+        // se valida que el usuairo no este bloqueado
+        if (usuario.idestado === USUARIOSESTADOS.BLOQUEADO) {
+            let responseMessage = {message: "Usuario Bloqueado"};
+            response.status(HttpStatus.UNAUTHORIZED).send(responseMessage).end();
+            
+            let auditoria = new audit({idusuario:usuario._id, observacion:JSON.stringify(responseMessage), aditionalinfo:JSON.stringify(request.body), tipooperacion:TIPOOPERACION.LOGINDENIED, location:location});            
+            await reporitoryAuditoria.Insert(auditoria);
+            return;
+        }
+
+        // se valida el password
+        if (passwordHash.verify(password, usuario.password) === false) {
                     
-                    let fieldsToUpdate = {intentosfallidoslogin: results[0].intentosfallidoslogin + 1, 
-                                          idestado: results[0].idestado};
-
-                    // se bloquea el usuario
-                    if (results[0].intentosfallidoslogin == config.app.intentosfallidoslogin*1) {
-                        fieldsToUpdate.idestado = USUARIOSESTADOS.BLOQUEADO;
-                    }
-
-                    // se actualiza el usuario
-                    UserModel.update({_id: results[0]._id}, fieldsToUpdate, function(err, numberAffected, rawResponse){
-                        if (err) {
-                            setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                            return;
-                        }                      
-                    });
-
-                    let responseMessage = {message: "Password Invalido"};
-                    response.status(HttpStatus.UNAUTHORIZED).send(responseMessage).end();
-                    SaveAudit2(results[0]._id, JSON.stringify(responseMessage), JSON.stringify(request.body), TIPOOPERACION.LOGINDENIED, location);
-                    return;
-                } else {
-                    // se actualizan los intentos fallidos del usuario
-                    UserModel.update({_id: results[0]._id}, {intentosfallidoslogin: 0}, function(err, numberAffected, rawResponse){
-                        if (err) {
-                            setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                            return;
-                        }
-                        
-                        const payload = {
-                            user: results[0].nombre,
-                            id: results[0]._id,
-                            moneda: results[0].moneda, 
-                        };
-
-                        //var token = jwt.sign(payload, app.get('jwtsecret'), { expiresIn : 60*60*24 });
-                        var token = jwt.sign(payload, app.get('jwtsecret'), { expiresIn : config.app.expiraciontoken*1 });
-
-                        response.status(HttpStatus.OK).send({token: token});
-                        SaveAudit2(results[0]._id, null, null, TIPOOPERACION.LOGINOK, location);     
-                    });                    
-                }
+            usuario.intentosfallidoslogin++;
+            
+            // se bloquea el usuario
+            if (usuario.intentosfallidoslogin == config.app.intentosfallidoslogin*1) {
+                usuario.idestado = USUARIOSESTADOS.BLOQUEADO;
             }
-        });        
+
+            // se actualiza el usuario
+            await reporitoryUser.Update(usuario);
+
+            let responseMessage = {message: "Password Invalido"};
+            response.status(HttpStatus.UNAUTHORIZED).send(responseMessage).end();
+            
+            let auditoria = new audit({idusuario:usuario._id, observacion:JSON.stringify(responseMessage), aditionalinfo:JSON.stringify(request.body), tipooperacion:TIPOOPERACION.LOGINDENIED, location:location});            
+            await reporitoryAuditoria.Insert(auditoria);
+            return;
+        }
+
+        // se actualizan los intentos fallidos del usuario a cero
+        usuario.intentosfallidoslogin = 0;
+        await reporitoryUser.Update(usuario);
+
+        const payload = {
+            user: usuario.nombre,
+            id: usuario._id,
+            moneda: usuario.moneda, 
+        };
+
+        //var token = jwt.sign(payload, app.get('jwtsecret'), { expiresIn : 60*60*24 });
+        var token = jwt.sign(payload, app.get('jwtsecret'), { expiresIn : config.app.expiraciontoken*1 });
+
+        response.status(HttpStatus.OK).send({token: token});
+        
+        let auditoria = new audit({idusuario:usuario._id, observacion:"", aditionalinfo:"", tipooperacion:TIPOOPERACION.LOGINOK, location:location});            
+        await reporitoryAuditoria.Insert(auditoria);
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -229,40 +233,25 @@ apiRoutes.post('/usuarios/registracion', async (request, response, next) => {
         fechaParam.setUTCMilliseconds(0);
 
         // valida que el usuario no exista
-        UserModel.find(
-            {email: { $regex: new RegExp("^" + email.toLowerCase(), "i")}},
-            function(err, results){
-            if (err) {
-                setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                return;
-            }
-            if(results.length > 0){
-                response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe un usuario con el mismo email"}).end();
-                return;
-            }
-            else{
-                // se hashea el password
-                let hashedPassword = passwordHash.generate(password);
+        let result = await reporitoryUser.GetByFilter(email);
+        if(result.length > 0){
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe un usuario con el mismo email"}).end();
+            return;
+        }
 
-                let userM = new UserModel({
-                    email: email,
-                    nombre: nombre,
-                    fechanacimiento: fechaParam,
-                    idestado: 0,
-                    moneda: moneda,
-                    password: hashedPassword
-                });
-                userM.save(function(err){
-                    if (err) {
-                        setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                        return;
-                    }
-                    else {
-                        response.status(HttpStatus.OK).send();
-                    }
-                });
-            }
-        });        
+        // se hashea el password
+        let hashedPassword = passwordHash.generate(password);
+
+        let usuario = new user();
+        usuario.email = email;
+        usuario.nombre = nombre;
+        usuario.fechanacimiento = fechaParam;
+        usuario.moneda = moneda;
+        usuario.password = hashedPassword;
+        
+        await reporitoryUser.Insert(usuario);
+
+        response.status(HttpStatus.OK).send();             
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -303,21 +292,8 @@ apiRoutes.use(function(request, response, next) {
 apiRoutes.get('/usuarios', async function(request, response, next) {
     
     try {
-        let searchFilter: {[k: string]: any} = {};
-
-        // filtro por email
-        if (request.query.email != undefined &&
-            request.query.email.length > 0) {
-            searchFilter.email = request.query.email;
-        }
-
-        UserModel.find(searchFilter, { conceptos: 0, __v: 0 } , function(err, results){
-            if (err) {
-                setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                return;
-            }
-            response.status(HttpStatus.OK).send(results).end();
-        });        
+        let result = await reporitoryUser.GetByFilter(request.query.email);
+        response.status(HttpStatus.OK).send(result).end();
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -333,15 +309,8 @@ apiRoutes.get('/usuarios/conceptos', async function (request, response, next) {
             return;
         }
 
-        ConceptoModel.find({user: idUsuario}, {user:0, __v:0},
-            function(err, results){
-                if (err) {                    
-                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                    return;
-                }
-                response.status(HttpStatus.OK).send(results).end();
-            }
-        ).sort('descripcion'); 
+        let conceptos = await reporitoryConcepto.GetByFilter(idUsuario);
+        response.status(HttpStatus.OK).send(conceptos).end();        
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -357,13 +326,8 @@ apiRoutes.get('/usuarios/:id', async function (request, response, next) {
             return;
         }
 
-        UserModel.findOne({_id:id}, {_id:0, conceptos: 0, __v:0}, function(err, results){
-            if (err) {
-                setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                return;
-            }
-            response.status(HttpStatus.OK).send(results).end();            
-        });
+        let usuario = await reporitoryUser.GetById(id);
+        response.status(HttpStatus.OK).send(usuario).end();
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -423,35 +387,25 @@ apiRoutes.put('/usuario', async function (request, response, next) {
         }
 
         // se obtiene el usuario via email
-        UserModel.find(
-            {email: { $regex: new RegExp("^" + email.toLowerCase(), "i")}},
-            function(err, results){
-            if (err) {
-                setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                return;
-            }
-            if(results.length > 0 &&
-               results[0].id != idUsuario){
-                response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe un usuario con el mismo email"}).end();
-                return;
-            }
-            else {
-                // se actualizan los datos del usuario
-                UserModel.update({_id: idUsuario}, 
-                                 {email: (email != undefined && email.length > 0) ? email : results[0].email,
-                                  fechanacimiento: (fechaNacimParsed != undefined) ? fechaNacimParsed : results[0].fechanacimiento,
-                                  moneda: (moneda != undefined && moneda.length > 0) ? moneda : results[0].moneda,
-                                  nombre: (nombre != undefined && nombre.length > 0) ? nombre : results[0].nombre,
-                                  password: (password != undefined && password.length > 0) ? passwordHash.generate(password) : results[0].password}, 
-                                 function(err, numberAffected, rawResponse){
-                    if (err) {
-                        setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                        return;
-                    }                    
-                    response.status(HttpStatus.OK).send().end();
-                });           
-            }
-        });
+        let result = await reporitoryUser.GetByFilter(email);
+        if(result.length > 0 &&
+            result[0]._id != idUsuario){
+             response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe un usuario con el mismo email"}).end();
+             return;
+         }
+
+         let usuario = result[0];
+
+         // se actualizan los datos del usuario
+         usuario.email = (email != undefined && email.length > 0) ? email : usuario.email,
+         usuario.fechanacimiento = (fechaNacimParsed != undefined) ? fechaNacimParsed : usuario.fechanacimiento,
+         usuario.moneda = (moneda != undefined && moneda.length > 0) ? moneda : usuario.moneda,
+         usuario.nombre = (nombre != undefined && nombre.length > 0) ? nombre : usuario.nombre,
+         usuario.password = (password != undefined && password.length > 0) ? passwordHash.generate(password) : usuario.password;
+        
+         await reporitoryUser.Update(usuario);
+
+         response.status(HttpStatus.OK).send().end();
     } catch(err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -1467,173 +1421,3 @@ catch(e){
 }
 
 
-
-
-
-/***************************** MIGRATION *******************************/
-/*
-// se migran los usuarios
-apiRoutes.post('/usuarios/migration', async (request, response, next) => {
-    
-    try {
-        let user1 = new UserModel({
-            email: "flopyglorias@gmail.com",
-            nombre: "Flor",
-            fechanacimiento: "1986-12-27 00:00:00",
-            idestado: 0,
-            moneda: "€",
-            password: "sha1$0aba42ea$1$ffb674911b122a75a8721d1bd47c54a28670acb5"
-        });
-        user1.save(function(err){
-            if (err) {
-                setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                return;
-            }
-            else {
-                response.status(HttpStatus.OK).send();
-            }
-        });
-
-        let user2 = new UserModel({
-            email: "joseluiseiguren@gmail.com",
-            nombre: "Joseph",
-            fechanacimiento: "1980-05-13 00:00:00",
-            idestado: 0,
-            moneda: "$",
-            password: "sha1$790e9674$1$4afb8e2b92a59dd3f25e25c088e5b9a90d9af4c3"
-        });
-        user2.save(function(err){
-            if (err) {
-                setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                return;
-            }
-            else {
-                response.status(HttpStatus.OK).send();
-            }
-        });
-
-        let user3 = new UserModel({
-            email: "fernanda.eiguren@gmail.com",
-            nombre: "Fernanda Eiguren",
-            fechanacimiento: "1988-05-13 00:00:00",
-            idestado: 0,
-            moneda: "$",
-            password: "sha1$a53c3e8c$1$479923b420203b70ed2a71a18426119aa00c4822"
-        });
-        user3.save(function(err){
-            if (err) {
-                setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                return;
-            }
-            else {
-                response.status(HttpStatus.OK).send();
-            }
-        });
-    } catch (err) {
-        setImmediate(() => { next(new Error(JSON.stringify(err))); });
-    }
-});
-
-// se migran los conceptos
-apiRoutes.post('/conceptos/migration/', async (request, response, next) => {
-    
-    try {
-        let idUsuario = "5ad1ce4cbefd252f74b413cb";
-        let conceptos = new Array();
-
-        // flor 
-        conceptos.push({descripcion: 'Suedo', credito: 1});
-        conceptos.push({descripcion: 'Supermercado', credito: 0});
-        conceptos.push({descripcion: 'Perros', credito: 0});
-        conceptos.push({descripcion: 'Viajes Work',credito: 0});
-        conceptos.push({descripcion: 'Comida Work',credito: 0});
-        conceptos.push({descripcion: 'Gym', credito: 0});
-        conceptos.push({descripcion: 'Beauty', credito: 0});
-        conceptos.push({descripcion: 'Salidas', credito: 0});
-        conceptos.push({descripcion: 'Ahorro', credito: 1});
-        conceptos.push({descripcion: 'Alquiler', credito: 0});
-        conceptos.push({descripcion: 'Orange', credito: 0});
-        conceptos.push({descripcion: 'Luz', credito: 0});
-        conceptos.push({descripcion: 'Gas', credito: 0});
-        conceptos.push({descripcion: 'Agua', credito: 0});
-        conceptos.push({descripcion: 'Seguros', credito: 0});
-        conceptos.push({descripcion: 'Odontólogo', credito: 0});
-        conceptos.push({descripcion: 'Cursos', credito: 0});
-        conceptos.push({descripcion: 'Salud', credito: 0});
-        conceptos.push({descripcion: 'Reposteria', credito: 0});
-        conceptos.push({descripcion: 'Deco Casa',credito:  0});
-        conceptos.push({descripcion: 'Ajuste', credito: 1});
-        conceptos.push({descripcion: 'Varios', credito: 0});
-        conceptos.push({descripcion: 'Viajes Mundo',credito: 0});
-        conceptos.push({descripcion: 'Look', credito: 0});
-        
-        //joseph
-        conceptos.push({descripcion: 'Plazo Fijo', credito: 1});
-        conceptos.push({descripcion: 'Varios', credito: 0});
-        conceptos.push({descripcion: 'Haras', credito: 0});
-        conceptos.push({descripcion: 'Ahorros Arg', credito: 1});
-        conceptos.push({descripcion: 'Netflix', credito: 0});
-        conceptos.push({descripcion: 'Venta Muebles', credito: 1});
-        conceptos.push({descripcion: 'Pluralsight', credito: 0});
-        conceptos.push({descripcion: 'Tarjeta flor', credito: 0});
-        
-        //maria
-        conceptos.push({descripcion: 'Suedo', credito: 1});
-        
-
-        conceptos.forEach(element => {
-            let concepto1 = new ConceptoModel({
-                descripcion: element.descripcion,
-                credito: element.credito,
-                user: idUsuario
-            });
-            concepto1.save(function(err){
-                if (err) {
-                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                    return;
-                }
-                else {
-                    response.status(HttpStatus.OK).send();
-                }
-            });
-        });
-    } catch (err) {
-        setImmediate(() => { next(new Error(JSON.stringify(err))); });
-    }
-});
-
-// se migran los movimientos
-apiRoutes.post('/movimientos/migration/', async (request, response, next) => {
-    
-    try {
-        let idUsuario = "5ad1ce4cbefd252f74b413cb";
-        let idConcepto = "5ad1d09c922a5e05dc0f8c5a";
-        let movimientos = new Array();
-
-        
-        movimientos.push({fecha: '2018-03-18 02:00:00', importe: '20000.00'});
-
-
-
-        movimientos.forEach(element => {
-            let movimientoM = new MovimientoModel({
-                user: idUsuario,
-                concepto: idConcepto,
-                fecha: element.fecha,
-                importe: element.importe
-            });
-            movimientoM.save(function(err){
-                if (err) {
-                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                    return;
-                }
-                else {
-                    response.status(HttpStatus.OK).send();
-                }
-            });          
-        });                
-    } catch (err) {
-        setImmediate(() => { next(new Error(JSON.stringify(err))); });
-    }
-});
-*/
