@@ -10,7 +10,7 @@ const dev = {
         key: process.env.DEV_SECRETHASH
     },
     db: {
-        strconexion: process.env.DEV_DBMONGO
+        strconexion: process.env.DEV_DB
     }
 };
 
@@ -25,7 +25,7 @@ const production = {
         key: process.env.PROD_SECRETHASH
     },
     db: {
-        strconexion: process.env.PROD_DBMONGO
+        strconexion: process.env.PROD_DB
     }
 };
 

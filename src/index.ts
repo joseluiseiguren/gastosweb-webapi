@@ -73,9 +73,6 @@ switch (process.env.NODE_ENV) {
         process.exit(1);
 }
 
-// se abre la conexion con la base de datos mongo
-mongoose.connect(config.db.strconexion);
-
 let app = express();
 app.use(cors())
 app.use(bodyParser.json());
@@ -1325,8 +1322,22 @@ app.use(function(err, req, res, next) {
     logger.error({errorId: errorId, message: err});
 });
 
-logger.info({message: "init ok"});
-app.listen(config.app.port);
+// se abre la conexion con la base de datos mongo
+try{
+    mongoose.connect(config.db.strconexion, function(error) {
+        if(error !== null){
+            logger.error({message: "No se Pudo conectar a la base de datos: " + config.db.strconexion});
+        }
+    });    
+
+    app.listen(config.app.port);
+    logger.info({message: "App iniciada..."});
+}
+catch(e){
+    logger.error({message: "No se pudo conectar a la base de datos"});
+}
+
+
 
 
 
