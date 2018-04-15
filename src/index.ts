@@ -4,6 +4,7 @@ import { conceptoRepositoryMongo } from "./mongo.repositories/concepto.mongo.rep
 import { auditRepositoryMongo } from "./mongo.repositories/audit.mongo.repository";
 import { user } from "./app.models/user.app.model";
 import { audit } from "./app.models/audit.app.model";
+import { concepto } from "./app.models/concepto.app.model";
 
 var express         = require('express');
 var cors            = require('cors');
@@ -309,7 +310,7 @@ apiRoutes.get('/usuarios/conceptos', async function (request, response, next) {
             return;
         }
 
-        let conceptos = await reporitoryConcepto.GetByFilter(idUsuario);
+        let conceptos = await reporitoryConcepto.GetByFilter(idUsuario, undefined, undefined);
         response.status(HttpStatus.OK).send(conceptos).end();        
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
@@ -436,56 +437,15 @@ apiRoutes.get('/conceptos/mensual/:mes/sumary', async function (request, respons
         let mes = Number(fecha.toString().substring(4, 6));
         let anio = Number(fecha.toString().substring(0, 4));
 
-        let fechaDesde: Date = new Date();
-        fechaDesde.setFullYear(anio);
-        fechaDesde.setUTCMonth(mes-1);
-        fechaDesde.setUTCDate(1);
-        fechaDesde.setUTCHours(0);
-        fechaDesde.setUTCMinutes(0);
-        fechaDesde.setUTCSeconds(0);
-        fechaDesde.setUTCMilliseconds(0);
-
-        let fechaHasta: Date = new Date();
-        fechaHasta.setFullYear(anio);
-        fechaHasta.setUTCMonth(mes);
-        fechaHasta.setUTCDate(1);
-        fechaHasta.setUTCHours(0);
-        fechaHasta.setUTCMinutes(0);
-        fechaHasta.setUTCSeconds(0);
-        fechaHasta.setUTCMilliseconds(0);
-
-        var resp = new Array();
-        let conceptos = ConceptoModel.find({user:idUsuario}).sort('descripcion').cursor();
-        for (let doc = await conceptos.next(); doc != null; doc = await conceptos.next()) {
-            let foo = {};
-            foo['idconcepto'] = doc._id.toString();
-            foo['descripcion'] = doc.descripcion;
-
-            var totalconcepto = await MovimientoModel.aggregate(
-                [
-                    {"$match": {
-                        "user": new mongoose.Types.ObjectId(idUsuario),
-                        "concepto": new  mongoose.Types.ObjectId(doc._id),
-                        "fecha": {$gte: fechaDesde, $lt: fechaHasta}}
-                    },
-                    {$group: {
-                        _id : "$concepto",
-                        importe : { $sum : "$importe" }
-                        }
-                    }
-                ]
-            );
-
-            resp.push({idConcepto:doc._id.toString(), descripcion: doc.descripcion, saldo: (totalconcepto.length > 0) ? totalconcepto[0].importe : 0 });
-        }
-        response.status(HttpStatus.OK).send(resp).end();
+        let conceptosSumary = await reporitoryConcepto.GetMensualSumary(idUsuario, anio, mes);
+        response.status(HttpStatus.OK).send(conceptosSumary).end();
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
 
 });
 
-//obtiene las fechas que un concepto tuvo movimientos YYYYMM para un usuario
+//obtiene los dias que un concepto tuvo movimientos YYYYMM para un usuario
 apiRoutes.get('/conceptos/:id/movimientos/mensual/:mes', async function (request, response, next) {
     
     try {
@@ -510,53 +470,8 @@ apiRoutes.get('/conceptos/:id/movimientos/mensual/:mes', async function (request
         let mes = Number(fecha.toString().substring(4, 6));
         let anio = Number(fecha.toString().substring(0, 4));
 
-        let fechaDesde: Date = new Date();
-        fechaDesde.setFullYear(anio);
-        fechaDesde.setUTCMonth(mes-1);
-        fechaDesde.setUTCDate(1);
-        fechaDesde.setUTCHours(0);
-        fechaDesde.setUTCMinutes(0);
-        fechaDesde.setUTCSeconds(0);
-        fechaDesde.setUTCMilliseconds(0);
-
-        let fechaHasta: Date = new Date();
-        fechaHasta.setFullYear(anio);
-        fechaHasta.setUTCMonth(mes);
-        fechaHasta.setUTCDate(1);
-        fechaHasta.setUTCHours(0);
-        fechaHasta.setUTCMinutes(0);
-        fechaHasta.setUTCSeconds(0);
-        fechaHasta.setUTCMilliseconds(0);
-
-        var resp = new Array();
-        
-        MovimientoModel.aggregate(
-            [
-                {"$match": {
-                    "user": new  mongoose.Types.ObjectId(idUsuario),
-                    "concepto": new  mongoose.Types.ObjectId(idConcepto),
-                    "fecha": {$gte: fechaDesde, $lt: fechaHasta},
-                    "importe": {$ne:0}}
-                },
-                {$group: {
-                    _id : "$fecha" ,
-                    importe : { $sum : "$importe" }
-                    }
-                },
-                { $sort : { _id : 1 } }
-            ],
-            function(err, result){
-                if (err) {
-                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                    return;
-                }
-                result.forEach(element => {
-                    resp.push({fecha: element._id, importe: element.importe})
-                });
-                
-                response.status(HttpStatus.OK).send(resp).end();
-            }
-        );
+        let conceptosMovimientos = await reporitoryConcepto.GetMensualByConcept(idUsuario, idConcepto, anio, mes);
+        response.status(HttpStatus.OK).send(conceptosMovimientos).end();
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -586,37 +501,20 @@ apiRoutes.post('/concepto', async function (request, response, next) {
         }
 
         // se valida que el no exista un concepto con la misma descripcion
-        ConceptoModel.find(
-            {user:idUsuario, 
-                descripcion:{ $regex : new RegExp(descripcion, "i") }}, 
-            function(err, results){
-                if (err) {
-                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                    return;
-                }
-                if(results.length > 0){
-                    response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe concepto con el mismo nombre"}).end();
-                    return;
-                }
-                else{
-                    // se agrega el concepto al usuario                
-                    let conceptoM = new ConceptoModel({
-                        descripcion: descripcion,
-                        credito: credito,
-                        user: idUsuario
-                    });
-                    conceptoM.save(function(err){
-                        if (err) {
-                            setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                            return;
-                        }
-                        else {
-                            response.status(HttpStatus.OK).send();
-                        }
-                    }); 
-                }
-            }
-        );
+        let conceptos = await reporitoryConcepto.GetByFilter(idUsuario, descripcion, undefined);
+        if(conceptos.length > 0){
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe concepto con el mismo nombre"}).end();
+            return;
+        }
+
+        // se agrega el concepto al usuario                
+        let cnp = new concepto();
+        cnp.user = idUsuario;
+        cnp.descripcion = descripcion;
+        cnp.credito = credito;
+        
+        await reporitoryConcepto.Insert(cnp);
+        response.status(HttpStatus.OK).send();
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -652,52 +550,32 @@ apiRoutes.put('/concepto', async function (request, response, next) {
         }
 
         // se valida que exista el concepto y pertenezca al usuario
-        ConceptoModel.findById(idConcepto, 
-            function(err, results){
-                if (err) {
-                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                    return;
-                }
-                
-                // el concepto no existe o no pertenece al usuario
-                if (results == null || results.user != idUsuario) {
-                    response.status(HttpStatus.BAD_REQUEST).send({message: "El conepto no pertenece al usuario"}).end();
-                    return;
-                }
+        let conceptos = await reporitoryConcepto.GetByFilter(idUsuario, undefined, idConcepto);
 
-                // se valida que no haya otro concepto con el mismo nombre para ese usuario
-                ConceptoModel.find(
-                    {user:idUsuario, 
-                        descripcion: { $regex: new RegExp("^" + descripcion.toLowerCase(), "i")}}, 
-                    function(err, results){
-                        if (err) {
-                            setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                            return;
-                        }
+        // el concepto no existe o no pertenece al usuario
+        if (conceptos.length <= 0) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "El conepto no pertenece al usuario"}).end();
+            return;
+        }
 
-                        // ya existe otro concepto con el mismo nombre
-                        if (results.length > 0 && results[0]._id != idConcepto){
-                            response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe otro concepto con el mismo nombre"}).end();
-                            return;
-                        }
+        // se valida que no haya otro concepto con el mismo nombre para ese usuario
+        conceptos = await reporitoryConcepto.GetByFilter(idUsuario, descripcion, undefined);
+        
+        // ya existe otro concepto con el mismo nombre
+        if (conceptos.length > 0 && conceptos[0]._id != idConcepto){
+            response.status(HttpStatus.BAD_REQUEST).send({message: "Ya existe otro concepto con el mismo nombre"}).end();
+            return;
+        }
 
-                        ConceptoModel.update(
-                            {_id:idConcepto}, 
-                            {descripcion: descripcion,
-                             credito:credito},
-                            function(err, results){
-                                if (err) {
-                                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                                    return;
-                                }
+        // se actualiza el concepto
+        let cnp: concepto = new concepto();
+        cnp._id = idConcepto;
+        cnp.credito = credito;
+        cnp.descripcion = descripcion;
+        cnp.user = idUsuario;
+        await reporitoryConcepto.Update(cnp);
 
-                                response.status(HttpStatus.OK).send().end();
-                            }
-                        );
-                    }
-                );
-            }
-        );
+        response.status(HttpStatus.OK).send().end();
     } catch(err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -719,49 +597,9 @@ apiRoutes.get('/conceptos/anual/:anio/sumary', async function (request, response
             return;
         }
 
-        let fechaDesde: Date = new Date();
-        fechaDesde.setFullYear(anio);
-        fechaDesde.setUTCMonth(0);
-        fechaDesde.setUTCDate(1);
-        fechaDesde.setUTCHours(0);
-        fechaDesde.setUTCMinutes(0);
-        fechaDesde.setUTCSeconds(0);
-        fechaDesde.setUTCMilliseconds(0);
+        let conceptosSumary = await reporitoryConcepto.GetAnualSumary(idUsuario, anio);
+        response.status(HttpStatus.OK).send(conceptosSumary).end();
 
-        let fechaHasta: Date = new Date();
-        fechaHasta.setFullYear(anio);
-        fechaHasta.setUTCMonth(11);
-        fechaHasta.setUTCDate(31);
-        fechaHasta.setUTCHours(23);
-        fechaHasta.setUTCMinutes(59);
-        fechaHasta.setUTCSeconds(59);
-        fechaHasta.setUTCMilliseconds(0);
-
-        var resp = new Array();
-        let conceptos = ConceptoModel.find({user:idUsuario}).sort('descripcion').cursor();
-        for (let doc = await conceptos.next(); doc != null; doc = await conceptos.next()) {
-            let foo = {};
-            foo['idconcepto'] = doc._id.toString();
-            foo['descripcion'] = doc.descripcion;
-
-            var totalconcepto = await MovimientoModel.aggregate(
-                [
-                    {"$match": {
-                        "user": new  mongoose.Types.ObjectId(idUsuario),
-                        "concepto": new  mongoose.Types.ObjectId(doc._id),
-                        "fecha": {$gte: fechaDesde, $lte: fechaHasta}}
-                    },
-                    {$group: {
-                        _id : "$concepto",
-                        importe : { $sum : "$importe" }
-                        }
-                    }
-                ]
-            );
-
-            resp.push({idConcepto:doc._id.toString(), descripcion: doc.descripcion, saldo: (totalconcepto.length > 0) ? totalconcepto[0].importe : 0 });
-        }
-        response.status(HttpStatus.OK).send(resp).end();
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -790,53 +628,9 @@ apiRoutes.get('/conceptos/:id/movimientos/anual/:anio', async function (request,
             return;
         }
 
-        let fechaDesde: Date = new Date();
-        fechaDesde.setFullYear(anio);
-        fechaDesde.setUTCMonth(0);
-        fechaDesde.setUTCDate(1);
-        fechaDesde.setUTCHours(0);
-        fechaDesde.setUTCMinutes(0);
-        fechaDesde.setUTCSeconds(0);
-        fechaDesde.setUTCMilliseconds(0);
+        let conceptosMovimientos = await reporitoryConcepto.GetAnualByConcept(idUsuario, idConcepto, anio);
+        response.status(HttpStatus.OK).send(conceptosMovimientos).end();
 
-        let fechaHasta: Date = new Date();
-        fechaHasta.setFullYear(anio);
-        fechaHasta.setUTCMonth(11);
-        fechaHasta.setUTCDate(31);
-        fechaHasta.setUTCHours(23);
-        fechaHasta.setUTCMinutes(59);
-        fechaHasta.setUTCSeconds(59);
-        fechaHasta.setUTCMilliseconds(0);
-
-        var resp = new Array();
-        
-        MovimientoModel.aggregate(
-            [
-                {"$match": {
-                    "user": new  mongoose.Types.ObjectId(idUsuario),
-                    "concepto": new  mongoose.Types.ObjectId(idConcepto),
-                    "fecha": {$gte: fechaDesde, $lte: fechaHasta},
-                    "importe": {$ne:0}}
-                },
-                {$group: {
-                    _id : { $month : "$fecha" } ,
-                    importe : { $sum : "$importe" }
-                    }
-                },
-                { $sort : { _id : 1 } }
-            ],
-            function(err, result){
-                if (err) {
-                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                    return;
-                }
-                result.forEach(element => {
-                    resp.push({mes: element._id.toString().padStart(2, '0') + anio, importe: element.importe})
-                });
-                
-                response.status(HttpStatus.OK).send(resp).end();
-            }
-        );
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -852,30 +646,8 @@ apiRoutes.get('/conceptos/historico/sumary', async function (request, response, 
             return;
         }
 
-        var resp = new Array();
-        let conceptos = ConceptoModel.find({user:idUsuario}).sort('descripcion').cursor();
-        for (let doc = await conceptos.next(); doc != null; doc = await conceptos.next()) {
-            let foo = {};
-            foo['idconcepto'] = doc._id.toString();
-            foo['descripcion'] = doc.descripcion;
-
-            var totalconcepto = await MovimientoModel.aggregate(
-                [
-                    {"$match": {
-                        "user": new  mongoose.Types.ObjectId(idUsuario),
-                        "concepto": new  mongoose.Types.ObjectId(doc._id)}
-                    },
-                    {$group: {
-                        _id : "$concepto",
-                        importe : { $sum : "$importe" }
-                        }
-                    }
-                ]
-            );
-
-            resp.push({idConcepto:doc._id.toString(), descripcion: doc.descripcion, saldo: (totalconcepto.length > 0) ? totalconcepto[0].importe : 0 });
-        }
-        response.status(HttpStatus.OK).send(resp).end();
+        let conceptosSumary = await reporitoryConcepto.GetHistoricoSumary(idUsuario);
+        response.status(HttpStatus.OK).send(conceptosSumary).end();
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -898,34 +670,9 @@ apiRoutes.get('/conceptos/:id/movimientos/historico', async function (request, r
             return;
         }
 
-        var resp = new Array();
-        
-        MovimientoModel.aggregate(
-            [
-                {"$match": {
-                    "user": new  mongoose.Types.ObjectId(idUsuario),
-                    "concepto": new  mongoose.Types.ObjectId(idConcepto),
-                    "importe": {$ne:0}}
-                },
-                {$group: {
-                    _id : { $year : "$fecha" } ,
-                    importe : { $sum : "$importe" }
-                    }
-                },
-                { $sort : { _id : 1 } }
-            ],
-            function(err, result){
-                if (err) {
-                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                    return;
-                }
-                result.forEach(element => {
-                    resp.push({anio: element._id, importe: element.importe})
-                });
-                
-                response.status(HttpStatus.OK).send(resp).end();
-            }
-        );
+        let conceptosMovimientos = await reporitoryConcepto.GetHistoricoByConcept(idUsuario, idConcepto);
+        response.status(HttpStatus.OK).send(conceptosMovimientos).end();
+
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }

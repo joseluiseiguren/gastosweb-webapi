@@ -1,3 +1,4 @@
+var mongoose = require('mongoose');
 var UserModel = require('../mongo.models/user.mongo.model');
 import {userInterface} from '../interfaces/user.interface';
 import {user} from '../app.models/user.app.model';
@@ -37,7 +38,7 @@ export class userRepositoryMongo implements  userInterface {
 
     public async GetById(id: string): Promise<user> {
 
-        let resultMongo = await UserModel.findOne({_id:id});
+        let resultMongo = await UserModel.findOne({_id:new mongoose.Types.ObjectId(id)});
 
         if (resultMongo === null){
             return null;
@@ -50,7 +51,7 @@ export class userRepositoryMongo implements  userInterface {
 
         // se actualiza el usuario
         await UserModel.update(
-            {_id: usuario._id}, 
+            {_id: new mongoose.Types.ObjectId(usuario._id)}, 
             {intentosfallidoslogin: usuario.intentosfallidoslogin,
              email: usuario.email,
              nombre: usuario.nombre,
