@@ -3,6 +3,7 @@ import { conceptoSumary } from '../app.models/concepto.sumary.app.model';
 import { conceptoMovimiento } from '../app.models/concepto.movimiento.app.model';
 import { conceptoMovimientoAnual } from '../app.models/concepto.movimiento.anual.app.model';
 import { conceptoMovimientoHist } from '../app.models/concepto.movimiento.hist.app.model';
+import { movimientoDiario } from '../app.models/movimiento.diario.app.model';
 
 export interface conceptoInterface {
     
@@ -23,4 +24,6 @@ export interface conceptoInterface {
     GetHistoricoSumary(idUsuario: string): Promise<Array<conceptoSumary>>;
 
     GetHistoricoByConcept(idUsuario: string, idConcepto: string): Promise<Array<conceptoMovimientoHist>>;
+
+    GetDiarioSumary(idUsuario: string, anio: number, mes: number, dia: number): Promise<Array<movimientoDiario>>;
 }

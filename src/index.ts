@@ -1,10 +1,12 @@
 import "reflect-metadata";
-import { userRepositoryMongo } from "./mongo.repositories/user.mongo.repository";
-import { conceptoRepositoryMongo } from "./mongo.repositories/concepto.mongo.repository";
-import { auditRepositoryMongo } from "./mongo.repositories/audit.mongo.repository";
 import { user } from "./app.models/user.app.model";
 import { audit } from "./app.models/audit.app.model";
 import { concepto } from "./app.models/concepto.app.model";
+import { movimientoRepositoryMongo } from "./mongo.repositories/movimiento.mongo.repository";
+import { userRepositoryMongo } from "./mongo.repositories/user.mongo.repository";
+import { conceptoRepositoryMongo } from "./mongo.repositories/concepto.mongo.repository";
+import { auditRepositoryMongo } from "./mongo.repositories/audit.mongo.repository";
+import { movimiento } from "./app.models/movimiento.app.model";
 
 var express         = require('express');
 var cors            = require('cors');
@@ -17,9 +19,6 @@ var bodyParser      = require('body-parser');
 var uuid            = require('uuid');
 var log4js          = require('log4js');
 var mongoose        = require('mongoose');
-
-var ConceptoModel = require('../src/mongo.models/concepto.mongo.model');
-var MovimientoModel = require('../src/mongo.models/movimiento.mongo.model');
 
 // configuracion de log4j
 log4js.configure({ 
@@ -90,6 +89,7 @@ const USUARIOSESTADOS = Object.freeze({NORMAL: 0, BLOQUEADO: 1});
 var reporitoryUser = new userRepositoryMongo();
 var reporitoryConcepto = new conceptoRepositoryMongo();
 var reporitoryAuditoria = new auditRepositoryMongo();
+var reporitoryMovimiento = new movimientoRepositoryMongo();
 
 
 /**** USUARIOS ******************************************************************************************/
@@ -699,68 +699,13 @@ apiRoutes.get('/mensual/:fecha/sumary', async function (request, response, next)
             response.status(HttpStatus.BAD_REQUEST).send({message: "Fecha invalida"}).end();
             return;
         }
-        
-        let anio = Number(fecha.substring(0, 4));
-        let mes = Number(fecha.substring(4, 6));
 
-        let fechaDesde: Date = new Date();
-        fechaDesde.setFullYear(anio);
-        fechaDesde.setUTCMonth(mes-1);
-        fechaDesde.setUTCDate(1);
-        fechaDesde.setUTCHours(0);
-        fechaDesde.setUTCMinutes(0);
-        fechaDesde.setUTCSeconds(0);
-        fechaDesde.setUTCMilliseconds(0);
+        let mes = Number(fecha.toString().substring(4, 6));
+        let anio = Number(fecha.toString().substring(0, 4));
 
-        let fechaHasta: Date = new Date();
-        fechaHasta.setFullYear(anio);
-        fechaHasta.setUTCMonth(mes);
-        fechaHasta.setUTCDate(1);
-        fechaHasta.setUTCHours(0);
-        fechaHasta.setUTCMinutes(0);
-        fechaHasta.setUTCSeconds(0);
-        fechaHasta.setUTCMilliseconds(0);
-
-        let resp = {};
-        
-        // obtengo el total de ingresos
-        MovimientoModel.aggregate(
-            [
-                {"$match": {
-                    "user": new  mongoose.Types.ObjectId(idUsuario), 
-                    "importe":{$gt:0},
-                    "fecha": {$gte:fechaDesde, $lt: fechaHasta}}
-                },
-                {$group: {_id: '$user', ingresos: {$sum: "$importe"}}}
-            ], 
-            function(err, result){
-            if (err) {
-                setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                return;
-            }
-
-            resp['ingresos'] = (result[0] !== undefined) ? result[0].ingresos : 0;
-
-            // obtengo el total de egresos
-            MovimientoModel.aggregate(
-                [
-                    {"$match": {
-                        "user": new  mongoose.Types.ObjectId(idUsuario), 
-                        "importe":{$lt:0},
-                        "fecha": {$gte:fechaDesde, $lt: fechaHasta}}
-                    },
-                    {$group: {_id: '$user', egresos: {$sum: "$importe"}}}
-                ], 
-                function(err, result){
-                if (err) {
-                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                    return;
-                }
-
-                resp['egresos'] = (result[0] !== undefined) ? Math.abs(result[0].egresos) : 0;
-                response.status(HttpStatus.OK).send(resp).end();
-            });
-        });
+        let sumary = await reporitoryMovimiento.GetMensualSumary(idUsuario, anio, mes);
+        response.status(HttpStatus.OK).send(sumary).end();
+         
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -779,71 +724,16 @@ apiRoutes.get('/anual/:fecha/sumary', async function (request, response, next) {
             return;
         }
 
-        let fecha = request.params.fecha;
-        if (isNaN(fecha) ||
-            fecha.length != 4) {
+        let anio = request.params.fecha;
+        if (isNaN(anio) ||
+            anio.length != 4) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Año invalido"}).end();
             return;
         }
 
-        let fechaDesde: Date = new Date();
-        fechaDesde.setFullYear(fecha);
-        fechaDesde.setUTCMonth(0);
-        fechaDesde.setUTCDate(1);
-        fechaDesde.setUTCHours(0);
-        fechaDesde.setUTCMinutes(0);
-        fechaDesde.setUTCSeconds(0);
-        fechaDesde.setUTCMilliseconds(0);
+        let sumary = await reporitoryMovimiento.GetAnualSumary(idUsuario, anio);
+        response.status(HttpStatus.OK).send(sumary).end();
 
-        let fechaHasta: Date = new Date();
-        fechaHasta.setFullYear(fecha);
-        fechaHasta.setUTCMonth(11);
-        fechaHasta.setUTCDate(31);
-        fechaHasta.setUTCHours(23);
-        fechaHasta.setUTCMinutes(59);
-        fechaHasta.setUTCSeconds(59);
-        fechaHasta.setUTCMilliseconds(0);
-
-        let resp = {};
-        
-        // obtengo el total de ingresos
-        MovimientoModel.aggregate(
-            [
-                {"$match": {
-                    "user": new  mongoose.Types.ObjectId(idUsuario), 
-                    "importe":{$gt:0},
-                    "fecha": {$gte: fechaDesde, $lte: fechaHasta}}
-                },
-                {$group: {_id: '$user', ingresos: {$sum: "$importe"}}}
-            ], 
-            function(err, result){
-            if (err) {
-                setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                return;
-            }
-
-            resp['ingresos'] = (result[0] !== undefined) ? result[0].ingresos : 0;
-
-            // obtengo el total de egresos
-            MovimientoModel.aggregate(
-                [
-                    {"$match": {
-                        "user": new  mongoose.Types.ObjectId(idUsuario), 
-                        "importe":{$lt:0},
-                        "fecha": {$gte: fechaDesde, $lte: fechaHasta}}
-                    },
-                    {$group: {_id: '$user', egresos: {$sum: "$importe"}}}
-                ], 
-                function(err, result){
-                if (err) {
-                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                    return;
-                }
-
-                resp['egresos'] = (result[0] !== undefined) ? Math.abs(result[0].egresos) : 0;
-                response.status(HttpStatus.OK).send(resp).end();
-            });
-        });
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -862,38 +752,9 @@ apiRoutes.get('/historico/sumary', async function (request, response, next) {
             return;
         }
 
-        let resp = {};
-
-        // obtengo el total de ingresos
-        MovimientoModel.aggregate(
-            [
-                {"$match": {"user": new  mongoose.Types.ObjectId(idUsuario), "importe":{$gt:0}}},
-                {$group: {_id: '$user', ingresos: {$sum: "$importe"}}}
-            ], 
-            function(err, result){
-            if (err) {
-                setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                return;
-            }
-
-            resp['ingresos'] = (result[0] !== undefined) ? result[0].ingresos : 0;
-
-            // obtengo el total de egresos
-            MovimientoModel.aggregate(
-                [
-                    {"$match": {"user": new  mongoose.Types.ObjectId(idUsuario), "importe":{$lt:0}}},
-                    {$group: {_id: '$user', egresos: {$sum: "$importe"}}}
-                ], 
-                function(err, result){
-                if (err) {
-                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                    return;
-                }
-
-                resp['egresos'] = (result[0] !== undefined) ? Math.abs(result[0].egresos) : 0;
-                response.status(HttpStatus.OK).send(resp).end();
-            });
-        });
+        let sumary = await reporitoryMovimiento.GetHistoricoSumary(idUsuario);
+        response.status(HttpStatus.OK).send(sumary).end();
+       
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -931,6 +792,15 @@ apiRoutes.post('/diario', async function (request, response, next) {
             return;
         }
 
+        // se valida que exista el concepto y pertenezca al usuario
+        let conceptos = await reporitoryConcepto.GetByFilter(idUsuario, undefined, idConcepto);
+
+        // el concepto no existe o no pertenece al usuario
+        if (conceptos.length <= 0) {
+            response.status(HttpStatus.BAD_REQUEST).send({message: "El conepto no pertenece al usuario"}).end();
+            return;
+        }
+
         let fechaMov: Date = new Date();
         fechaMov.setFullYear(Number(fecha.substring(0, 4)));
         fechaMov.setUTCMonth(Number(fecha.substring(4, 6))-1);
@@ -949,68 +819,30 @@ apiRoutes.post('/diario', async function (request, response, next) {
         fechaHasta.setUTCSeconds(59);
         fechaHasta.setUTCMilliseconds(0);
 
-        // se busca el concepto para el cual se va a cargar el movimiento
-        ConceptoModel.findById(idConcepto, 
-            function(err, results){
-                if (err) {
-                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                    return;
-                }
-                
-                // el concepto no existe o no pertenece al usuario
-                if (results == null || results.user != idUsuario) {
-                    response.status(HttpStatus.BAD_REQUEST).send({message: "El conepto no pertenece al usuario"}).end();
-                    return;
-                }
+        // se busca el movimiento para la fecha solicitada
+        let existeMov = await reporitoryMovimiento.GetByFilter(idUsuario, idConcepto, fechaMov, fechaHasta);
 
-                // se busca el movimiento para la fecha solicitada
-                MovimientoModel.findOne(
-                    {concepto: idConcepto, 
-                        fecha: {$gte: fechaMov, $lte: fechaHasta}}, 
-                    function(err, results){
-                        if (err) {
-                            setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                            return;
-                        }
-                        
-                        // no existe un movimiento cargado para la fecha solicitada, hay que hacer un insert
-                        if (results == null) {
-                            let movimientoM = new MovimientoModel({
-                                user: idUsuario,
-                                concepto: idConcepto,
-                                fecha: fechaMov,
-                                importe: importe
-                            });
-                            movimientoM.save(function(err){
-                                if (err) {
-                                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                                    return;
-                                }
-                                else {
-                                    response.status(HttpStatus.OK).send();
-                                }
-                            });                             
-                        }
-                        else{
-                            // ya existe el movimiento para la fecha solicitada, se actualiza
-                            MovimientoModel.update(
-                                {_id:results._id},
-                                {importe:importe,
-                                 fechaalta: new Date()},
-                                function(err, results){
-                                    if (err) {
-                                        setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                                        return;
-                                    }
+        // no existe un movimiento cargado para la fecha solicitada, hay que hacer un insert
+        if (existeMov.length <= 0){
+            let mov: movimiento = new movimiento();
+            mov.concepto = idConcepto;
+            mov.fecha = fechaMov;
+            mov.importe = importe;
+            mov.user = idUsuario;
+            await reporitoryMovimiento.Insert(mov);
+        } else {
+            // ya existe el movimiento para la fecha solicitada, se actualiza
+            let mov: movimiento = new movimiento();
+            mov.concepto = idConcepto;
+            mov.fecha = fechaMov;
+            mov.importe = importe;
+            mov.user = idUsuario;
+            mov._id = existeMov[0]._id;
+            await reporitoryMovimiento.Update(mov);
+        }
 
-                                    response.status(HttpStatus.OK).send();
-                                }
-                            );                            
-                        }            
-                    }
-                ); 
-            }
-        ); 
+        response.status(HttpStatus.OK).send();
+
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -1026,39 +858,9 @@ apiRoutes.get('/diario/first', async function (request, response, next) {
             return;
         }
 
-        var fechaMax = null;
-        var fechaMin = null;
+        let result = await reporitoryMovimiento.GetFirstLast(idUsuario);
+        response.status(HttpStatus.OK).send(result).end();
 
-        // busca el max de fecha
-        MovimientoModel.findOne()
-            .where({user:idUsuario})
-            .sort('-fecha')
-            .exec(function(err, result)
-            {
-                if (err) {
-                    setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                    return;
-                }
-
-                fechaMax = result.fecha;
-
-                // busca el min de fecha
-                MovimientoModel.findOne()
-                    .where({user:idUsuario})
-                    .sort('fecha')
-                    .exec(function(err, result)
-                    {
-                        if (err) {
-                            setImmediate(() => { next(new Error(JSON.stringify(err))); });
-                            return;
-                        }
-
-                        fechaMin = result.fecha;                    
-                        response.status(HttpStatus.OK).send({fechaMin: fechaMin, fechaMax: fechaMax}).end();
-                    }
-                );
-            }
-        );
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
@@ -1081,51 +883,13 @@ apiRoutes.get('/diario/:fecha', async function (request, response, next) {
             return;
         }
 
-        let fechaDesde: Date = new Date();
-        fechaDesde.setFullYear(Number(fecha.substring(0, 4)));
-        fechaDesde.setUTCMonth(Number(fecha.substring(4, 6))-1);
-        fechaDesde.setUTCDate(Number(fecha.substring(6, 8)));
-        fechaDesde.setUTCHours(0);
-        fechaDesde.setUTCMinutes(0);
-        fechaDesde.setUTCSeconds(0);
-        fechaDesde.setUTCMilliseconds(0);
+        let anio = Number(fecha.substring(0, 4));
+        let mes = Number(fecha.substring(4, 6));
+        let dia = Number(fecha.substring(6, 8));
 
-        let fechaHasta: Date = new Date();
-        fechaHasta.setFullYear(Number(fecha.substring(0, 4)));
-        fechaHasta.setUTCMonth(Number(fecha.substring(4, 6))-1);
-        fechaHasta.setUTCDate(Number(fecha.substring(6, 8)));
-        fechaHasta.setUTCHours(23);
-        fechaHasta.setUTCMinutes(59);
-        fechaHasta.setUTCSeconds(59);
-        fechaHasta.setUTCMilliseconds(0);
+        let result = await reporitoryConcepto.GetDiarioSumary(idUsuario, anio, mes, dia);
+        response.status(HttpStatus.OK).send(result).end();
 
-        var resp = new Array();
-        let conceptos = ConceptoModel.find({user:idUsuario}).sort('descripcion').cursor();
-        for (let doc = await conceptos.next(); doc != null; doc = await conceptos.next()) {
-            let foo = {};
-            foo['idconcepto'] = doc._id.toString();
-            foo['descripcion'] = doc.descripcion;
-            foo['credito'] = doc.credito;
-            
-            let movimiento = MovimientoModel.find(
-                {concepto:doc._id, 
-                 fecha: {$gte: fechaDesde, $lte: fechaHasta}}).cursor();
-
-            for (let mov = await movimiento.next(); mov != null; mov = await movimiento.next()) {
-                foo['fecha'] = mov.fecha;
-                foo['importe'] = mov.importe;
-            }
-
-            // el concepto no tiene movimientos
-            if(foo['importe'] === undefined){
-                foo['fecha'] = fechaDesde;
-                foo['importe'] = 0;
-            }
-            
-            resp.push(foo);            
-        }
-
-        response.status(HttpStatus.OK).send(resp).end();
     } catch (err) {
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }

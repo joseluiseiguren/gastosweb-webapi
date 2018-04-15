@@ -7,6 +7,7 @@ import { conceptoSumary } from '../app.models/concepto.sumary.app.model';
 import { conceptoMovimiento } from '../app.models/concepto.movimiento.app.model';
 import { conceptoMovimientoAnual } from '../app.models/concepto.movimiento.anual.app.model';
 import { conceptoMovimientoHist } from '../app.models/concepto.movimiento.hist.app.model';
+import { movimientoDiario } from '../app.models/movimiento.diario.app.model';
 
 export class conceptoRepositoryMongo implements  conceptoInterface {
     
@@ -72,7 +73,7 @@ export class conceptoRepositoryMongo implements  conceptoInterface {
         var resp = new Array<conceptoSumary>();
         let conceptos = ConceptoModel.find({user:idUsuario}).sort('descripcion').cursor();
         for (let doc = await conceptos.next(); doc != null; doc = await conceptos.next()) {
-            let foo: conceptoSumary = new conceptoSumary;
+            let foo: conceptoSumary = new conceptoSumary();
             foo.idConcepto = doc._id.toString();
             foo.descripcion = doc.descripcion;
 
@@ -193,7 +194,7 @@ export class conceptoRepositoryMongo implements  conceptoInterface {
         var resp = new Array<conceptoSumary>();
         let conceptos = ConceptoModel.find({user:idUsuario}).sort('descripcion').cursor();
         for (let doc = await conceptos.next(); doc != null; doc = await conceptos.next()) {
-            let foo: conceptoSumary = new conceptoSumary;
+            let foo: conceptoSumary = new conceptoSumary();
             foo.idConcepto = doc._id.toString();
             foo.descripcion = doc.descripcion;
 
@@ -274,7 +275,7 @@ export class conceptoRepositoryMongo implements  conceptoInterface {
         var resp = new Array<conceptoSumary>();
         let conceptos = ConceptoModel.find({user:idUsuario}).sort('descripcion').cursor();
         for (let doc = await conceptos.next(); doc != null; doc = await conceptos.next()) {
-            let foo: conceptoSumary = new conceptoSumary;
+            let foo: conceptoSumary = new conceptoSumary();
             foo.idConcepto = doc._id.toString();
             foo.descripcion = doc.descripcion;
 
@@ -326,6 +327,50 @@ export class conceptoRepositoryMongo implements  conceptoInterface {
             
             resp.push(item)
         });                
+
+        return resp;
+    }
+
+    public async GetDiarioSumary(idUsuario: string, anio: number, mes: number, dia: number): Promise<Array<movimientoDiario>> {
+
+        let fechaDesde: Date = new Date();
+        fechaDesde.setFullYear(anio);
+        fechaDesde.setUTCMonth(mes-1);
+        fechaDesde.setUTCDate(dia);
+        fechaDesde.setUTCHours(0);
+        fechaDesde.setUTCMinutes(0);
+        fechaDesde.setUTCSeconds(0);
+        fechaDesde.setUTCMilliseconds(0);
+
+        let fechaHasta: Date = new Date();
+        fechaHasta.setFullYear(anio);
+        fechaHasta.setUTCMonth(mes-1);
+        fechaHasta.setUTCDate(dia);
+        fechaHasta.setUTCHours(23);
+        fechaHasta.setUTCMinutes(59);
+        fechaHasta.setUTCSeconds(59);
+        fechaHasta.setUTCMilliseconds(0);
+
+        var resp = new Array<movimientoDiario>();
+        let conceptos = ConceptoModel.find({user:idUsuario}).sort('descripcion').cursor();
+        for (let doc = await conceptos.next(); doc != null; doc = await conceptos.next()) {
+            let foo: movimientoDiario = new movimientoDiario();
+            foo.idconcepto = doc._id.toString();
+            foo.descripcion = doc.descripcion;
+            foo.credito = doc.credito;
+            foo.fecha = fechaDesde;
+            foo.importe = 0;
+            
+            let movimiento = MovimientoModel.find(
+                {concepto:doc._id, 
+                 fecha: {$gte: fechaDesde, $lte: fechaHasta}}).cursor();
+
+            for (let mov = await movimiento.next(); mov != null; mov = await movimiento.next()) {
+                foo.importe = mov.importe;
+            }
+
+            resp.push(foo);            
+        }
 
         return resp;
     }
