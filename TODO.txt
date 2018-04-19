@@ -6,6 +6,6 @@
 - webapi: abrir el index.ts en multiples files
 - poner indices en los select
     - Tener un ormconfig.json de dev y otro de prod
-- migrar a mongo db
+    - migrar a mongo db
 - implementar signalR
-- pàtron repository urgente: index.ts no tiene que saber de sintaxis mongoose (FALTA ELIMINAR CONEXION A LA BASE DE DATOS DEL INDEX.TS)
+    - pàtron repository urgente: index.ts no tiene que saber de sintaxis mongoose (FALTA ELIMINAR CONEXION A LA BASE DE DATOS DEL INDEX.TS)

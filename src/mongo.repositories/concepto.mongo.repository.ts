@@ -9,6 +9,8 @@ import { conceptoMovimientoAnual } from '../app.models/concepto.movimiento.anual
 import { conceptoMovimientoHist } from '../app.models/concepto.movimiento.hist.app.model';
 import { movimientoDiario } from '../app.models/movimiento.diario.app.model';
 
+var conection = require('../mongo.repositories/conection');
+
 export class conceptoRepositoryMongo implements  conceptoInterface {
     
     public async GetByFilter(userId: string, descripcion: string, conceptoId: string): Promise<Array<concepto>> {

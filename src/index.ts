@@ -2,11 +2,13 @@ import "reflect-metadata";
 import { user } from "./app.models/user.app.model";
 import { audit } from "./app.models/audit.app.model";
 import { concepto } from "./app.models/concepto.app.model";
+import { movimiento } from "./app.models/movimiento.app.model";
+
+//mongodb repositories
 import { movimientoRepositoryMongo } from "./mongo.repositories/movimiento.mongo.repository";
 import { userRepositoryMongo } from "./mongo.repositories/user.mongo.repository";
 import { conceptoRepositoryMongo } from "./mongo.repositories/concepto.mongo.repository";
 import { auditRepositoryMongo } from "./mongo.repositories/audit.mongo.repository";
-import { movimiento } from "./app.models/movimiento.app.model";
 
 var express         = require('express');
 var cors            = require('cors');
@@ -18,7 +20,6 @@ var config          = require('./config');
 var bodyParser      = require('body-parser');
 var uuid            = require('uuid');
 var log4js          = require('log4js');
-var mongoose        = require('mongoose');
 
 // configuracion de log4j
 log4js.configure({ 
@@ -915,20 +916,6 @@ app.use(function(err, req, res, next) {
     logger.error({errorId: errorId, message: err});
 });
 
-// se abre la conexion con la base de datos mongo
-try{
-    mongoose.connect(config.db.strconexion, function(error) {
-        if(error !== null){
-            logger.error({message: "No se Pudo conectar a la base de datos: " + config.db.strconexion});
-        }
-    });    
-
-    app.listen(config.app.port);
-    logger.info({message: "Fecha Server: " + new Date()});
-    logger.info({message: "App iniciada..."});
-}
-catch(e){
-    logger.error({message: "No se pudo conectar a la base de datos"});
-}
-
-
+app.listen(config.app.port);
+logger.info({message: "Fecha Server: " + new Date()});
+logger.info({message: "App iniciada..."});

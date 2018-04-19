@@ -3,6 +3,8 @@ var UserModel = require('../mongo.models/user.mongo.model');
 import {userInterface} from '../interfaces/user.interface';
 import {user} from '../app.models/user.app.model';
 
+var conection = require('../mongo.repositories/conection');
+
 export class userRepositoryMongo implements  userInterface {
     
     public async GetByFilter(email: string): Promise<Array<user>> {

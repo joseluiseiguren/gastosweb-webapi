@@ -1,6 +1,7 @@
 var AuditModel = require('../mongo.models/audit.mongo.model');
 import {auditInterface} from '../interfaces/audit.interface';
 import {audit} from '../app.models/audit.app.model';
+var conection = require('../mongo.repositories/conection');
 
 export class auditRepositoryMongo implements  auditInterface {
     

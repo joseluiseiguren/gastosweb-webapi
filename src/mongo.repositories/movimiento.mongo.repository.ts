@@ -5,6 +5,8 @@ import { sumaryMovimiento } from '../app.models/movimiento.sumary.app.model';
 import { movimiento } from '../app.models/movimiento.app.model';
 import { firstlastMovimiento } from '../app.models/movimiento.firstlast.app.model';
 
+var conection = require('../mongo.repositories/conection');
+
 export class movimientoRepositoryMongo implements  movimientoInterface {
     
     public async GetMensualSumary(idUsuario: string, anio: number, mes: number): Promise<sumaryMovimiento> {
