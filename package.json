@@ -4,13 +4,12 @@
   "description": "WebApi del proyecto de gastos web",
   "devDependencies": {
     "@types/express": "^4.11.1",
-    "@types/node": "^8.0.29",
+    "@types/node": "^8.10.50",
     "ts-node": "3.3.0",
     "typescript": "2.5.2"
   },
   "dependencies": {
     "@types/express": "^4.11.1",
-    "@types/node": "^8.9.3",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
     "express": "^4.16.2",
