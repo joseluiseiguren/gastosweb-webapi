@@ -22,7 +22,7 @@ SET PROD_APP_PORT=3000
 SET PROD_SECRETHASH=ilovescotchyscotch
 SET PROD_EXPIRACION_TOKEN=86400
 SET PROD_INTENTOS_FALLIDOS_LOGIN=5
-SET PROD_DB=mongodb://147cda85e5f36bc5a7e386d45d3a79d1:cgmongo01@6b.mongo.evennode.com:27017/147cda85e5f36bc5a7e386d45d3a79d1
+SET PROD_DB=/****REVISAR ARCHIVO DE PASSWORDS***/
 
 
 /* Para eliminar variables de entorno */
@@ -32,10 +32,12 @@ SET NODE_ENV=undefined
 /* Ejemplo string conexion mongo */
 mongodb://user:password@host:port/database
 
+/* Si da un error de compilacion en 'require', abrir un cmd como administrador, pararse en la ruta de la aplicacion y ejecutar: */
+npm install @types/node --save-dev
 
-/*Mysql production */
-HOST=sql2.freemysqlhosting.net
-PORT=3306
-NAME=sql2225236
-USER=sql2225236
-PASSWORD=sP9*jG2%
+
+/* Generar un nuevo token para utilizar desde Postman */
+1. https://jwt.io/
+2. Pegar el Token actual que tenemos en el postman (seguramente este vencido)
+3. Modificar el campo "exp" y poner una fecha mayor a la actual
+4. Copiar el campo "Encoded" (de la pagina web) al access token del postman
