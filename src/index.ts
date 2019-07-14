@@ -3,12 +3,14 @@ import { user } from "./app.models/user.app.model";
 import { audit } from "./app.models/audit.app.model";
 import { concepto } from "./app.models/concepto.app.model";
 import { movimiento } from "./app.models/movimiento.app.model";
+import { movimiento_tag } from "./app.models/movimiento_tag.app.model";
 
 //mongodb repositories
 import { movimientoRepositoryMongo } from "./mongo.repositories/movimiento.mongo.repository";
 import { userRepositoryMongo } from "./mongo.repositories/user.mongo.repository";
 import { conceptoRepositoryMongo } from "./mongo.repositories/concepto.mongo.repository";
 import { auditRepositoryMongo } from "./mongo.repositories/audit.mongo.repository";
+import { conceptoMovimientoAnual } from "./app.models/concepto.movimiento.anual.app.model";
 
 var express         = require('express');
 var cors            = require('cors');
@@ -771,7 +773,8 @@ apiRoutes.post('/diario', async function (request, response, next) {
         const idUsuario = request.decoded.id,
             fecha: string = request.body.fecha,
             importe = request.body.importe,
-            idConcepto = request.body.idConcepto;
+            idConcepto = request.body.idConcepto,
+            tags = request.body.tags;
 
         if (idUsuario === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
@@ -824,22 +827,32 @@ apiRoutes.post('/diario', async function (request, response, next) {
         let existeMov = await reporitoryMovimiento.GetByFilter(idUsuario, idConcepto, fechaMov, fechaHasta);
 
         // no existe un movimiento cargado para la fecha solicitada, hay que hacer un insert
-        if (existeMov.length <= 0){
-            let mov: movimiento = new movimiento();
+        let mov: movimiento = new movimiento();
+        if (existeMov.length <= 0){            
             mov.concepto = idConcepto;
             mov.fecha = fechaMov;
             mov.importe = importe;
             mov.user = idUsuario;
-            await reporitoryMovimiento.Insert(mov);
+            mov._id = await reporitoryMovimiento.Insert(mov);
         } else {
             // ya existe el movimiento para la fecha solicitada, se actualiza
-            let mov: movimiento = new movimiento();
             mov.concepto = idConcepto;
             mov.fecha = fechaMov;
             mov.importe = importe;
             mov.user = idUsuario;
             mov._id = existeMov[0]._id;
             await reporitoryMovimiento.Update(mov);
+        }
+
+        //get current tags for the movement
+        await reporitoryMovimiento.RemoveTagsForMovement(mov._id);
+        
+        //save tags for movement
+        for (let tag of tags) {
+            let tagObject = new movimiento_tag();
+            tagObject.movimiento = mov._id;
+            tagObject.tag = tag;
+            await reporitoryMovimiento.InsertTag(tagObject);
         }
 
         response.status(HttpStatus.OK).send();

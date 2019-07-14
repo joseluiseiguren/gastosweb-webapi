@@ -1,8 +1,10 @@
 var mongoose = require('mongoose');
 var MovimientoModel = require('../mongo.models/movimiento.mongo.model');
+var MovimientoTagModel = require('../mongo.models/movimiento_tag.mongo.model');
 import { movimientoInterface } from '../interfaces/movimiento.interface';
 import { sumaryMovimiento } from '../app.models/movimiento.sumary.app.model';
 import { movimiento } from '../app.models/movimiento.app.model';
+import { movimiento_tag } from '../app.models/movimiento_tag.app.model';
 import { firstlastMovimiento } from '../app.models/movimiento.firstlast.app.model';
 
 var conection = require('../mongo.repositories/conection');
@@ -181,7 +183,7 @@ export class movimientoRepositoryMongo implements  movimientoInterface {
         return lstUser;
     }
 
-    public async Insert(mov: movimiento): Promise<void> {
+    public async Insert(mov: movimiento): Promise<any> {
 
         let movM = new MovimientoModel({
             concepto: mov.concepto,
@@ -190,8 +192,23 @@ export class movimientoRepositoryMongo implements  movimientoInterface {
             importe: mov.importe
         });
 
-        // se inserta el movimiento
-        await movM.save();        
+        await movM.save((function (_id) {
+            return function () {              
+            };
+          })(movM._id));
+
+          return movM._id;
+    }
+
+    public async InsertTag(mov: movimiento_tag): Promise<void> {
+
+        let movTagModel = new MovimientoTagModel({
+            movimiento: mov.movimiento,
+            tag: mov.tag
+        });
+
+        // se inserta el movimiento_tag
+        await movTagModel.save();        
     }
 
     public async Update(mov: movimiento): Promise<void> {
@@ -224,5 +241,18 @@ export class movimientoRepositoryMongo implements  movimientoInterface {
         result.fechaMin = fisrt.fecha;
 
         return result;
+    }
+
+    public async RemoveTagsForMovement(idMovimiento: string): Promise<void> {
+
+        let searchFilter: {[k: string]: any} = {};
+
+        // filtro por idMovimiento
+        if (idMovimiento != undefined &&
+            idMovimiento.length > 0) {
+            searchFilter.concepto = idMovimiento;
+        }
+
+        await MovimientoTagModel.find(searchFilter, { __v: 0 }).remove();        
     }
 }
