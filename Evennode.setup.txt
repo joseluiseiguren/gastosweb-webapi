@@ -15,14 +15,15 @@ Cada vez que hay un cambio
 	2.3. Pararse en cada coleccion vacia: Collection -> Import Data -> Utilizar los archivos de: ./gastosweb-webapi-master/MongoDb/
 
 
-/* Variables de entorno DEV LOCAL */
-SET NODE_ENV=dev
-SET DEV_APP_PORT=30000
-SET DEV_SECRETHASH=ilovescotchyscotch
-SET DEV_EXPIRACION_TOKEN=86400
-SET DEV_INTENTOS_FALLIDOS_LOGIN=5
-SET DEV_DB=mongodb://localhost:27017/gastosweb
+/* Variables de entorno DEV LOCAL (desde CMD como Administrador) */
+setx NODE_ENV dev
+setx DEV_APP_PORT 30000
+setx DEV_SECRETHASH ilovescotchyscotch
+setx DEV_EXPIRACION_TOKEN 86400
+setx DEV_INTENTOS_FALLIDOS_LOGIN 5
+setx DEV_DB mongodb://localhost:27017/gastosweb
 npm start
+/***** NOTA: luego de setear las variables de entorno, cerrar todas las instancias del visual studio code y volver a abrirlo, para que tome los cambios ****/
 
 
 /* Variables de entorno PROD */
