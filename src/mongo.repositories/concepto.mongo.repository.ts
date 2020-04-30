@@ -362,6 +362,7 @@ export class conceptoRepositoryMongo implements  conceptoInterface {
             foo.credito = doc.credito;
             foo.fecha = fechaDesde;
             foo.importe = 0;
+            foo.tags = [];
             
             let movimiento = MovimientoModel.find(
                 {concepto:doc._id, 
@@ -369,6 +370,7 @@ export class conceptoRepositoryMongo implements  conceptoInterface {
 
             for (let mov = await movimiento.next(); mov != null; mov = await movimiento.next()) {
                 foo.importe = mov.importe;
+                foo.tags = mov.movimTags;
             }
 
             resp.push(foo);            

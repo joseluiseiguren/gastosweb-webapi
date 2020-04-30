@@ -5,4 +5,5 @@ export class movimiento {
     importe: number;
     fecha: Date;
     fechaalta: Date;
+    movimTags: string[];
 }

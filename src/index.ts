@@ -774,7 +774,7 @@ apiRoutes.post('/diario', async function (request, response, next) {
             fecha: string = request.body.fecha,
             importe = request.body.importe,
             idConcepto = request.body.idConcepto,
-            tags = request.body.tags;
+            tags = request.body.movimientoTags;
 
         if (idUsuario === undefined) {
             response.status(HttpStatus.BAD_REQUEST).send({message: "Id usuario invalido"}).end();
@@ -833,6 +833,7 @@ apiRoutes.post('/diario', async function (request, response, next) {
             mov.fecha = fechaMov;
             mov.importe = importe;
             mov.user = idUsuario;
+            mov.movimTags = tags;
             mov._id = await reporitoryMovimiento.Insert(mov);
         } else {
             // ya existe el movimiento para la fecha solicitada, se actualiza
@@ -841,23 +842,14 @@ apiRoutes.post('/diario', async function (request, response, next) {
             mov.importe = importe;
             mov.user = idUsuario;
             mov._id = existeMov[0]._id;
+            mov.movimTags = tags;
             await reporitoryMovimiento.Update(mov);
-        }
-
-        //get current tags for the movement
-        await reporitoryMovimiento.RemoveTagsForMovement(mov._id);
-        
-        //save tags for movement
-        for (let tag of tags) {
-            let tagObject = new movimiento_tag();
-            tagObject.movimiento = mov._id;
-            tagObject.tag = tag;
-            await reporitoryMovimiento.InsertTag(tagObject);
         }
 
         response.status(HttpStatus.OK).send();
 
     } catch (err) {
+        console.log(err);
         setImmediate(() => { next(new Error(JSON.stringify(err))); });
     }
 });

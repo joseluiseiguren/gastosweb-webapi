@@ -189,7 +189,8 @@ export class movimientoRepositoryMongo implements  movimientoInterface {
             concepto: mov.concepto,
             user: mov.user,    
             fecha: mov.fecha,
-            importe: mov.importe
+            importe: mov.importe,
+            movimTags: mov.movimTags
         });
 
         await movM.save((function (_id) {
@@ -219,7 +220,8 @@ export class movimientoRepositoryMongo implements  movimientoInterface {
             {concepto: mov.concepto,
                 user: mov.user,
                 fecha: mov.fecha,
-                importe: mov.importe}
+                importe: mov.importe,
+                movimTags: mov.movimTags}
         );
         
     }

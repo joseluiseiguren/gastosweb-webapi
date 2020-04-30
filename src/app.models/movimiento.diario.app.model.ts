@@ -4,4 +4,5 @@ export class movimientoDiario {
     importe: number;
     fecha: Date;
     credito: boolean;
+    tags: string[]
 }

@@ -6,7 +6,8 @@ var MovimientoSchema = new Schema({
     user: { type: Schema.Types.ObjectId, ref: 'User' },
     fecha: {type: Date, require: true},
     importe: {type: Number, require: true},
-    fechaalta: {type: Date, default: Date.now}
+    fechaalta: {type: Date, default: Date.now},
+    movimTags: [{type: String, require: false}]
 });
 
 module.exports = mongoose.model('Movimiento', MovimientoSchema);
